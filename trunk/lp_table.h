@@ -28,9 +28,19 @@ typedef struct _slice{
 	size_t sp_len;
 }slice;
 
+
+typedef struct _lp_string{
+	lp_list str;
+}lp_string;
+
 unsigned int _BKDRHash(char *str, int len);
+
 int lp_list_new(lp_list* lp_l, size_t one_size);
 int lp_list_add(lp_list* lp_l, byte* data_p);
 int lp_list_free(lp_list* lp_l);
+
+lp_string lp_string_new(char* str);
+lp_string* lp_string_cat(lp_string* lp_s, char at_char);
+void lp_string_free(lp_string* lp_s);
 
 #endif
