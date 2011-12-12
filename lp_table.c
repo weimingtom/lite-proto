@@ -63,3 +63,32 @@ int lp_list_free(lp_list* lp_l)
 	memset(lp_l, 0, sizeof(lp_list));
 	return LP_TRUE;
 }
+
+lp_string lp_string_new(char* str)
+{
+	lp_string lp_s = {0};
+	check_null(str, lp_s);
+	lp_list_new(&lp_s.str, 1);
+	while(*str)
+	{
+		lp_list_add(&lp_s.str, str);
+		str++;
+	}
+	return lp_s;
+}
+
+lp_string* lp_string_cat(lp_string* lp_s, char at_char)
+{
+	check_null(lp_s, NULL);
+	
+	lp_list_add(&lp_s->str, &at_char);
+	return lp_s;
+}
+
+void lp_string_free(lp_string* lp_s)
+{
+	if(lp_s==NULL)
+		return;
+
+	lp_list_free(&lp_s->str);
+}

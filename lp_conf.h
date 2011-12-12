@@ -10,6 +10,7 @@ enum{
 	LP_NIL
 };
 
+typedef unsigned char byte;
 #define check_value(e, qe, r)	do{if((e)==(qe)) return (r);}while(0)	
 #define check_fail(e, r)		check_value(e, LP_FAIL, r)
 #define  check_null(e, r)		check_value(e, NULL, r)	
