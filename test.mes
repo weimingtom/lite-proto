@@ -1,0 +1,17 @@
+
+message test = 12345 {
+	int32 a;
+	int32 b;
+	string c;
+	
+	message info{
+	int32 a;
+	int32 b;
+	}
+	
+	info[] io;
+}
+
+
+MES TEST.INFO 0     {int32 0 a, int32 0 b}
+MES TEST 12345 {int32 0 a, int32 0 b, string 0 c, TEST.INFO 1 io}

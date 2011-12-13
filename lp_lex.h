@@ -3,6 +3,8 @@
 #include "lp_conf.h"
 #include "lp_table.h"
 
+extern char* ts[];
+
 typedef enum _e_c{
 	l_null,
 	l_char,
@@ -13,7 +15,9 @@ typedef enum _e_c{
 	l_ll,
 	l_rl,
 	l_n,
-	l_text
+	l_text,
+	l_end,
+	l_skip
 }e_c;
 
 typedef struct _lp_key{   
@@ -44,7 +48,10 @@ typedef enum _e_t{
 	t_ass,
 	t_ll,
 	t_rl,
-	t_ide
+	t_ide,
+	t_end,
+
+	t_count
 }e_t;
 
 typedef struct _lp_token{
@@ -53,6 +60,13 @@ typedef struct _lp_token{
 	lp_string name;
 }lp_token;
 
+#define watchs(t)	( (((byte)(t))>=t_count)?(ts[0]):(ts[(t)]) )
 int get_lex_env(lp_lex_env* le);
+void free_lex_env(lp_lex_env* le);
+int lp_lex(lp_lex_env* env_p, slice* buff);
+
+
+int lp_lex_print(lp_lex_env* env_p);
+
 
 #endif

@@ -1,13 +1,77 @@
 #include "lp.h"
 #include "lp_conf.h"
 #include <stdlib.h>
-#include "lp_lex.h"
+#include <stdio.h>
 
 lp_env* get_lp_env()
 {
 	lp_env* ret = (lp_env*)malloc(sizeof(*ret));
 	memset(ret, 0, sizeof(*ret));
 
-	check_fail(lp_lex_init(&ret->lex_envV), NULL);
+	check_fail(get_lex_env(&ret->lex_envV), NULL);
+	check_fail(get_parse_env(&ret->parse_envV, NULL), NULL);
 	return ret;
+}
+
+void free_lp_env(lp_env* lp)
+{
+	if(lp==NULL)
+		return;
+	free_lex_env(&lp->lex_envV);
+	free_parse_env(&lp->parse_envV);
+	free(lp);
+}
+
+// 获取文件字节大小
+long fsize( FILE *fp)
+{
+    long int save_pos;
+    long size_of_file;
+	
+	if (fp == NULL)
+		return 0;
+	
+    save_pos = ftell( fp );			// 保存当前文件指针地址
+	
+    fseek( fp, 0L, SEEK_END );		// 跳转到文件末尾
+    size_of_file = ftell( fp );		// 获取文件开始末尾文件地址
+    fseek( fp, save_pos, SEEK_SET ); // 恢复当前的文件地址
+	
+    return( size_of_file);
+}
+
+int read_file(char* file_name, slice* sp)
+{
+	FILE* fp = fopen(file_name, "r");
+	long fs = fsize(fp);
+	
+	check_null(fp, LP_FAIL);
+	sp->sp_len = (size_t)fs + 2;
+	sp->sp = (byte*)malloc(sp->sp_len);
+	memset(sp->sp, 0, sp->sp_len);
+	sp->b_sp = sp->sp;
+
+	if(fread(sp->sp, sizeof(char), sp->sp_len, fp) <0)
+		return LP_FAIL;
+	return LP_TRUE;
+}
+
+int main(void)
+{
+	slice sp = {0};
+	lp_env* lp = get_lp_env();
+	
+	if(read_file("test.mes", &sp)==LP_FAIL)
+		goto END;
+	if(lp_lex(&lp->lex_envV, &sp)==LP_FAIL)
+		goto END;
+
+	lp_lex_print(&lp->lex_envV);
+END:
+	if(sp.b_sp)
+		free(sp.b_sp);
+
+	free_lp_env(lp);
+	print("mem = %d", mem);
+	getchar();
 }
