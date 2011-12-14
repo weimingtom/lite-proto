@@ -31,7 +31,7 @@ typedef struct _lp_table_one{
 	struct _lp_table_one* next;
 }lp_table_one;
 
-#define  TABLE_SIZE		512
+#define  TABLE_SIZE		128
 typedef struct _lp_table{
 	lp_table_one* table_list[TABLE_SIZE];
 	size_t table_len;
@@ -53,5 +53,6 @@ lp_string lp_string_new(char* str);
 lp_string* lp_string_cat(lp_string* lp_s, char at_char);
 lp_string* lp_string_cats(lp_string* lp_s, char* str);
 void lp_string_free(lp_string* lp_s);
+void lp_string_clear(lp_string* lp_s);
 
 #endif

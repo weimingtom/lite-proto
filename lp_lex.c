@@ -18,6 +18,7 @@ char* ts[] = {
 	"]",
 	"t_ide",
 	";",
+	".",
 	"NULL"
 	};
 
@@ -106,6 +107,7 @@ int get_lex_env(lp_lex_env* le)
 	le->char_enum[']']= l_rl;
 	le->char_enum['#']= l_text;
 	le->char_enum[';']= l_end;
+	le->char_enum['.']= l_clo;
 	for(i='a'; i<='z'; i++)
 		le->char_enum[i] = l_char;
 	for(i='A'; i<='Z'; i++)
@@ -138,6 +140,10 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 			lp_add_token(env_p, lp_new_token(env_p, t_end, lp_string_new(NULL)));
 			next_char(buff);
 			break;
+		case l_clo:
+			lp_add_token(env_p, lp_new_token(env_p, t_clo, lp_string_new(NULL)));
+			next_char(buff);
+			break;
 		case l_ass:
 			lp_add_token(env_p, lp_new_token(env_p, t_ass, lp_string_new(NULL)));
 			next_char(buff);
@@ -159,14 +165,19 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 			next_char(buff);
 			break;
 		case l_text:
-			while(next_char(buff) != '\n');
+			{
+				char lc = now_char(buff);
+				for(; lc && lc!='\n'; next_char(buff))
+					lc = now_char(buff);
+			}
+			break;
 		case  l_n:
 			(env_p->line)++;
 		case  l_skip:
 			next_char(buff);
 			break;
 		default:
-			print("lex[error line: %ud] find can not lex char!\n", env_p->line);
+			print("lex[error line: %d] find can not lex char!\n", env_p->line);
 			return LP_FAIL;
 		}
 	}
@@ -209,7 +220,7 @@ static int lp_lex_number(lp_lex_env* env_p, slice* buff)
 	for(;  (at_char=now_char(buff)) && (char_type(env_p, at_char)==l_num); next_char(buff))
 		lp_string_cat(&name, at_char);
 
-	lp_add_token(env_p, lp_new_token(env_p, l_num, name));
+	lp_add_token(env_p, lp_new_token(env_p, t_num, name));
 	return LP_TRUE;
 }
 

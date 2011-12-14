@@ -9,7 +9,7 @@ lp_env* get_lp_env()
 	memset(ret, 0, sizeof(*ret));
 
 	check_fail(get_lex_env(&ret->lex_envV), NULL);
-	check_fail(get_parse_env(&ret->parse_envV, NULL), NULL);
+	check_fail(get_parse_env(&ret->parse_envV, &ret->lex_envV.lex_list), NULL);
 	return ret;
 }
 
@@ -58,6 +58,7 @@ int read_file(char* file_name, slice* sp)
 
 int main(void)
 {
+	FILE* fp = NULL;
 	slice sp = {0};
 	lp_env* lp = get_lp_env();
 	
@@ -67,11 +68,25 @@ int main(void)
 		goto END;
 
 	lp_lex_print(&lp->lex_envV);
+	
+	print("\n\n------parse-------\n");
+	if(lp_parse(&lp->parse_envV)==LP_FAIL)
+	{
+		print("parse error!\n");
+		goto END;
+	}
+	
+	fp = fopen("test.lpb", "w");
+	if(fp)
+	{
+		fwrite(lp->parse_envV.parse_out.list_p, lp->parse_envV.parse_out.list_len, 1, fp);
+		fclose(fp);
+	}
 END:
 	if(sp.b_sp)
 		free(sp.b_sp);
 
 	free_lp_env(lp);
-	print("mem = %d", mem);
+	print("\n\n----memory----\nmem = %d", mem);
 	getchar();
 }

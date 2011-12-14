@@ -50,9 +50,7 @@ int lp_table_add(lp_table* lp_t, char* name)
 		while(head)
 		{
 			if(strcmp((char*)head->name.str.list_p, name)==0)
-			{
 				return LP_EXIST;
-			}
 			back = head;
 			head = head->next;
 		}
@@ -133,7 +131,7 @@ int lp_list_relloc(lp_list* lp_l)
 	if(lp_l->list_len < lp_l->list_size)
 		return LP_NIL;
 
-	check_null(realloc(lp_l->list_p, (lp_l->list_size+=LP_LIST_DEF_SIZE)*lp_l->one_size), LP_FAIL);
+	check_null(lp_l->list_p=realloc(lp_l->list_p, (lp_l->list_size+=LP_LIST_DEF_SIZE)*lp_l->one_size), LP_FAIL);
 	return LP_TRUE;
 }
 
@@ -213,6 +211,13 @@ lp_string* lp_string_cat(lp_string* lp_s, char at_char)
 	lp_list_add(&lp_s->str, &a);
 	lp_s->str.list_len--;
 	return lp_s;
+}
+
+void lp_string_clear(lp_string* lp_s)
+{
+	if(lp_s==NULL)
+		return;
+	lp_s->str.list_len = 0;
 }
 
 void lp_string_free(lp_string* lp_s)

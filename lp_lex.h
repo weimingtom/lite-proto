@@ -17,6 +17,7 @@ typedef enum _e_c{
 	l_n,
 	l_text,
 	l_end,
+	l_clo,
 	l_skip
 }e_c;
 
@@ -50,6 +51,7 @@ typedef enum _e_t{
 	t_rl,
 	t_ide,
 	t_end,
+	t_clo,
 
 	t_count
 }e_t;
