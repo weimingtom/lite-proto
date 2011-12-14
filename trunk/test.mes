@@ -1,17 +1,36 @@
 
-message test = 12345 {
+# test ÃèÊöÎÄ±¾¡¤¡¤¡¤
+message test1 {
 	int32 a;
 	int32 b;
-	string c;
-	
-	message info{
-	int32 a;
-	int32 b;
-	}
-	
-	info[] io;
+	string name;
 }
 
 
-MES TEST.INFO 0     {int32 0 a, int32 0 b}
-MES TEST 12345 {int32 0 a, int32 0 b, string 0 c, TEST.INFO 1 io}
+message test2 {
+	int64 id;
+	string name;
+	int32 rgb;
+	
+	message info{
+		int32 al;
+		int32 b;
+	}
+	
+	
+	message info2{
+		string str;
+		string[] l_str;
+		
+		message like_info2{
+			int32 a;
+			int32 b;
+		}
+	}
+	
+	int32[] al;
+	info  i_al;
+	
+	info2 io2;
+	info2.like_info2 ili;	
+}
