@@ -132,5 +132,17 @@ SOURCE=.\lp_table.h
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
+# Begin Group "lib_lp"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\lib_lp.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_lp.h
+# End Source File
+# End Group
 # End Target
 # End Project

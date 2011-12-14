@@ -22,30 +22,15 @@ void free_lp_env(lp_env* lp)
 	free(lp);
 }
 
-// 获取文件字节大小
-long fsize( FILE *fp)
-{
-    long int save_pos;
-    long size_of_file;
-	
-	if (fp == NULL)
-		return 0;
-	
-    save_pos = ftell( fp );			// 保存当前文件指针地址
-	
-    fseek( fp, 0L, SEEK_END );		// 跳转到文件末尾
-    size_of_file = ftell( fp );		// 获取文件开始末尾文件地址
-    fseek( fp, save_pos, SEEK_SET ); // 恢复当前的文件地址
-	
-    return( size_of_file);
-}
-
 int read_file(char* file_name, slice* sp)
 {
-	FILE* fp = fopen(file_name, "r");
-	long fs = fsize(fp);
+	FILE* fp = NULL;
+	long fs = 0;
 	
-	check_null(fp, LP_FAIL);
+	check_null(file_name, (print("parse file not exist!\n"), LP_FAIL));
+	fp = fopen(file_name, "r");
+	fs = fsize(fp);
+	check_null(fp, (print("read file: %s is error!\n", file_name), LP_FAIL));
 	sp->sp_len = (size_t)fs + 2;
 	sp->sp = (byte*)malloc(sp->sp_len);
 	memset(sp->sp, 0, sp->sp_len);
@@ -56,26 +41,24 @@ int read_file(char* file_name, slice* sp)
 	return LP_TRUE;
 }
 
-int main(void)
+int lp_main(int argc, char* args[])
 {
 	FILE* fp = NULL;
 	slice sp = {0};
 	lp_env* lp = get_lp_env();
-	
+
 	if(read_file("test.mes", &sp)==LP_FAIL)
 		goto END;
 	if(lp_lex(&lp->lex_envV, &sp)==LP_FAIL)
 		goto END;
-
-	lp_lex_print(&lp->lex_envV);
-	
-	print("\n\n------parse-------\n");
 	if(lp_parse(&lp->parse_envV)==LP_FAIL)
 	{
 		print("parse error!\n");
 		goto END;
 	}
 	
+	lp_lex_print(&lp->lex_envV);
+
 	fp = fopen("test.lpb", "w");
 	if(fp)
 	{
