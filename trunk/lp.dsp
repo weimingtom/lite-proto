@@ -97,6 +97,10 @@ SOURCE=.\lp_lex.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\lp_list.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lp_parse.c
 # End Source File
 # Begin Source File
@@ -121,6 +125,10 @@ SOURCE=.\lp_lex.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lp_list.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lp_parse.h
 # End Source File
 # Begin Source File
@@ -142,6 +150,18 @@ SOURCE=.\lib_lp.c
 # Begin Source File
 
 SOURCE=.\lib_lp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_table.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_table.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\llp.h
 # End Source File
 # End Group
 # End Target

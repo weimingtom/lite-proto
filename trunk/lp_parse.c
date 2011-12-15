@@ -19,7 +19,7 @@
 #define lp_watch(p, t)	do{lp_check(p, t); ((p)->read_inx)++;}while(0)
 #define lp_get_token(p, t, d)	do{lp_check((p), (t)); (d)=lp_at_token(p); ((p)->read_inx)++;}while(0)
 
-static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, lp_table* ide_table, char* at_mes);
+static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, size_t* out_count, lp_table* ide_table, char* at_mes);
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes);
 static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name);
 
@@ -85,6 +85,7 @@ int lp_parse_push(lp_parse_env* lp_p, void* data, size_t len)
 
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 {
+	size_t out_count = 0;
 	int a_ret = LP_FAIL;
 	int ret = LP_FAIL;
 	unsigned int id = 0;
@@ -121,7 +122,8 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 			}
 			lp_string_cats(&mes, (char*)mes_name->name.str.list_p);
 			lp_table_new(&ide_table);
-			if(lp_parse_closure(lp_p, &temp_out, &ide_table, (char*)mes.str.list_p) == LP_FAIL)
+			out_count = 0;
+			if(lp_parse_closure(lp_p, &temp_out, &out_count, &ide_table, (char*)mes.str.list_p) == LP_FAIL)
 				goto C_END;
 		}
 		break;
@@ -140,6 +142,7 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 		goto C_END;
 	lp_parse_push(lp_p, mes.str.list_p, mes.str.list_len+1);	// write message name
 	lp_parse_push(lp_p, &id, sizeof(id));						// write message id
+	lp_parse_push(lp_p, &out_count, sizeof(out_count));			// write message count
 	lp_parse_push(lp_p, &temp_out.list_len, sizeof(size_t));	// write message body lens
 	lp_parse_push(lp_p, temp_out.list_p, temp_out.list_len);	// write message body
 	
@@ -152,7 +155,7 @@ C_END:
 	return ret;
 }
 
-static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, lp_table* ide_table, char* at_mes)
+static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, size_t* out_count, lp_table* ide_table, char* at_mes)
 {
 	size_t back_out_lens = 0;
 	byte tag = 0;
@@ -162,6 +165,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, lp_table* ide_t
 	check_null(lp_out, LP_FAIL);
 	check_null(at_mes, LP_FAIL);
 	check_null(ide_table, LP_FAIL);
+	check_null(out_count, LP_FAIL);
 	back_out_lens = lp_out->list_len;
 
 	lp_watch(lp_p, t_lb);
@@ -203,7 +207,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, lp_table* ide_t
 				else if(tt->type == t_ide)
 				{
 					ide = tt;
-					tag = lp_tag(temp->type, e_reg);
+					tag = lp_tag(temp->type, e_req);
 					lp_watch(lp_p, t_ide);
 					lp_watch(lp_p, t_end);		// ;
 				}
@@ -238,6 +242,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, lp_table* ide_t
 					for(i=0; i<ide->name.str.list_len; i++)	// push  ide name
 						lp_list_add(lp_out, ide->name.str.list_p+i);
 					lp_list_add(lp_out, &a);
+					(*out_count)++;
 				}
 			}
 			break;
