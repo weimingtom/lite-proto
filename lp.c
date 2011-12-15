@@ -41,7 +41,7 @@ int read_file(char* file_name, slice* sp)
 	return LP_TRUE;
 }
 
-int lp_main(int argc, char* args[])
+int t_main(int argc, char* args[])
 {
 	FILE* fp = NULL;
 	slice sp = {0};
@@ -72,4 +72,5 @@ END:
 	free_lp_env(lp);
 	print("\n\n----memory----\nmem = %d", mem);
 	getchar();
+	return 0;
 }

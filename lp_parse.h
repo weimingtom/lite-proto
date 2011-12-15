@@ -4,7 +4,7 @@
 #include "lp_table.h"
 
 enum {
-	e_reg,
+	e_req,
 	e_rep
 };
 
