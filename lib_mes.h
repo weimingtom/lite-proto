@@ -12,7 +12,6 @@ typedef union _filed_value{
 	double* float64_P;
 	char**  string_P;
 	struct _llp_mes*  mes_P;
-	lp_list*	al_p;
 }filed_value;
 
 typedef struct _llp_mes{
