@@ -33,25 +33,29 @@ struct _nl{
 // regedit .mes file 
 typedef struct _t_reg_mes{
 	struct _nl* mNs;		// all message at .mes
+	size_t mNs_count;		// all message count 
 
 	byte* mes_p;			// .mes buff
 	size_t mes_size;		// .mes size
-	
-	size_t mNs_count;		// all message count 
 }t_reg_mes;
+
+typedef struct _t_def_mes;
+typedef struct _t_Mfield{
+	byte tag;					// tag
+	struct _t_def_mes* tms;		// if type message 
+}t_Mfield;
 
 // def message body
 typedef struct _t_def_mes{
-	unsigned int	message_id;
-	llp_table		message_filed;
+	unsigned int	message_id;			// message id
+	llp_table		message_filed;		// filed table
+	t_Mfield*		message_tfl;		// filed tag list
+	unsigned int	message_count;		// filed count
 }t_def_mes;
 
 // def field at message
 typedef struct _t_def_field{
-	int f_id;			// id
-	byte tag;			// tag
-	char* f_name;		// filed name
-	t_def_mes* mes;		// if type is message ,not is NULL
+	unsigned int f_id;			// id
 }t_def_field;
 
 typedef struct _lp_value{
@@ -60,8 +64,6 @@ typedef struct _lp_value{
 		t_def_mes	def_mesV;
 		t_def_field def_fieldV;
 	}value;
-	
-	e_lt type;
 }lp_value;
 
 typedef struct _llp_env{
@@ -74,6 +76,8 @@ typedef struct _llp_env{
 #define DEF_MES_LEN		64
 #define DEF_DMES_LEN    128
  
+#define  tag_type(t)	( ((byte)t)>>3 )
+#define  tag_state(t)	( ((byte)(t)) & 0xF8 ) 
 static int get_llp_env(llp_env* env_p);
 static void free_llp_env(llp_env* p);
 

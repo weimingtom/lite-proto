@@ -1,14 +1,15 @@
 #include "lp_list.h"
 #include "lp_conf.h"
 
-int lp_list_new(lp_list* lp_l, size_t one_size, list_Fnew new_func, list_Ffree free_func)
+int _lp_list_new(lp_list* lp_l, size_t one_size, size_t def_size, list_Fnew new_func, list_Ffree free_func)
 {
 	check_null(lp_l, LP_FAIL);
 	lp_l->one_size = one_size;
 	lp_l->list_len = 0;
-	lp_l->list_p = (byte*)malloc(one_size*LP_LIST_DEF_SIZE);
-	memset(lp_l->list_p, 0, one_size*LP_LIST_DEF_SIZE);
-	lp_l->list_size = LP_LIST_DEF_SIZE;
+	lp_l->list_def_size = def_size;
+	lp_l->list_p = (byte*)malloc(one_size*lp_l->list_def_size);
+	memset(lp_l->list_p, 0, one_size*lp_l->list_def_size);
+	lp_l->list_size = lp_l->list_def_size;
 	lp_l->new_func = new_func;
 	lp_l->free_func = free_func;
 	
@@ -23,7 +24,7 @@ int lp_list_relloc(lp_list* lp_l)
 	if(lp_l->list_len < lp_l->list_size)
 		return LP_NIL;
 	
-	check_null(lp_l->list_p=realloc(lp_l->list_p, (lp_l->list_size+=LP_LIST_DEF_SIZE)*lp_l->one_size), LP_FAIL);
+	check_null(lp_l->list_p=realloc(lp_l->list_p, (lp_l->list_size+=lp_l->list_def_size)*lp_l->one_size), LP_FAIL);
 	return LP_TRUE;
 }
 
