@@ -153,6 +153,14 @@ SOURCE=.\lib_lp.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib_mes.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_mes.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib_table.c
 # End Source File
 # Begin Source File
