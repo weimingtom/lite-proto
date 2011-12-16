@@ -143,7 +143,7 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 	lp_parse_push(lp_p, mes.str.list_p, mes.str.list_len+1);	// write message name
 	lp_parse_push(lp_p, &id, sizeof(id));						// write message id
 	lp_parse_push(lp_p, &out_count, sizeof(out_count));			// write message count
-	lp_parse_push(lp_p, &temp_out.list_len, sizeof(size_t));	// write message body lens
+//	lp_parse_push(lp_p, &temp_out.list_len, sizeof(size_t));	// write message body lens
 	lp_parse_push(lp_p, temp_out.list_p, temp_out.list_len);	// write message body
 	
 	ret = LP_TRUE;

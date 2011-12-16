@@ -3,10 +3,33 @@
 
 static int llp_reg_mes_value(llp_env* env, t_reg_mes* rmp, slice* sl);
 static int llp_read_message(llp_env* env, char** out_name, slice* sl);
-
+int llp_reg_mes(llp_env* env, char* mes_name);
+int llp_del_mes(llp_env* env, char* mes_name);
 
 #define  sl_emp(sl)		( ((sl)->sp)-((sl)->b_sp) )
-#define check_sl(sl)	do{ if( (sl)==NULL || (sl)->sp==NULL || ((unsigned int)((sl)->sp-(sl)->b_sp))>(sl)->sp_len ) return LP_FAIL;}while(0)
+#define check_sl(sl)	do{		\
+							if( (sl)==NULL || (sl)->sp==NULL || ((unsigned int)((sl)->sp-(sl)->b_sp))>(sl)->sp_len ) \
+								return LP_FAIL; \
+							else if( ((unsigned int)((sl)->sp-(sl)->b_sp))==(sl)->sp_len )	\
+								return LP_END;	\
+						}while(0)
+
+int main(void)
+{
+	llp_env env = {0};
+	get_llp_env(&env);
+	
+	print("----reg before mem = %d\n", mem);
+	llp_reg_mes(&env, "test.lpb");
+	print("-----reg after mem = %d\n", mem);
+	llp_del_mes(&env, "test.lpb");
+	print("-----del after mem = %d\n", mem);
+	
+	free_llp_env(&env);
+	print("mem = %d\n", mem);
+	return 0;
+}
+
 int sl_Rstr(slice* sl, char** out)
 {
 	check_sl(sl);
@@ -16,6 +39,28 @@ int sl_Rstr(slice* sl, char** out)
 
 	return LP_TRUE;
 }	
+
+int sl_Rlens(slice* sl, unsigned int* out)
+{
+	check_sl(sl);
+	*out = *((unsigned int*)(sl->sp));
+	sl->sp += sizeof(unsigned int);
+	sl->sp += (*out);
+	check_sl(sl);
+	sl->sp -= (*out);
+
+	return LP_TRUE;
+}
+
+int sl_Rbyte(slice* sl, byte* out)
+{
+	check_sl(sl);
+	*out = *(sl->sp);
+	sl->sp += 1;
+	check_sl(sl);
+
+	return LP_TRUE;
+}
 
 int  sl_Ruint(slice* sl, size_t* out)
 {
@@ -27,29 +72,11 @@ int  sl_Ruint(slice* sl, size_t* out)
 	return LP_TRUE;
 }
 
-int main(void)
-{
-	FILE* fp = fopen("test.lpb", "r"); 
-	long lens = fsize(fp);
-	llp_env env = {0};
-
-	check_null(fp, LP_FAIL);
-	get_llp_env(&env);
-
-	free_llp_env(&env);
-	return 0;
-}
-
- int _free_s(void* p)
-{
-	 free(p);
-	return  LP_TRUE;
-}
-
 static int get_llp_env(llp_env* env_p)
 {
 	check_null(env_p, LP_FAIL);
-	check_fail(lib_table_new(&env_p->mes, DEF_MES_LEN), LP_FAIL);
+	check_fail(lib_table_new(&env_p->mes, DEF_MES_LEN, reg_mes), LP_FAIL);
+	check_fail(lib_table_new(&env_p->dmes, DEF_DMES_LEN, def_mes), LP_FAIL);
 	memset(&env_p->mesN, 0, sizeof(env_p->mesN));
 	return LP_TRUE;
 }
@@ -58,12 +85,29 @@ static void free_llp_env(llp_env* p)
 {
 	if(p)
 	{
+		lib_table_free(&p->dmes);
 		lib_table_free(&p->mes);
 		lib_Stable_free(&p->mesN);
-		free(p);
 	}
 }
 
+int llp_del_mes(llp_env* env, char* mes_name)
+{
+	struct _nl* mp = NULL;
+	struct _lp_value* lv = NULL;
+	check_null(env, LP_FAIL);
+	check_null(env, LP_FAIL);
+	check_null(lv=lib_table_look(&env->mes, mes_name), LP_FAIL);
+	mp = lv->value.reg_mesV.mNs;
+	while(mp)
+	{
+		lib_table_del(&env->dmes, mp->name);
+		mp = mp->next;
+	}
+	lib_table_del(&env->mes, mes_name);
+
+	return LP_TRUE;
+}
 
 int llp_reg_mes(llp_env* env, char* mes_name)
 {
@@ -79,10 +123,8 @@ int llp_reg_mes(llp_env* env, char* mes_name)
 	sl.b_sp = sl.sp;
 	f_read(sl.sp, 1, sl.sp_len, fd);
 	if( lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)) )
-	{
-		lv->type =reg_mes;
-		llp_reg_mes_value(env, &lv->value.reg_mesV, &sl);
-	}
+		check_fail(llp_reg_mes_value(env, &lv->value.reg_mesV, &sl), (llp_del_mes(env, mes_name), LP_FAIL));
+
 	f_close(fd);
 	return LP_TRUE;
 }
@@ -120,23 +162,45 @@ RMV_END:
 	return LP_TRUE;
 }
 
-static int llp_read_filed()
+static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 {
+	unsigned int i=0;
+	des_mes->message_tfl = (t_Mfield*)malloc(sizeof(t_Mfield)*des_mes->message_count);
+	memset(des_mes->message_tfl, 0, sizeof(t_Mfield)*des_mes->message_count);
+	check_fail(lib_table_new(&des_mes->message_filed, des_mes->message_count, def_field), LP_FAIL);
 
+	for(i=0; i<des_mes->message_count; i++)
+	{
+		char* f_name = NULL;
+		struct _lp_value* lv = NULL;
+		check_fail(sl_Rbyte(sl, &des_mes->message_tfl[i].tag), LP_FAIL);
+		if(tag_type(des_mes->message_tfl[i].tag) == lpt_message)
+		{
+			char* fms = NULL;
+			struct _lp_value* lv = NULL;
+			check_fail(sl_Rstr(sl, &fms), LP_FAIL);
+			check_null(lv=lib_table_look(&env->dmes, fms), LP_FAIL);
+			des_mes->message_tfl[i].tms = &lv->value.def_mesV;
+		}
+		
+		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
+		check_null(lv=lib_table_add(&des_mes->message_filed, f_name), LP_FAIL);
+		lv->value.def_fieldV.f_id = i;
+	}
+
+	return LP_TRUE;
 }
 
 static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 {
 	lp_value* lds = NULL;
-	int mes_len = strlen(sl->sp);
-	if(mes_len > sl_emp(sl))
-		return LP_FAIL;
-
-	check_fail(sl_Rstr(sl, out_name), LP_FAIL);							// read message name
-	check_null(lds=(lp_value*)lib_table_add(&env->dmes, *out_name), LP_FAIL);		//  begin add message body
-	lds->type = def_mes;
-	check_fail(sl_Ruint(sl, &lds->value.def_mesV.message_id), LP_FAIL);						// read id
-//	lds->value.def_mesV.message_filed
+	
+	check_sl(sl);
+	check_fail(sl_Rstr(sl, out_name), LP_FAIL);									// read message name
+	check_null(lds=(lp_value*)lib_table_add(&env->dmes, *out_name), LP_FAIL);	// begin add message body
+	check_fail(sl_Ruint(sl, &lds->value.def_mesV.message_id), LP_FAIL);			// read id
+	check_fail(sl_Ruint(sl, &lds->value.def_mesV.message_count), LP_FAIL);		// read message count
+	check_fail(llp_read_filed(env, &lds->value.def_mesV, sl), LP_FAIL);			// read filed
 
 	return LP_TRUE;
 }

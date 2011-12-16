@@ -12,8 +12,9 @@ typedef struct _llp_tableO{
 
 
 typedef struct _llp_table{
-	llp_tableO**  table_p;	
-	size_t	lens;
+	llp_tableO**  table_p;
+	size_t		  lens;
+	byte		  type;
 }llp_table;
 
 typedef struct _llp_strTO{
@@ -26,7 +27,7 @@ typedef struct _llp_strT{
 	llp_strTO* lst[DEF_STR_LEN];	
 }llp_strT;
 
-int lib_table_new(llp_table* lt, size_t size);
+int lib_table_new(llp_table* lt, size_t size, byte type);
 struct _lp_value* lib_table_add(llp_table* lt, char* name);
 struct _lp_value* lib_table_look(llp_table* lt, char* name);
 int lib_table_del(llp_table* lt, char* name);

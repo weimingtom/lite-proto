@@ -2,7 +2,7 @@
 #include "lib_lp.h"
 #include "lp_conf.h"
 
-static void lib_tableOne_free(llp_tableO* lto);
+static void lib_tableOne_free(llp_table* lt, llp_tableO* lto);
 int lib_table_free(llp_table* lt);
 
 
@@ -18,13 +18,14 @@ unsigned int _L_BKDRHash(char *str, int len)
 }
 
 
-int lib_table_new(llp_table* lt, size_t size)
+int lib_table_new(llp_table* lt, size_t size, byte type)
 {
 	check_null(lt, LP_FAIL);
 	if(size==0)
 		return LP_FAIL;
 	
 	lt->lens = size;
+	lt->type = type;
 	lt->table_p = (llp_tableO**)malloc(sizeof(llp_tableO*)*size);
 	check_null(lt->table_p, LP_FAIL);
 	memset((void*)(lt->table_p), 0, sizeof(llp_tableO*)*size);
@@ -95,7 +96,7 @@ int lib_table_del(llp_table* lt, char* name)
 		if(strcmp(np->name, name)==0)
 		{
 			llp_tableO* npt = np->next;
-			lib_tableOne_free(np);
+			lib_tableOne_free(lt, np);
 			if(np == lt->table_p[inx])
 				lt->table_p[inx] = npt;
 			else
@@ -109,25 +110,26 @@ int lib_table_del(llp_table* lt, char* name)
 	return LP_FAIL;
 }
 
-static int lib_value_free(lp_value* lpv)
+static int lib_value_free(llp_table* lt, lp_value* lpv)
 {	
-	switch(lpv->type)
+	switch(lt->type)
 	{
 	case reg_mes:
 		{
 			struct _nl* p = lpv->value.reg_mesV.mNs;
-			free(lpv->value.reg_mesV.mes_p);
 			while(p)
 			{
 				struct _nl* np = p->next;
 				free(p);
 				p=np;
 			}
+			free(lpv->value.reg_mesV.mes_p);
 		}
 		break;
 	case def_mes:
 		{
 			lib_table_free(&lpv->value.def_mesV.message_filed);
+			free(lpv->value.def_mesV.message_tfl);
 		}
 		break;
 	case def_field:
@@ -140,9 +142,9 @@ static int lib_value_free(lp_value* lpv)
 	return LP_TRUE;
 }
 
-static void lib_tableOne_free(llp_tableO* lto)
+static void lib_tableOne_free(llp_table* lt, llp_tableO* lto)
 {	
-	lib_value_free(lto->value);
+	lib_value_free(lt, lto->value);
 	free(lto);
 }
 
@@ -160,7 +162,7 @@ int lib_table_free(llp_table* lt)
 			while(lto)
 			{
 				lto_next = lto->next;
-				lib_tableOne_free(lto);
+				lib_tableOne_free(lt, lto);
 				lto = lto_next;
 			}
 			lt->table_p[i] = NULL;
