@@ -84,8 +84,6 @@ int sl_Wnumber(slice* out, byte* num, size_t lens)
 
 int _sl_Wint32(slice* out, unsigned int num)
 {
-	byte* p = (byte*)(&num);
-	
 	if (num >= 0x80)
     {
 		sl_Wbyte((byte)(num | 0x80));
