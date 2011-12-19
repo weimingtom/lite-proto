@@ -145,6 +145,22 @@ SOURCE=.\lp_table.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\lib_al.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_al.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_io.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib_io.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib_lp.c
 # End Source File
 # Begin Source File
