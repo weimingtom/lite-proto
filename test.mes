@@ -29,7 +29,7 @@ message test2 {
 	}
 	
 	int32[] al;
-	info  i_al;
+	info[]  i_al;
 	
 	info2 io2;
 	info2.like_info2 ili;	
