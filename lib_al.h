@@ -5,10 +5,10 @@
 struct _llp_mes;
 typedef union _llp_value{
 	char*			 lp_str;
-	int				 lp_int32;
-	long			 lp_int64;
-	float			 lp_float32;
-	double			 lp_float64;
+	llp_int32		 lp_int32;
+	llp_int64		 lp_int64;
+	llp_float32		 lp_float32;
+	llp_float64		 lp_float64;
     struct _llp_mes* lp_mes;
 }llp_value;
 

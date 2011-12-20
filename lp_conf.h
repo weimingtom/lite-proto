@@ -13,6 +13,15 @@ enum{
 	LP_END
 };
 
+typedef signed __int32		llp_int32;
+typedef unsigned __int32	llp_uint32;
+
+typedef signed __int64		llp_int64;
+typedef unsigned __int64	llp_uint64;
+	
+typedef float				llp_float32;
+typedef double				llp_float64;
+
 
 extern size_t mem;
 #undef  malloc
@@ -31,7 +40,7 @@ typedef unsigned char byte;
 typedef struct _slice{
 	byte* sp;
 	byte* b_sp;
-	size_t sp_len;
+	size_t sp_size;
 }slice;
 
 #define check_value(e, qe, r)	do{if((e)==(qe)) return (r);}while(0)	
