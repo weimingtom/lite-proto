@@ -14,21 +14,23 @@ typedef struct _llp_mes{
 }llp_mes;
 
 llp_mes*  llp_message_new(llp_env* env, char* mes_name);
+llp_mes* _llp_message_new(t_def_mes* def_mesP);
 void llp_message_clr(llp_mes* in_mes);
 void  llp_message_free(llp_mes* in_mes);
+int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd);
 
-int llp_Wmes_int32(llp_mes* lm, char* filed_str, int number);
-int llp_Wmes_int64(llp_mes* lm, char* filed_str, long number);
-int llp_Wmes_float32(llp_mes* lm, char* filed_str, float number);
-int llp_Wmes_float64(llp_mes* lm, char* filed_str, double number);
+int llp_Wmes_int32(llp_mes* lm, char* filed_str, llp_int32 number);
+int llp_Wmes_int64(llp_mes* lm, char* filed_str, llp_int64 number);
+int llp_Wmes_float32(llp_mes* lm, char* filed_str, llp_float32 number);
+int llp_Wmes_float64(llp_mes* lm, char* filed_str, llp_float64 number);
 int llp_Wmes_string(llp_mes* lm, char* filed_str, char* str);
 llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str);
 
 
-int llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx);
-long llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx);
-float llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx);
-double llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx);
+llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx);
+llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx);
+llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx);
+llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx);
 char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx);
 

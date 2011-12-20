@@ -31,12 +31,12 @@ int read_file(char* file_name, slice* sp)
 	fp = fopen(file_name, "r");
 	fs = fsize(fp);
 	check_null(fp, (print("read file: %s is error!\n", file_name), LP_FAIL));
-	sp->sp_len = (size_t)fs + 2;
-	sp->sp = (byte*)malloc(sp->sp_len);
-	memset(sp->sp, 0, sp->sp_len);
+	sp->sp_size = (size_t)fs + 2;
+	sp->sp = (byte*)malloc(sp->sp_size);
+	memset(sp->sp, 0, sp->sp_size);
 	sp->b_sp = sp->sp;
 
-	if(fread(sp->sp, sizeof(char), sp->sp_len, fp) <0)
+	if(fread(sp->sp, sizeof(char), sp->sp_size, fp) <0)
 		return LP_FAIL;
 	return LP_TRUE;
 }

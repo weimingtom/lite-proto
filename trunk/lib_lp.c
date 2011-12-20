@@ -8,39 +8,11 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl);
 int llp_reg_mes(llp_env* env, char* mes_name);
 int llp_del_mes(llp_env* env, char* mes_name);
 
-#define LENS 128
-int main(void)
+#define LENS 4
+
+void test2_p_mes(llp_mes* lpm)
 {
 	int i=0;
-	llp_env env = {0};
-	llp_mes* lpm = NULL;
-
-	get_llp_env(&env);
-	
-	print("----reg before mem = %d\n", mem);
-	llp_reg_mes(&env, "test.lpb");
-	print("-----reg after mem = %d\n", mem);
-	
-	// test1 message 
-	lpm = llp_message_new(&env, "test1");		// create a message obj
-	llp_Wmes_int32(lpm, "a", 123);
-	llp_Wmes_int32(lpm, "b", 456);
-	llp_Wmes_string(lpm, "name", "test_name~~");
-	
-	print("test1 a= %d \n", llp_Rmes_int32(lpm, "a", 0));
-	print("test1 b = %d \n", llp_Rmes_int32(lpm, "b", 0));
-	print("test1 name = %s \n", llp_Rmes_string(lpm, "name", 0));
-	llp_message_free(lpm);
-
-	
-	// test2 message
-	lpm = llp_message_new(&env, "test2");
-	llp_Wmes_int64(lpm, "id", 333);
-	llp_Wmes_string(lpm, "name", "t2_name!");
-	llp_Wmes_int32(lpm, "rgb", 444);
-	for(i=0; i<LENS; i++)
-		llp_Wmes_int32(lpm, "al", i+10);
-
 	print("test2 id= %d \n", llp_Rmes_int64(lpm, "id", 0));
 	print("test2 name = %s \n", llp_Rmes_string(lpm, "name", 0));
 	print("test2 rgb = %d \n", llp_Rmes_int32(lpm, "name", 0));
@@ -61,7 +33,53 @@ int main(void)
 			print("info b[%d] = %d\n", i, llp_Rmes_int32(nms, "b", 0));
 		}
 	}
+}
 
+int main(void)
+{
+	slice ins = {0};
+	int i=0;
+	llp_env env = {0};
+	llp_mes* lpm = NULL;
+	llp_mes* lpm2 = NULL;
+
+	get_llp_env(&env);
+	
+	print("----reg before mem = %d long[%d] int[%d] float[%d]  double[%d]\n", mem, sizeof(llp_int64), sizeof(llp_int32), sizeof(float), sizeof(double));
+	llp_reg_mes(&env, "test.lpb");
+	print("-----reg after mem = %d\n", mem);
+	
+	// test1 message 
+	lpm = llp_message_new(&env, "test1");		// create a message obj
+	llp_Wmes_int32(lpm, "a", 1523698);
+	llp_Wmes_int32(lpm, "b", 456);
+	llp_Wmes_string(lpm, "name", "test_name~~");
+	
+	print("test1 a= %d \n", llp_Rmes_int32(lpm, "a", 0));
+	print("test1 b = %d \n", llp_Rmes_int32(lpm, "b", 0));
+	print("test1 name = %s \n", llp_Rmes_string(lpm, "name", 0));
+//	llp_out_message(lpm);
+	llp_message_free(lpm);
+
+	
+
+	// test2 message
+	lpm = llp_message_new(&env, "test2");
+	lpm2 = llp_message_new(&env, "test2");
+	llp_Wmes_int64(lpm, "id", 333);
+	llp_Wmes_string(lpm, "name", "t2_name!");
+	llp_Wmes_int32(lpm, "rgb", 444);
+	for(i=0; i<LENS; i++)
+		llp_Wmes_int32(lpm, "al", i+10);
+	test2_p_mes(lpm);
+	
+	llp_out_message(lpm);
+	ins.sp = lpm->sio.b_sp;
+	ins.b_sp = lpm->sio.b_sp;
+	ins.sp_size = lpm->sio.sp - lpm->sio.b_sp;
+	llp_in_message(&ins, lpm2);
+	print("in-------\n");
+	test2_p_mes(lpm2);
 	llp_message_free(lpm);
 
 	free_llp_env(&env);
@@ -111,14 +129,14 @@ int llp_reg_mes(llp_env* env, char* mes_name)
 	slice sl = {0};
 	lp_value* lv = NULL;
 	f_handle fd = f_open(mes_name, "r");
-	sl.sp_len = fsize(fd);
+	sl.sp_size = fsize(fd);
 	check_null(env, LP_FAIL);
 	check_null(mes_name, LP_FAIL);
 	check_null(fd, LP_FAIL);
 	
-	sl.sp = (byte*)malloc(sl.sp_len);
+	sl.sp = (byte*)malloc(sl.sp_size);
 	sl.b_sp = sl.sp;
-	f_read(sl.sp, 1, sl.sp_len, fd);
+	f_read(sl.sp, 1, sl.sp_size, fd);
 	if( lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)) )
 		check_fail(llp_reg_mes_value(env, &lv->value.reg_mesV, &sl), (llp_del_mes(env, mes_name), LP_FAIL));
 
@@ -134,7 +152,7 @@ static int llp_reg_mes_value(llp_env* env, t_reg_mes* rmp, slice* sl)
 	check_null(sl->sp, LP_FAIL);
 
 	rmp->mes_p = sl->sp;
-	rmp->mes_size = sl->sp_len;
+	rmp->mes_size = sl->sp_size;
 	for(;;)
 	{
 		switch(llp_read_message(env, &out_name, sl))
