@@ -78,7 +78,9 @@ typedef struct _llp_env{
  
 #define  tag_type(t)	( ((byte)t)>>3 )
 #define  tag_state(t)	( ((byte)(t)) & 0xF8 ) 
-static int get_llp_env(llp_env* env_p);
-static void free_llp_env(llp_env* p);
+ int get_llp_env(llp_env* env_p);
+ void free_llp_env(llp_env* p);
 
+int llp_reg_mes(llp_env* env, char* mes_name);
+int llp_del_mes(llp_env* env, char* mes_name);
 #endif
