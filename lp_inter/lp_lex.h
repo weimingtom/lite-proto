@@ -64,6 +64,7 @@ typedef struct _lp_token{
 
 #define watchs(t)	( (((byte)(t))>=t_count)?(ts[0]):(ts[(t)]) )
 int get_lex_env(lp_lex_env* le);
+int cls_lex_env(lp_lex_env* le);
 void free_lex_env(lp_lex_env* le);
 int lp_lex(lp_lex_env* env_p, slice* buff);
 
