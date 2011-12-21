@@ -32,6 +32,7 @@ llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx);
 char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx);
+unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str);
 
 // ------- out/in a message body
 slice* llp_out_message(llp_mes* lms);

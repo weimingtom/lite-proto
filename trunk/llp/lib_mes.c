@@ -47,6 +47,7 @@ void llp_message_clr(llp_mes* in_mes)
 		else
 			lib_array_clr(&in_mes->filed_al[i], NULL);
 	}
+	llp_out_close(&in_mes->sio);
 }
 
 void  llp_message_free(llp_mes* in_mes)
@@ -244,4 +245,16 @@ llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_message, al_inx), NULL);
 	
 	return lpv->lp_mes;
+}
+
+unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str)
+{
+	struct _lp_value* lv = NULL;
+	int inx = 0;
+	check_null(lm, 0);
+	check_null(filed_str, 0);
+	check_null(lv=lib_table_look(&lm->d_mes->message_filed, filed_str), 0);
+	inx = lv->value.def_fieldV.f_id;
+
+	return lm->filed_al[inx].lens;
 }
