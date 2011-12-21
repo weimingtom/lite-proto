@@ -43,10 +43,10 @@ typedef struct _slice{
 	size_t sp_size;
 }slice;
 
-#define check_value(e, qe, r)	do{if((e)==(qe)) return (r);}while(0)	
-#define check_fail(e, r)		check_value(e, LP_FAIL, r)
+#define	 check_value(e, qe, r)	do{if((e)==(qe)) return (r);}while(0)	
+#define	 check_fail(e, r)		check_value(e, LP_FAIL, r)
 #define  check_null(e, r)		check_value(e, NULL, r)	
-#define  print printf
+#define  print					printf
 
 void* lp_malloc(size_t len);
 void lp_free(void* p);
