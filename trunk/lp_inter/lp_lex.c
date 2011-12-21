@@ -78,6 +78,16 @@ void free_lex_env(lp_lex_env* le)
 	memset(le, 0, sizeof(*le));
 }
 
+int cls_lex_env(lp_lex_env* le)
+{
+	check_null(le, LP_FAIL);
+	lp_list_free(&le->lex_list);
+	le->line = 1;
+	check_fail(lp_list_new(&le->lex_list, sizeof(lp_token), NULL, (list_Ffree)lp_lex_token_free), LP_FAIL);
+
+	return LP_TRUE;
+}
+
 int get_lex_env(lp_lex_env* le)
 {
 	int i=0;

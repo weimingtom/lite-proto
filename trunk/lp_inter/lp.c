@@ -1,5 +1,6 @@
 #include "lp.h"
 #include "lp_conf.h"
+#include "lp_file.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -13,6 +14,15 @@ lp_env* get_lp_env()
 	return ret;
 }
 
+int clr_lp_env(lp_env* lp)
+{
+	check_null(lp, LP_FAIL);
+	cls_lex_env(&lp->lex_envV);
+	free_parse_env(&lp->parse_envV);
+	get_parse_env(&lp->parse_envV, &lp->lex_envV.lex_list);
+	return LP_TRUE;
+}
+
 void free_lp_env(lp_env* lp)
 {
 	if(lp==NULL)
@@ -22,55 +32,74 @@ void free_lp_env(lp_env* lp)
 	free(lp);
 }
 
-int read_file(char* file_name, slice* sp)
-{
-	FILE* fp = NULL;
-	long fs = 0;
-	
-	check_null(file_name, (print("parse file not exist!\n"), LP_FAIL));
-	fp = fopen(file_name, "r");
-	fs = fsize(fp);
-	check_null(fp, (print("read file: %s is error!\n", file_name), LP_FAIL));
-	sp->sp_size = (size_t)fs + 2;
-	sp->sp = (byte*)malloc(sp->sp_size);
-	memset(sp->sp, 0, sp->sp_size);
-	sp->b_sp = sp->sp;
-
-	if(fread(sp->sp, sizeof(char), sp->sp_size, fp) <0)
-		return LP_FAIL;
-	return LP_TRUE;
-}
-
-int main(int argc, char* args[])
+int lp_inter(lp_env* lp, char* name)
 {
 	FILE* fp = NULL;
 	slice sp = {0};
-	lp_env* lp = get_lp_env();
+	lp_string t_name ={0};
 
-	if(read_file("test.mes", &sp)==LP_FAIL)
-		goto END;
+	check_null(lp, (print("Serious error, not lp_env!\n"), LP_FAIL));
+	t_name =  lp_string_new(name);
+	if(read_file(name, &sp)==LP_FAIL)
+		goto FAIL_END;
 	if(lp_lex(&lp->lex_envV, &sp)==LP_FAIL)
-		goto END;
+		goto FAIL_END;
 	if(lp_parse(&lp->parse_envV)==LP_FAIL)
-	{
-		print("parse error!\n");
-		goto END;
-	}
-	
-	lp_lex_print(&lp->lex_envV);
+		goto FAIL_END;
 
-	fp = fopen("test.lpb", "w");
+	lp_string_cats(&t_name, ".lpb");
+	fp = fopen((char*)t_name.str.list_p, "w");
 	if(fp)
 	{
 		fwrite(lp->parse_envV.parse_out.list_p, lp->parse_envV.parse_out.list_len, 1, fp);
 		fclose(fp);
+		print("inter success[file: %s]\n", (char*)t_name.str.list_p);
+		goto SUCCESS_END;
 	}
-END:
+	
+FAIL_END:
+	print("inter fail<file: %s>!\n", ((char*)t_name.str.list_p)?((char*)t_name.str.list_p):("null") );
+SUCCESS_END:
+	clr_lp_env(lp);
+	lp_string_free(&t_name);
 	if(sp.b_sp)
 		free(sp.b_sp);
 
+	return LP_TRUE;
+}
+
+void lp_arg(lp_env* lp, char* args[])
+{
+	if(args[1]==0 || strcmp(args[1], "-h")==0)
+	{
+		print("%s%s%s%s", 
+			  "lp.exe help:\n",
+			  "-o :  interpretation a .mes file. EXP: lp.exe -o [fileName]\n",
+			  "-a :  interpretation all .mes file at specify the path. EXP: lp.exe -a [path] \n",
+			  "-h :  lp help, by benniey.\n"
+			 );
+	}
+	else if(strcmp(args[1], "-o")==0)
+	{
+		lp_inter(lp, args[2]);
+	}
+	else if(strcmp(args[1], "-a")==0)
+	{
+		lp_path(lp, args[2]);
+	}
+	else
+		print("%s cmd is error! please input %s -h  see help.\n", args[0], args[0]);
+}
+
+
+int main(int argc, char* args[])
+{
+	FILE* fp = NULL;
+	lp_env* lp = get_lp_env();
+
+	lp_arg(lp, args);
+	
 	free_lp_env(lp);
-	print("\n\n----memory----\nmem = %d", mem);
-	getchar();
+	print("\n\n----memory----\nmem = %d\n", mem);
 	return 0;
 }
