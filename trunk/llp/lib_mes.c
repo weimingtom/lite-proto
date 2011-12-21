@@ -119,7 +119,6 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 static int llp_Wmes(llp_mes* lm, char* filed_str, byte v_type, void* msd)
 {
 	int inx = 0;
-	byte tag = 0;
 	struct _lp_value* lv = NULL;
 	
 	check_null(lm, LP_FAIL);

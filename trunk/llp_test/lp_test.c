@@ -91,8 +91,8 @@ void at_test(llp_env* env)
 	lpm = llp_message_new(env, "at");
 	
 	// write
-	llp_Wmes_int32(lpm, "aa", 123);
-	llp_Wmes_int32(lpm, "bb", 456);
+	llp_Wmes_int32(lpm, "aa", -123);
+	llp_Wmes_int32(lpm, "bb", -456);
 	
 	for(i=0; i<10; i++)
 		llp_Wmes_int64(lpm, "cc", 34567*i);

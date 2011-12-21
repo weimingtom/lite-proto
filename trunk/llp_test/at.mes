@@ -1,5 +1,5 @@
 message at{
-	int32 aa;
+	float32 aa;
 	int32 bb;
 	int64[] cc;
 	
