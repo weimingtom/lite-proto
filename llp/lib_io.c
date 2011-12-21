@@ -250,7 +250,7 @@ int llp_in_message(slice* in, llp_mes* lms)
 			return LP_FAIL;
 		
 		// check tag type is true
-		switch(tt=tag_type(lms->d_mes->message_tfl[Ri].tag))
+		switch(tt=(byte)tag_type(lms->d_mes->message_tfl[Ri].tag))
 		{
 		case lpt_int32:
 			{
@@ -303,7 +303,7 @@ int llp_in_message(slice* in, llp_mes* lms)
 				llp_mes* temp = NULL;
 				if(Rtag_type(Rtag)!= o_mes)
 					return LP_FAIL;
-				check_fail(sl_R32(in, &st.sp_size), LP_FAIL);		// read message lens
+				check_fail(sl_R32(in, (llp_uint32*)(&st.sp_size)), LP_FAIL);		// read message lens
 				st.sp = in->sp;
 				st.b_sp = st.sp;
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
