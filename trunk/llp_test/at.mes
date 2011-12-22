@@ -1,13 +1,7 @@
 message at{
 	int32 aa;
 	int32 bb;
-	int64[] cc;
 	
-	message io_at{
-		int32 tt;
-		int32 tt2;
-	}
-	
-	io_at[] dd;
+	string[] cc;
 	
 }

@@ -39,9 +39,10 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "../" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -94,6 +95,10 @@ SOURCE=..\lp_conf.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\lp_file.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lp_lex.c
 # End Source File
 # Begin Source File
@@ -119,6 +124,10 @@ SOURCE=.\lp.h
 # Begin Source File
 
 SOURCE=..\lp_conf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lp_file.h
 # End Source File
 # Begin Source File
 
