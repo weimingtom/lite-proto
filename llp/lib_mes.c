@@ -5,6 +5,8 @@
 #include "lib_io.h"
 
 void llp_message_freeV(llp_value* lp_v);
+void llp_string_freeV(llp_value* lp_v);
+char* malloc_string(char* str);
 
 llp_mes* _llp_message_new(t_def_mes* def_mesP)
 {
@@ -44,6 +46,8 @@ void llp_message_clr(llp_mes* in_mes)
 	{
 		if(tag_type(in_mes->d_mes->message_tfl[i].tag) == lpt_message)
 			lib_array_clr(&in_mes->filed_al[i], llp_message_freeV);
+		else if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_string)
+			lib_array_clr(&in_mes->filed_al[i], llp_string_freeV);
 		else
 			lib_array_clr(&in_mes->filed_al[i], NULL);
 	}
@@ -60,6 +64,8 @@ void  llp_message_free(llp_mes* in_mes)
 	{
 		if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_message)
 			lib_array_free(&in_mes->filed_al[i], llp_message_freeV);
+		else if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_string)
+			lib_array_free(&in_mes->filed_al[i], llp_string_freeV);
 		else
 			lib_array_free(&in_mes->filed_al[i], NULL);
 	}
@@ -71,6 +77,14 @@ void  llp_message_free(llp_mes* in_mes)
 void llp_message_freeV(llp_value* lp_v)
 {
 	llp_message_free(lp_v->lp_mes);
+}
+
+void llp_string_freeV(llp_value* lp_v)
+{
+	if(lp_v->lp_str)
+	{
+		free(lp_v->lp_str);
+	}
 }
 
 int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
@@ -98,7 +112,7 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 		lpv.lp_float64 = *((llp_float64*)msd);
 		break;
 	case  lpt_string:
-		lpv.lp_str = (char*)msd;
+		lpv.lp_str = malloc_string((char*)msd);
 		break;
 	case lpt_message:
 		//	lpv.lp_mes = (llp_mes*)msd;

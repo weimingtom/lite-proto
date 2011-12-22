@@ -233,6 +233,7 @@ int llp_out_clr(slice* out)
 	return LP_TRUE;
 }
 
+// API
 int llp_in_message(slice* in, llp_mes* lms)
 {
 	size_t Ri = 0;
@@ -319,7 +320,7 @@ int llp_in_message(slice* in, llp_mes* lms)
 	return LP_TRUE;
 }
 
-int _llp_out_message(llp_mes* lms)
+static int _llp_out_message(llp_mes* lms)
 {
 	unsigned int inx =0;
 	size_t i=0;
@@ -400,6 +401,7 @@ int _llp_out_message(llp_mes* lms)
 	return LP_TRUE;
 }
 
+// api
 slice* llp_out_message(llp_mes* lms)
 {
 	check_fail(_llp_out_message(lms), NULL);

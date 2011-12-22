@@ -181,8 +181,9 @@ char* malloc_string(char* str)
 	check_null(str, NULL);
 	len = strlen(str);
 	ret = (char*)malloc(len+1);
-	memset(ret, 0, len+1);
 	memcpy(ret, str, len);
+	ret[len] = 0;
+
 	return ret;
  }
 
