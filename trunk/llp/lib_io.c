@@ -404,7 +404,9 @@ slice* llp_out_message(llp_mes* lms)
 {
 	check_fail(_llp_out_message(lms), NULL);
 	
-	lms->sio.sp_size = lms->sio.sp - lms->sio.b_sp;
-	lms->sio.sp = lms->sio.b_sp;
-	return &lms->sio;
+	lms->sret.b_sp = lms->sio.b_sp;
+	lms->sret.sp = lms->sio.b_sp;
+	lms->sret.sp_size = lms->sio.sp - lms->sio.b_sp;
+
+	return &lms->sret;
 }

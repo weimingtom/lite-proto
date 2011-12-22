@@ -15,6 +15,7 @@ int llp_del_mes(llp_env* env, char* mes_name);
 
 // --------new/delete a message object
 llp_mes*  llp_message_new(llp_env* env, char* mes_name);
+void llp_message_clr(llp_mes* in_mes);
 void  llp_message_free(llp_mes* in_mes);
 
 // --------write a message object
