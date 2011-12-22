@@ -76,6 +76,6 @@ typedef struct _llp_env{
 #define DEF_DMES_LEN    128
  
 #define  tag_type(t)	( ((byte)t)>>3 )
-#define  tag_state(t)	( ((byte)(t)) & 0xF8 ) 
+#define  tag_state(t)	( ((byte)(t)) & 0x07 ) 
 
 #endif
