@@ -11,6 +11,7 @@ typedef struct _llp_mes{
 	size_t		 filed_lens;
 
 	slice		 sio;			// out 
+	slice		 sret;			//  ret slice
 }llp_mes;
 
 llp_mes* _llp_message_new(t_def_mes* def_mesP);

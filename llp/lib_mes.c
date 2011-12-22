@@ -42,7 +42,7 @@ void llp_message_clr(llp_mes* in_mes)
 
 	for(i=0; i<in_mes->filed_lens; i++)
 	{
-		if(in_mes->d_mes->message_tfl[i].tag == lpt_message)
+		if(tag_type(in_mes->d_mes->message_tfl[i].tag) == lpt_message)
 			lib_array_clr(&in_mes->filed_al[i], llp_message_freeV);
 		else
 			lib_array_clr(&in_mes->filed_al[i], NULL);
