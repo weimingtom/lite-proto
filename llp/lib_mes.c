@@ -94,7 +94,7 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 	tag = lm->d_mes->message_tfl[inx].tag;
 	
 	// error : if a filed is not repeated, so dobule add is error
-	if( (tag_type(tag)!=v_type)||(tag_state(tag) == lpf_req && lm->filed_al[inx].lens>=1) )
+	if( (tag_type(tag)!=v_type) || (tag_state(tag)==lpf_req &&  lm->filed_al[inx].lens>=1) )
 		return LP_FAIL;
 	
 	switch(tag_type(tag))

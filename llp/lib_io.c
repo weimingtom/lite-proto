@@ -39,9 +39,11 @@ static int sl_relloc(slice* sl);
 										int i=0;	\
 										for(i=0; i<((sizeof(*(num_p))<<3)/7+1) && sl_is_end(in)==0; i++)	\
 										{	\
-											(*(num_p)) |= (((*(in->sp)) & 0x7F)<<(7*i));	\
-											if( ((*(in->sp++))&(0x80))==0 )	\
+											(*(num_p)) |= (((llp_uint64)((*((in)->sp)) & 0x7F))<<(7*i));	\
+											if( ((*(in)->sp++)&(0x80))==0 )	\
+											{	\
 												return LP_TRUE;		\
+											}	\
 										}		\
 										*(num_p) = 0;	\
 										return LP_FAIL;	\
@@ -152,7 +154,7 @@ static int sl_R64(slice* in, llp_uint64* num_p)
 
 int sl_Wint64(slice* out, llp_int64 num)
 {
-	return sl_W64(out, *((llp_uint64*)&(num)) );
+	return sl_W64(out, *((llp_uint64*)(&num)) );
 }
 
 int sl_Rint64(slice* in, llp_int64* num_p)
@@ -162,7 +164,7 @@ int sl_Rint64(slice* in, llp_int64* num_p)
 
 int sl_Wfloat64(slice* out, llp_float64 num)
 {
-	return sl_W64(out, *((llp_uint64*)&(num)) );
+	return sl_W64(out, *((llp_uint64*)(&num)) );
 }
 
 int sl_Rfloat64(slice* in, llp_float64* num_p)
