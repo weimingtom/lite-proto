@@ -113,6 +113,10 @@ SOURCE=.\lp_parse.c
 
 SOURCE=.\lp_table.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\llp_test\lp_test.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
