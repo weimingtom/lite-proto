@@ -154,17 +154,21 @@ local java_text = {
 	j_read    = {
 					"public void decodeRead(LlpMessage lpIn) throw Exception {\n",
 					"%s = new %s();\n",
-					"%s.decodeRead();\n",
-					"%s = new ArrayList<%s>;\n",
-					"for(int i=0; i<lpIn.)"
+					"%s.decodeRead(lpIn.readMessage(\"%s\"));\n",
+					"%s = new ArrayList<%s>();\n",
+					"for(int i=0; i<lpIn.readSize(\"%s\"); i++) {\n",
+					"%s.add(lpIn.%s(\"%s\", i));\n",
+					"%s temp = new %s();\n",
+					"temp.decodeRead(lpIn.readMessage(\"%s\", i));\n",
+					"%s.add(temp);\n"
 	            },
 
 	0,
-	{"public int %s;\n",   "public List<Integer> %s;\n",  "Integer", "%s = lpIn.readInt(\"%s\");\n"},
-	{"public long %s;\n",  "public List<Long> %s;\n",     "Long"   , "%s = lpIn.readLong(\"%s\");\n"},
-	{"public String %s;\n","public List<String> %s;\n",   "String" , "%s = lpIn.readString(\"%s\");\n"},
-	{"public float %s;\n", "public List<Float> %s;\n",    "Float"  , "%s = lpIn.readFloat(\"%s\");\n"},
-	{"public double %s;\n","public List<Double> %s;\n",   "Double" , "%s = lpIn.readDouble(\"%s\");\n"},
+	{"public int %s;\n",   "public List<Integer> %s;\n",  "Integer", "%s = lpIn.readInt(\"%s\");\n", "readInt"},
+	{"public long %s;\n",  "public List<Long> %s;\n",     "Long"   , "%s = lpIn.readLong(\"%s\");\n", "readLong"},
+	{"public String %s;\n","public List<String> %s;\n",   "String" , "%s = lpIn.readString(\"%s\");\n", "readString"},
+	{"public float %s;\n", "public List<Float> %s;\n",    "Float"  , "%s = lpIn.readFloat(\"%s\");\n", "readFloat"},
+	{"public double %s;\n","public List<Double> %s;\n",   "Double" , "%s = lpIn.readDouble(\"%s\");\n", "readDouble"},
 	{0},
 	{0},
 	{0},
@@ -270,23 +274,44 @@ function parse_decode_read(out_file, mes_table, tab)
 	out_file:write(java_text.j_read[1])
 
 	local ttab = tab + 4
+	local tttable = ttab + 4
 	for i=1, mes_table.count do
 		write_tab(out_file, ttab)
 		local tt, ts = tag_type(mes_table.filed[i].tag)
 		if tt == e_tag_type.message_type then
 			if ts == e_tag_stat.rep then
+				out_file:write(string.format(java_text.j_read[4], mes_table.filed[i].filed_name, mes_table.filed[i].mes_name))
+				write_tab(out_file, ttab)
+				out_file:write(string.format(java_text.j_read[5], mes_table.filed[i].filed_name))
+
+				write_tab(out_file, tttable)
+				out_file:write(string.format(java_text.j_read[7], mes_table.filed[i].mes_name, mes_table.filed[i].mes_name))
+				write_tab(out_file, tttable)
+				out_file:write(string.format(java_text.j_read[8], mes_table.filed[i].filed_name))
+				write_tab(out_file, tttable)
+				out_file:write(string.format(java_text.j_read[9], mes_table.filed[i].filed_name))
+
+				write_tab(out_file, ttab)
+				out_file:write(java_text["j_end"])
 
 			else
 				out_file:write(string.format(java_text.j_read[2], mes_table.filed[i].filed_name, mes_table.filed[i].mes_name))
 				write_tab(out_file, ttab)
-				out_file:write(string.format(java_text.j_read[3], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[3], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
 			end
 
 		else									-- if is base type
 			if ts == e_tag_stat.rep then		-- if is repeated
 				out_file:write(string.format(java_text.j_read[4], mes_table.filed[i].filed_name, java_text[tt][3]))
 				write_tab(out_file, ttab)
-				out_file:write()
+				out_file:write(string.format(java_text.j_read[5], mes_table.filed[i].filed_name))
+
+				write_tab(out_file, tttable)
+				out_file:write(string.format(java_text.j_read[6], mes_table.filed[i].filed_name,java_text[tt][5], mes_table.filed[i].filed_name))
+
+				write_tab(out_file, ttab)
+				out_file:write(java_text["j_end"])
+
 			else
 				out_file:write(string.format(java_text[tt][4], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
 			end
