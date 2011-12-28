@@ -131,6 +131,11 @@ public class LlpMessage {
 		return readMessage(filedStr, 0);
 	}
 	
+	public int readSize(String filedStr)
+	{
+		return  LlpJavaNative.llpRmesSize(llpMesHandle, LlpJavaNative.strByte(filedStr));
+	}
+	
 	// 编码
 	public byte[] encode()
 	{
