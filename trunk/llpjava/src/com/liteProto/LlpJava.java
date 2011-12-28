@@ -49,7 +49,7 @@ public class LlpJava {
 	public LlpMessage getMessage(String mes, byte[] buff) throws Exception
 	{
 		long handle = LlpJavaNative.llpMessageNew(env, LlpJavaNative.strByte(mes));
-		if( handle == 0)
+		if( handle == 0 || buff == null)
 			throw new Exception("[LlpJavaNative NewMes]: get message \""+mes+"\" is error.");
 		LlpMessage llpMessage = new LlpMessage(handle, mes, buff);
 		return llpMessage;

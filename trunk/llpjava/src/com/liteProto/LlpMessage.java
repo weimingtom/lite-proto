@@ -122,7 +122,7 @@ public class LlpMessage {
 	{
 		long handle = LlpJavaNative.llpRmesMessage(llpMesHandle, LlpJavaNative.strByte(filedStr), alInx);
 		if(handle == 0)
-			throw new Exception("[LlpJavaNative readMes]:  read message \""+name+"\" is error.");
+			return null;
 		
 		return new LlpMessage(handle, filedStr);
 	}
