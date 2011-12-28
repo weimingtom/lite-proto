@@ -159,13 +159,15 @@ local java_text = {
 					"return ret;\n",
 				},
 	j_list    = {
-					"for(%s obj : %s) {\n",
+					"for(int i=0; %s!=null && i<%s.size(); i++) {\n",
+					"if(%s.get(i) != null) %s.get(i).encodeWrite(lpOut.write(\"%s\"));\n",
+					"%s.get(i)"
 				},
 	j_read    = {
 					"public void decodeRead(LlpMessage lpIn) throws Exception {\n",
 					"%s = new %s();\n",
 					"%s.decodeRead(temp);\n",
-					"%s = new ArrayList<%s>();\n",
+					"if(lpIn.readSize(\"%s\")>0)  %s = new ArrayList<%s>();\n",
 					"for(int i=0; i<lpIn.readSize(\"%s\"); i++) {\n",
 					"%s.add(lpIn.%s(\"%s\", i));\n",
 					"%s mesObj = new %s();\n",
@@ -208,7 +210,8 @@ function parse_filed(out_file, filed_table, tab)
 		if ts == e_tag_stat.rep then
 			inx = 2
 		end
-		out_file:write(string.format(java_text[tt][inx], filed_table.mes_name, filed_table.filed_name))
+		out_file:write(string.format(java_text[tt][inx],
+						filed_table.mes_name, filed_table.filed_name))
 	else
 		if ts == e_tag_stat.rep then
 			inx = 2
@@ -247,7 +250,8 @@ function parse_decode(out_file, mes_table, tab)
 
 	local ttab = tab + 4
 	write_tab(out_file, ttab)
-	out_file:write(string.format(java_text.j_decode[2], mes_table.name, mes_table.name))
+	out_file:write(string.format(java_text.j_decode[2],
+					mes_table.name, mes_table.name))
 	write_tab(out_file, ttab)
 	out_file:write(java_text.j_decode[3])
 	write_tab(out_file, ttab)
@@ -297,46 +301,68 @@ function parse_decode_read(out_file, mes_table, tab)
 		local tt, ts = tag_type(mes_table.filed[i].tag)
 		if tt == e_tag_type.message_type then
 			if ts == e_tag_stat.rep then
-				out_file:write(string.format(java_text.j_read[4], mes_table.filed[i].filed_name, mes_table.filed[i].mes_name))
+				out_file:write(string.format(java_text.j_read[4],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].mes_name))
 				write_tab(out_file, ttab)
-				out_file:write(string.format(java_text.j_read[5], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[5],
+								mes_table.filed[i].filed_name))
 
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[7], mes_table.filed[i].mes_name, mes_table.filed[i].mes_name))
+				out_file:write(string.format(java_text.j_read[7],
+								mes_table.filed[i].mes_name,
+								mes_table.filed[i].mes_name))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[8], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[8],
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[9], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[9],
+								mes_table.filed[i].filed_name))
 
 				write_tab(out_file, ttab)
 				out_file:write(java_text["j_end"])
 
 			else
-				out_file:write(string.format(java_text.j_read[11], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[11],
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, ttab)
 				out_file:write(java_text.j_read[12])
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[2], mes_table.filed[i].filed_name, mes_table.filed[i].mes_name))
+				out_file:write(string.format(java_text.j_read[2],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].mes_name))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[3], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[3],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, ttab)
 				out_file:write(java_text["j_end"])
 			end
 
 		else									-- if is base type
 			if ts == e_tag_stat.rep then		-- if is repeated
-				out_file:write(string.format(java_text.j_read[4], mes_table.filed[i].filed_name, java_text[tt][3]))
+				out_file:write(string.format(java_text.j_read[4],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name,
+								java_text[tt][3]))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[5], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[5],
+								mes_table.filed[i].filed_name))
 
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_read[6], mes_table.filed[i].filed_name,java_text[tt][5], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_read[6],
+								mes_table.filed[i].filed_name,
+								java_text[tt][5],
+								mes_table.filed[i].filed_name))
 
 				write_tab(out_file, ttab)
 				out_file:write(java_text["j_end"])
 
 			else
-				out_file:write(string.format(java_text[tt][4], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text[tt][4],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 			end
 
 		end
@@ -363,23 +389,37 @@ function parse_encode_write(out_file, mes_table, tab)
 		write_tab(out_file, ttab)
 		if tt == e_tag_type.message_type then	-- if is not base type
 			if ts == e_tag_stat.rep then		-- if repeated
-				out_file:write(string.format(java_text.j_list[1], mes_table.filed[i].mes_name, mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_list[1],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_write[3], "obj", "obj", "obj"))
+				out_file:write(string.format(java_text.j_list[2],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, ttab)
 				out_file:write(java_text["j_end"])
 			else
-				out_file:write(string.format(java_text.j_write[3], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_write[3],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 			end
 		else
 			if ts == e_tag_stat.rep then		-- if repeated
-				out_file:write(string.format(java_text.j_list[1], java_text[tt][3], mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_list[1],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 				write_tab(out_file, tttable)
-				out_file:write(string.format(java_text.j_write[2], mes_table.filed[i].filed_name, "obj"))
+				out_file:write(string.format(java_text.j_write[2],
+								mes_table.filed[i].filed_name,
+								string.format(java_text.j_list[3], mes_table.filed[i].filed_name)))
 				write_tab(out_file, ttab)
 				out_file:write(java_text["j_end"])
 			else
-				out_file:write(string.format(java_text.j_write[2], mes_table.filed[i].filed_name, mes_table.filed[i].filed_name))
+				out_file:write(string.format(java_text.j_write[2],
+								mes_table.filed[i].filed_name,
+								mes_table.filed[i].filed_name))
 			end
 
 		end
