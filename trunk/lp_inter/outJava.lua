@@ -124,26 +124,36 @@ function parse_lpb2table(file)
 end
 
 local java_text = {
-	j_head    = " //outJava.lua output ,so not edit it!\n\n",
-	j_class   = "public class %s {\n",
+	j_head    = "//outJava.lua output ,so not edit it!\n\n"..
+				"import com.liteProto.*;\n"..
+				"import java.util.ArrayList;\n"..
+				"import java.util.List;\n\n",
+	j_class0  = "public class %s {\n",
+	j_class   = "public static class %s {\n",
 	j_end     = "}\n",
 	j_encode  = {
-					"public byte[] encode(LlpJava llpJava) throw Exception {\n",				-- 编码
+					"public byte[] encode(LlpJava llpJava) throws Exception {\n",				-- 编码
 					"LlpMessage out = llpJava.getMessage(\"%s\");\n",
-					"encodeWrite(out);\n",
-					"byte[] ret = out.encode();\n",
-					"out.destory();\n",
+					"byte[] ret = null;\n",
+					"try {\n",
+					"    encodeWrite(out);\n",
+					"    ret = out.encode();\n",
+					"} catch (Exception e) {\n",
+					"} finally {\n",
+					"    if( out != null )\n",
+				    "        out.destory();\n",
+					"}\n",
 					"return ret;\n"
 				},
 	j_write   = {
-					"public void encodeWrite(LlpMessage lpOut) throw Exception {\n",
+					"public void encodeWrite(LlpMessage lpOut) throws Exception {\n",
 					"LlpMessage temp;\n",
 					"lpOut.write(\"%s\", %s);\n",
 					"temp = lpOut.write(\"%s\");\n",
 					"%s.encodeWrite(temp);\n"
 				},
 	j_decode  = {
-					"public static %s decode(LlpMessage lpIn) throw Exception {\n",	-- 解码
+					"public static %s decode(LlpMessage lpIn) throws Exception {\n",	-- 解码
 					"%s ret = new %s();\n",
 					"ret.decodeRead(lpIn);\n",
 					"return ret;\n",
@@ -152,7 +162,7 @@ local java_text = {
 					"for(%s obj : %s) {\n",
 				},
 	j_read    = {
-					"public void decodeRead(LlpMessage lpIn) throw Exception {\n",
+					"public void decodeRead(LlpMessage lpIn) throws Exception {\n",
 					"%s = new %s();\n",
 					"%s.decodeRead(lpIn.readMessage(\"%s\"));\n",
 					"%s = new ArrayList<%s>();\n",
@@ -255,7 +265,7 @@ function parse_encode(out_file, mes_table, tab)
 	local ttab = tab + 4
 	write_tab(out_file, ttab)
 	out_file:write(string.format(java_text.j_encode[2], mes_table.r_name))
-	for i=1, 4 do
+	for i=1, 10 do
 		write_tab(out_file, ttab)
 		out_file:write(java_text.j_encode[i-1+3])
 	end
@@ -380,7 +390,7 @@ function parse_java(file, name)
 	local out_file = io.open(name..".java", "w")
 	local tab = 4
 	out_file:write(string.format(java_text["j_head"]))
-	out_file:write(string.format(java_text["j_class"], name))
+	out_file:write(string.format(java_text["j_class0"], name))
 
 	while parse_lpb2table(file) do
 		parse_message(out_file, mes_body, tab)
@@ -389,8 +399,19 @@ function parse_java(file, name)
 end
 
 
--- begin
-local file = io.open("a.mes.lpb", "rb")
---print("str = "..read_str(file))
-parse_java(file, "ja")
+-- begin commend
+if not arg[1] then
+	print("not find lpb data file!")
+elseif  not string.find(arg[1], ".lpb") then
+	print("the file type is not .lpb!")
+else
+	local file = io.open(arg[1], "rb")
+	if not file then
+		print("can not open file: "..arg[1].."!")
+	else
+		local name = string.sub(arg[1], 1, string.find(arg[1], "%.")-1)
+		--print("parse :"..name)
+		parse_java(file, name)
+	end
+end
 
