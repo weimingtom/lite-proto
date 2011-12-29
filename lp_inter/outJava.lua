@@ -449,15 +449,16 @@ end
 -- begin commend
 if not arg[1] then
 	print("not find lpb data file!")
-elseif  not string.find(arg[1], ".lpb") then
+elseif  not string.find(arg[1], '([%w_]+)%.mes%.lpb') then
 	print("the file type is not .lpb!")
 else
 	local file = io.open(arg[1], "rb")
 	if not file then
 		print("can not open file: "..arg[1].."!")
 	else
-		local name = string.sub(arg[1], 1, string.find(arg[1], "%.")-1)
-		--print("parse :"..name)
+		local file_name = string.sub(arg[1], string.find(arg[1], '([%w_]+)%.mes%.lpb'), -1)
+		local name = string.sub(file_name, 1, string.find(file_name, '%.')-1)
+		print("parse :"..name..".java")
 		parse_java(file, name)
 	end
 end
