@@ -123,7 +123,6 @@ static int lib_value_free(llp_table* lt, lp_value* lpv)
 				free(p);
 				p=np;
 			}
-			free(lpv->value.reg_mesV.mes_p);
 		}
 		break;
 	case def_mes:
