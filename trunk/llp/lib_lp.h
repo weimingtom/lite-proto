@@ -34,8 +34,9 @@ typedef struct _t_reg_mes{
 	struct _nl* mNs;		// all message at .mes
 	size_t mNs_count;		// all message count 
 
-	byte* mes_p;			// .mes buff
+/*	byte* mes_p;			// .mes buff
 	size_t mes_size;		// .mes size
+*/
 }t_reg_mes;
 
 typedef struct _t_def_mes;

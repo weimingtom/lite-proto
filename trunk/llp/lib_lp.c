@@ -56,10 +56,15 @@ int llp_reg_mes(llp_env* env, char* mes_name)
 	sl.sp = (byte*)malloc(sl.sp_size);
 	sl.b_sp = sl.sp;
 	f_read(sl.sp, 1, sl.sp_size, fd);
-	if( lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)) )
-		check_fail(llp_reg_mes_value(env, &lv->value.reg_mesV, &sl), (llp_del_mes(env, mes_name), LP_FAIL));
-
 	f_close(fd);
+	if( lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)) )
+	{
+		check_fail( llp_reg_mes_value(env, &lv->value.reg_mesV, &sl), 
+					(llp_del_mes(env, mes_name), free(sl.b_sp), LP_FAIL)
+				  );
+	}
+
+	free(sl.b_sp);
 	return LP_TRUE;
 }
 
@@ -70,8 +75,6 @@ static int llp_reg_mes_value(llp_env* env, t_reg_mes* rmp, slice* sl)
 	check_null(sl, LP_FAIL);
 	check_null(sl->sp, LP_FAIL);
 
-	rmp->mes_p = sl->sp;
-	rmp->mes_size = sl->sp_size;
 	for(;;)
 	{
 		switch(llp_read_message(env, &out_name, sl))
@@ -118,7 +121,7 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 		}
 		
 		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
-		check_null(lv=lib_table_add(&des_mes->message_filed, f_name), LP_FAIL);
+		check_null(lv=lib_table_add(&des_mes->message_filed, lib_Stable_add(&env->mesN, f_name)), LP_FAIL);
 		lv->value.def_fieldV.f_id = i;
 	}
 
@@ -131,6 +134,7 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 	
 	check_sl(sl);
 	check_fail(sl_Rstr(sl, out_name), LP_FAIL);									// read message name
+	*out_name = lib_Stable_add(&env->mesN, *out_name);							// add name
 	check_null(lds=(lp_value*)lib_table_add(&env->dmes, *out_name), LP_FAIL);	// begin add message body
 	check_fail(sl_Ruint(sl, &lds->value.def_mesV.message_id), LP_FAIL);			// read id
 	check_fail(sl_Ruint(sl, &lds->value.def_mesV.message_count), LP_FAIL);		// read message count
