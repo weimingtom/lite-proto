@@ -3,7 +3,7 @@
 
 size_t mem = 0;
 
-// »ñÈ¡ÎÄ¼ş×Ö½Ú´óĞ¡
+// è·å–æ–‡ä»¶å­—èŠ‚å¤§å°
 long fsize( FILE *fp)
 {
     long int save_pos;
@@ -12,11 +12,11 @@ long fsize( FILE *fp)
 	if (fp == NULL)
 		return 0;
 	
-    save_pos = ftell( fp );			// ±£´æµ±Ç°ÎÄ¼şÖ¸ÕëµØÖ·
+    save_pos = ftell( fp );			// ä¿å­˜å½“å‰æ–‡ä»¶æŒ‡é’ˆåœ°å€
 	
-    fseek( fp, 0L, SEEK_END );		// Ìø×ªµ½ÎÄ¼şÄ©Î²
-    size_of_file = ftell( fp );		// »ñÈ¡ÎÄ¼ş¿ªÊ¼Ä©Î²ÎÄ¼şµØÖ·
-    fseek( fp, save_pos, SEEK_SET ); // »Ö¸´µ±Ç°µÄÎÄ¼şµØÖ·
+    fseek( fp, 0L, SEEK_END );		// è·³è½¬åˆ°æ–‡ä»¶æœ«å°¾
+    size_of_file = ftell( fp );		// è·å–æ–‡ä»¶å¼€å§‹æœ«å°¾æ–‡ä»¶åœ°å€
+    fseek( fp, save_pos, SEEK_SET ); // æ¢å¤å½“å‰çš„æ–‡ä»¶åœ°å€
 	
     return( size_of_file);
 }
