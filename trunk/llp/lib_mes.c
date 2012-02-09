@@ -38,7 +38,8 @@ llp_mes*  llp_message_new(llp_env* env, char* mes_name)
 	return _llp_message_new(&lv->value.def_mesV);
 }
 
-int _llp_message_cf(llp_mes* in_mes)
+typedef void (*lib_array_cf_func)(llp_array* al, al_free free_func);
+int _llp_message_cf(llp_mes* in_mes, lib_array_cf_func cf_func)
 {
 	size_t i=0;
 	if(in_mes == NULL)
@@ -49,16 +50,16 @@ int _llp_message_cf(llp_mes* in_mes)
 		switch(tag_type(in_mes->d_mes->message_tfl[i].tag))
 		{
 		case lpt_message:
-			lib_array_clr(&in_mes->filed_al[i], llp_message_freeV);
+			cf_func(&in_mes->filed_al[i], llp_message_freeV);
 			break;
 		case lpt_string:
-			lib_array_clr(&in_mes->filed_al[i], llp_string_freeV);
+			cf_func(&in_mes->filed_al[i], llp_string_freeV);
 			break;
 		case lpt_stream:
-			lib_array_clr(&in_mes->filed_al[i], llp_stream_freeV);
+			cf_func(&in_mes->filed_al[i], llp_stream_freeV);
 			break;
 		default:
-			lib_array_clr(&in_mes->filed_al[i], NULL);
+			cf_func(&in_mes->filed_al[i], NULL);
 			break;
 		}
 	}
@@ -68,14 +69,14 @@ int _llp_message_cf(llp_mes* in_mes)
 
 void llp_message_clr(llp_mes* in_mes)
 {
-	if(_llp_message_cf(in_mes)==LP_FAIL)
+	if(_llp_message_cf(in_mes, lib_array_clr)==LP_FAIL)
 		return;
 	llp_out_close(&in_mes->sio);
 }
 
 void  llp_message_free(llp_mes* in_mes)
 {
-	if(_llp_message_cf(in_mes)==LP_FAIL)
+	if(_llp_message_cf(in_mes, lib_array_free)==LP_FAIL)
 		return;
 	free(in_mes->filed_al);
 	llp_out_close(&in_mes->sio);
@@ -246,7 +247,7 @@ static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned i
 slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_str, lpt_stream, al_inx), 0);
+	check_null(lpv=llp_Rmes(lm, filed_str, lpt_stream, al_inx), NULL);
 	
 	return lpv->lp_stream;
 }
