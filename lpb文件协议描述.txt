@@ -7,9 +7,9 @@ message lpb{   # 其中字段都是完整字节序, 所有的字符串末尾都�
                                         # 标签 8bit 高5位( 
 					         #2: int32
 						 #3: int64
-						 #5:string
-						 #6:float32
-						 #7:float64
+						 #4:string
+						 #5:float32
+						 #6:float64
 						 #13:message_type)
     if ((tag<<3)==message_type)   # 如果高5位为 message_type 类型 
        string f_message_name;         # 则会写入此message 类型的名称

@@ -9,7 +9,7 @@ char* ts[] = {
 	"int64",
 	"string",
 	"float32",
-	"float64",
+	"float64",	
 	"t_num",
 	"{",
 	"}",
@@ -19,13 +19,16 @@ char* ts[] = {
 	"t_ide",
 	";",
 	".",
+
+	"t_stream",
+	
 	"NULL"
 	};
 
 
  static lp_key lp_sk[] = {
 	{"message", t_Kmessage}, {"int32", t_Kint32}, {"int64", t_Kint64}, {"string", t_kstring},
-	{"float32", t_Kfloat32}, {"float64", t_Kfloat64}, {NULL, t_error}
+	{"float32", t_Kfloat32}, {"float64", t_Kfloat64}, {"stream", t_Kstream}, {NULL, t_error}
 };
 
 #define now_char(p)					( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp)) ):(0)

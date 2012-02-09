@@ -24,6 +24,7 @@ int llp_Wmes_int64(llp_mes* lm, char* filed_str, llp_int64 number);
 int llp_Wmes_float32(llp_mes* lm, char* filed_str, llp_float32 number);
 int llp_Wmes_float64(llp_mes* lm, char* filed_str, llp_float64 number);
 int llp_Wmes_string(llp_mes* lm, char* filed_str, char* str);
+int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned int len);
 llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str);
 
 // ---------read a message object
@@ -31,6 +32,7 @@ llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx);
+slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx);
 char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx);
 unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str);

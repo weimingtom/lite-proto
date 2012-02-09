@@ -6,7 +6,9 @@
 
 void llp_message_freeV(llp_value* lp_v);
 void llp_string_freeV(llp_value* lp_v);
+void llp_stream_freeV(llp_value* lp_v);
 char* malloc_string(char* str);
+slice* malloc_slice(slice* sl);
 
 llp_mes* _llp_message_new(t_def_mes* def_mesP)
 {
@@ -36,39 +38,45 @@ llp_mes*  llp_message_new(llp_env* env, char* mes_name)
 	return _llp_message_new(&lv->value.def_mesV);
 }
 
-void llp_message_clr(llp_mes* in_mes)
+int _llp_message_cf(llp_mes* in_mes)
 {
 	size_t i=0;
 	if(in_mes == NULL)
-		return;
-
+		return LP_FAIL;
+	
 	for(i=0; i<in_mes->filed_lens; i++)
 	{
-		if(tag_type(in_mes->d_mes->message_tfl[i].tag) == lpt_message)
+		switch(tag_type(in_mes->d_mes->message_tfl[i].tag))
+		{
+		case lpt_message:
 			lib_array_clr(&in_mes->filed_al[i], llp_message_freeV);
-		else if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_string)
+			break;
+		case lpt_string:
 			lib_array_clr(&in_mes->filed_al[i], llp_string_freeV);
-		else
+			break;
+		case lpt_stream:
+			lib_array_clr(&in_mes->filed_al[i], llp_stream_freeV);
+			break;
+		default:
 			lib_array_clr(&in_mes->filed_al[i], NULL);
+			break;
+		}
 	}
+
+	return LP_TRUE;
+}
+
+void llp_message_clr(llp_mes* in_mes)
+{
+	if(_llp_message_cf(in_mes)==LP_FAIL)
+		return;
 	llp_out_close(&in_mes->sio);
 }
 
 void  llp_message_free(llp_mes* in_mes)
 {
-	size_t i=0;
-	if(in_mes==NULL)
+	if(_llp_message_cf(in_mes)==LP_FAIL)
 		return;
-
-	for(i=0; i<in_mes->filed_lens; i++)
-	{
-		if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_message)
-			lib_array_free(&in_mes->filed_al[i], llp_message_freeV);
-		else if(tag_type(in_mes->d_mes->message_tfl[i].tag)==lpt_string)
-			lib_array_free(&in_mes->filed_al[i], llp_string_freeV);
-		else
-			lib_array_free(&in_mes->filed_al[i], NULL);
-	}
 	free(in_mes->filed_al);
 	llp_out_close(&in_mes->sio);
 	free(in_mes);
@@ -84,6 +92,15 @@ void llp_string_freeV(llp_value* lp_v)
 	if(lp_v->lp_str)
 	{
 		free(lp_v->lp_str);
+	}
+}
+
+void llp_stream_freeV(llp_value* lp_v)
+{
+	if(lp_v->lp_stream)
+	{
+		free(lp_v->lp_stream->b_sp);
+		free(lp_v->lp_stream);
 	}
 }
 
@@ -114,6 +131,9 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 	case  lpt_string:
 		lpv.lp_str = malloc_string((char*)msd);
 		break;
+	case lpt_stream:
+		lpv.lp_stream = malloc_slice((slice*)msd);
+		break;
 	case lpt_message:
 		//	lpv.lp_mes = (llp_mes*)msd;
 		{
@@ -142,6 +162,16 @@ static int llp_Wmes(llp_mes* lm, char* filed_str, byte v_type, void* msd)
 	inx = lv->value.def_fieldV.f_id;
 
 	return _llp_Wmes(lm, inx, v_type, msd);
+}
+
+int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned int len)
+{
+	slice temp = {0};
+	temp.b_sp = temp.sp = (byte*)ptr;
+	temp.sp_size = (size_t)len;
+	
+	check_fail(llp_Wmes(lm, filed_str, lpt_stream, (void*)(&temp)), LP_FAIL);
+	return LP_TRUE;
 }
 
 int llp_Wmes_int32(llp_mes* lm, char* filed_str, llp_int32 number)
@@ -200,16 +230,25 @@ static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned i
 	{
 	case lpt_int32:
 	case lpt_int64:
-	case  lpt_float32:
-	case  lpt_float64:
-	case  lpt_string:
+	case lpt_float32:
+	case lpt_float64:
+	case lpt_string:
 	case lpt_message:
+	case lpt_stream:
 		break;
 	default:
 		return NULL;
 	}
 
 	return lib_array_inx(&lm->filed_al[inx], al_inx);
+}
+
+slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx)
+{
+	llp_value* lpv = NULL;
+	check_null(lpv=llp_Rmes(lm, filed_str, lpt_stream, al_inx), 0);
+	
+	return lpv->lp_stream;
 }
 
 llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx)

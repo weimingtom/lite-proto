@@ -183,6 +183,17 @@ int sl_Wstring(slice* out, char* str)
 	return LP_TRUE;
 }
 
+int sl_Wstream(slice* out, slice* sl)
+{
+	size_t i=0;
+	check_fail(sl_Wint32(out, sl->sp_size), LP_FAIL);
+	for(i=0; i<sl->sp_size; i++)
+	{
+		sl_Wbyte(out, sl->b_sp[i]);
+	}
+	return LP_TRUE;
+}
+
 int sl_Rstring(slice* in, char** str_p)
 {
 	size_t len = strlen((char*)in->sp)+1;
@@ -190,6 +201,21 @@ int sl_Rstring(slice* in, char** str_p)
 	*str_p = (char*)in->sp;
 	in->sp += len;
 
+	return LP_TRUE;
+}
+
+int sl_Rstream(slice* in, slice* sl)
+{
+	slice ret= {0};
+	size_t i=0;
+
+	check_fail(sl_Rint32(in, &ret.sp_size), LP_FAIL);
+	if(sl_emp(in)<ret.sp_size)
+		return LP_FAIL;
+	
+	ret.b_sp=ret.sp = in->sp;
+	in->sp += ret.sp_size;
+	*sl = ret;
 	return LP_TRUE;
 }
 
@@ -300,6 +326,15 @@ int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(temp)), LP_FAIL);
 			}
 			break;
+		case lpt_stream:
+			{
+				slice temp = {0};
+				if(Rtag_type(Rtag)!= o_stream)
+					return LP_FAIL;
+				check_fail(sl_Rstream(in, &temp), LP_FAIL);
+				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
+			}
+			break;
 		case lpt_message:
 			{
 				slice st = {0};
@@ -381,6 +416,16 @@ static int _llp_out_message(llp_mes* lms)
 					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
 					sl_Wtag(&lms->sio, o_str, i);
 					sl_Wstring(&lms->sio, lv->lp_str);
+				}
+			}
+			break;
+		case lpt_stream:
+			{
+				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				{
+					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					sl_Wtag(&lms->sio, o_stream, i);
+					sl_Wstream(&lms->sio, lv->lp_stream);
 				}
 			}
 			break;

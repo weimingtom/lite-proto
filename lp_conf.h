@@ -22,7 +22,6 @@ typedef unsigned __int64	llp_uint64;
 typedef float				llp_float32;
 typedef double				llp_float64;
 
-
 extern size_t mem;
 #undef  malloc
 #undef free

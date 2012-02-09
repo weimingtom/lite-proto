@@ -183,6 +183,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, size_t* out_cou
 		case t_Kfloat32:
 		case t_Kfloat64:
 		case t_kstring:
+		case t_Kstream:
 		case t_ide:
 			{
 				lp_token* tt = NULL;
