@@ -26,8 +26,9 @@ extern size_t mem;
 #undef  malloc
 #undef free
 
-#define malloc	lp_malloc
-#define free	lp_free
+//#define malloc(s)	lp_malloc(s,  __FILE__,  __LINE__)
+#define malloc      lp_malloc
+#define free		lp_free
 
 typedef FILE*   f_handle;
 #define f_open  fopen
@@ -47,6 +48,7 @@ typedef struct _slice{
 #define  check_null(e, r)		check_value(e, NULL, r)	
 #define  print					printf
 
+//void* lp_malloc(size_t len, char* file, int line);
 void* lp_malloc(size_t len);
 void lp_free(void* p);
 long fsize( FILE *fp);
