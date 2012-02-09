@@ -97,8 +97,11 @@ int main(int argc, char* args[])
 	FILE* fp = NULL;
 	lp_env* lp = get_lp_env();
 
+#ifndef _DEBUG
 	lp_arg(lp, args);
-	
+#else
+	lp_inter(lp, "F:\\code\\lp\\test.mes");
+#endif
 	free_lp_env(lp);
 	print("\n\n----memory----\nmem = %d\n", mem);
 	return 0;

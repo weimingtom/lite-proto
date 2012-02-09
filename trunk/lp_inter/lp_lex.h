@@ -53,6 +53,8 @@ typedef enum _e_t{
 	t_end,
 	t_clo,
 
+	t_Kstream,
+
 	t_count
 }e_t;
 

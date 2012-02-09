@@ -9,6 +9,7 @@ typedef union _llp_value{
 	llp_int64		 lp_int64;
 	llp_float32		 lp_float32;
 	llp_float64		 lp_float64;
+	slice*			 lp_stream;
     struct _llp_mes* lp_mes;
 }llp_value;
 

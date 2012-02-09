@@ -10,6 +10,7 @@ typedef enum _e_lpt{
 	lpt_string = 4,
 	lpt_float32 = 5,
 	lpt_float64 = 6,
+	lpt_stream = 16,
 	lpt_message = 13
 }e_lpt;
 

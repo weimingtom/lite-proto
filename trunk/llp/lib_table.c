@@ -186,6 +186,18 @@ char* malloc_string(char* str)
 	return ret;
  }
 
+slice* malloc_slice(slice* sl)
+{
+	slice* ret = (slice*)malloc(sizeof(*ret));
+	
+	check_null(ret, NULL);
+	check_null(sl, NULL);
+	check_null(ret->b_sp=ret->sp=(byte*)malloc(sl->sp_size), (free(ret), NULL));
+	ret->sp_size = sl->sp_size;
+	memcpy(ret->sp, sl->sp, ret->sp_size);
+	return ret;
+}
+
 char* lib_Stable_add(llp_strT* ls, char* name)
 {
 	llp_strTO* lsto = NULL;

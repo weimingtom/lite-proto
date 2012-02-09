@@ -3,7 +3,7 @@
 #include "lp_conf.h"
 #include "lib_mes.h"
 
-#define  sl_emp(sl)		( ((sl)->sp_size) - (((sl)->sp)-((sl)->b_sp)) )
+#define  sl_emp(sl)				( ((sl)->sp_size) - (((sl)->sp)-((sl)->b_sp)) ) 
 #define check_sl(sl)	do{		\
 							if( (sl)==NULL || (sl)->sp==NULL || ((unsigned int)((sl)->sp-(sl)->b_sp))>(sl)->sp_size ) \
 							return LP_FAIL; \
@@ -14,7 +14,8 @@
 typedef enum _e_ot{
 	o_num,
 	o_str,
-	o_mes
+	o_mes,
+	o_stream
 }e_ot;
 
 int sl_Rstr(slice* sl, char** out);
