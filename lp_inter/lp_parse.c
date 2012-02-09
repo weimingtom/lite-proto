@@ -121,6 +121,13 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 				lp_string_cat(&mes, '.');
 			}
 			lp_string_cats(&mes, (char*)mes_name->name.str.list_p);
+			if((a_ret=lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p)) == LP_EXIST)
+			{
+				print("parse[error line: %d]the new message \"%s\" is exist!\n", lp_p->line, mes.str.list_p);
+				goto C_END;
+			}
+			else if(a_ret==LP_FAIL)
+				goto C_END;
 			lp_table_new(&ide_table);
 			out_count = 0;
 			if(lp_parse_closure(lp_p, &temp_out, &out_count, &ide_table, (char*)mes.str.list_p) == LP_FAIL)
@@ -133,13 +140,7 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 	}
 	
 	id = (mes_id)?(atoi((char*)mes_id->name.str.list_p)):(0);
-	if((a_ret=lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p)) == LP_EXIST)
-	{
-		print("parse[error line: %d]the new message \"%s\" is exist!\n", lp_p->line, mes.str.list_p);
-		goto C_END;
-	}
-	else if(a_ret==LP_FAIL)
-		goto C_END;
+
 	lp_parse_push(lp_p, mes.str.list_p, mes.str.list_len+1);	// write message name
 	lp_parse_push(lp_p, &id, sizeof(id));						// write message id
 	lp_parse_push(lp_p, &out_count, sizeof(out_count));			// write message count
