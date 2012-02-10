@@ -271,7 +271,7 @@ llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx)
 llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_str, lpt_float32, al_inx), 0.0);
+	check_null(lpv=llp_Rmes(lm, filed_str, lpt_float32, al_inx), (float)0.0);
 	
 	return lpv->lp_float32;
 }

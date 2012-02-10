@@ -116,7 +116,12 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 			char* fms = NULL;
 			struct _lp_value* lv = NULL;
 			check_fail(sl_Rstr(sl, &fms), LP_FAIL);
-			check_null(lv=lib_table_look(&env->dmes, fms), LP_FAIL);
+			lv=lib_table_look(&env->dmes, fms);
+			if(lv == NULL)
+			{
+				lv = lib_table_add(&env->dmes, lib_Stable_add(&env->mesN, fms));
+				check_null(lv, LP_FAIL);
+			}
 			des_mes->message_tfl[i].tms = &lv->value.def_mesV;
 		}
 		

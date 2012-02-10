@@ -45,7 +45,7 @@ lp_value* lib_table_add(llp_table* lt, char* name)
 	while(np)
 	{
 		if(strcmp(np->name, name)==0)
-			return NULL;
+			return np->value;
 		np = np->next;
 	}
 
