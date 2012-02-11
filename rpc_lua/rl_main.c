@@ -170,6 +170,11 @@ static int rpc_out(lua_State* L, slice* in, llp_mes* lm)
 	return len;
 }
 
+static int lua_t_time(lua_State* L)
+{
+	lua_pushnumber(L, (int)GetTickCount());
+	return 1;
+}
   
 static int lua_rpc_call(lua_State* L)
 {
@@ -181,7 +186,7 @@ static int lua_rpc_call(lua_State* L)
 	int len = 0;
 	char* func = NULL;
 	llp_mes* rpc_ret = NULL;
-	
+
 	// send to server 
 	llp_in_message(rpc_in(L, lua_gettop(L)), r_rpc_lua);			// 获得client 传送过来的rpc包，进行反序列化生成message obj
 	len = llp_Rmes_size(r_rpc_lua, "rpc_ret");
@@ -220,12 +225,13 @@ int main()
 	luaopen_base(L);
 	luaopen_table(L);
  
-	ret = llp_reg_mes(env, "F:\\code\\lp\\rpc_lua\\rpc_lua.mes.lpb");
+	ret = llp_reg_mes(env, "rpc_lua.mes.lpb");
 	rpc_lua = llp_message_new(env, "rpc_lua");
 	r_rpc_lua = llp_message_new(env, "rpc_lua");
 
 	lua_register(L, "rpc_call", lua_rpc_call);
-	if(luaL_dofile(L, "F:\\code\\lp\\rpc_lua\\rpc_lua.lua") != 0)
+	lua_register(L, "t_time", lua_t_time);
+	if(luaL_dofile(L, "rpc_lua.lua") != 0)
 	{
 		printf("[error]: %s", lua_tostring(L, -1));
 	}
