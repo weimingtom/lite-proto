@@ -183,27 +183,27 @@ static int lua_rpc_call(lua_State* L)
 	llp_mes* rpc_ret = NULL;
 	
 	// send to server 
-	llp_in_message(rpc_in(L, lua_gettop(L)), r_rpc_lua);			// è·å¾—client ä¼ é€è¿‡æ¥çš„rpcåŒ…ï¼Œè¿›è¡Œååºåˆ—åŒ–ç”Ÿæˆmessage obj
+	llp_in_message(rpc_in(L, lua_gettop(L)), r_rpc_lua);			// »ñµÃclient ´«ËÍ¹ıÀ´µÄrpc°ü£¬½øĞĞ·´ĞòÁĞ»¯Éú³Émessage obj
 	len = llp_Rmes_size(r_rpc_lua, "rpc_ret");
-	rpc_ret = llp_Rmes_message(r_rpc_lua, "rpc_ret", len-1);	// è·å¾—rpc_callå‡½æ•°å
+	rpc_ret = llp_Rmes_message(r_rpc_lua, "rpc_ret", len-1);	// »ñµÃrpc_callº¯ÊıÃû
 	func = llp_Rmes_string(rpc_ret, "rpc_str", 0);
 	
 	b_top = lua_gettop(L);
 	lua_getglobal(L, func);
 	for(i=len-2; i>=0; i--)
 	{
-		rpc_ret = llp_Rmes_message(r_rpc_lua, "rpc_ret", i);		// è·å¾—å‚æ•°
-		rpc_out_value(L, rpc_ret);		// å°†å‚æ•°å±•å¼€åˆ°stackä¸Š
+		rpc_ret = llp_Rmes_message(r_rpc_lua, "rpc_ret", i);		// »ñµÃ²ÎÊı
+		rpc_out_value(L, rpc_ret);		// ½«²ÎÊıÕ¹¿ªµ½stackÉÏ
 	}
 	
 	if(lua_pcall(L, len-1, LUA_MULTRET, 0))
 	{
 		const char* error = lua_tostring(L, -1);
 	}
-	ret_len = lua_gettop(L)-b_top;		// è·å¾—è¿”å›å€¼ä¸ªæ•°
+	ret_len = lua_gettop(L)-b_top;		// »ñµÃ·µ»ØÖµ¸öÊı
 	
 	// back to client
-	in = rpc_in(L, ret_len);			// ä»æ ˆä¸Šè·å–è¿”å›å€¼ï¼ŒåŒæ—¶å°†å…¶åºåˆ—åŒ–
+	in = rpc_in(L, ret_len);			// ´ÓÕ»ÉÏ»ñÈ¡·µ»ØÖµ£¬Í¬Ê±½«ÆäĞòÁĞ»¯
 	lua_settop(L, b_top);
 	llp_message_clr(r_rpc_lua);
 	len = rpc_out(L, in, r_rpc_lua);
