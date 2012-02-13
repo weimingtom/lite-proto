@@ -7,6 +7,8 @@
 #include "lrpcClib.h"
 #include "lrpcSlib.h"
 
+#pragma comment(lib, ".\\srpc_lua___Win32_Debug\\srpc_lua.lib")
+
 
 static int lua_t_time(lua_State* L)
 {
