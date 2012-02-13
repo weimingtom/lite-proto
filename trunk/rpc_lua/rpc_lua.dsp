@@ -219,7 +219,11 @@ SOURCE=.\lrpcClib.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lrpclib.c
+SOURCE=.\lrpcSlib.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\rl_main.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -336,6 +340,10 @@ SOURCE=.\lrpc.h
 # Begin Source File
 
 SOURCE=.\lrpcClib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lrpcSlib.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
