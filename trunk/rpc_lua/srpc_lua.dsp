@@ -63,7 +63,7 @@ LIB32=link.exe -lib
 # PROP Output_Dir "srpc_lua___Win32_Debug"
 # PROP Intermediate_Dir "srpc_lua___Win32_Debug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "./lua" /I "./" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD BASE RSC /l 0x804 /d "_DEBUG"
 # ADD RSC /l 0x804 /d "_DEBUG"
@@ -207,34 +207,6 @@ SOURCE=.\lua\lzio.c
 SOURCE=.\lua\print.c
 # End Source File
 # End Group
-# Begin Group "llp"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\llp\lib_al.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_io.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_lp.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_mes.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_table.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lp_conf.c
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\lrpc.c
@@ -345,38 +317,6 @@ SOURCE=.\lua\lvm.h
 # Begin Source File
 
 SOURCE=.\lua\lzio.h
-# End Source File
-# End Group
-# Begin Group "llp_h"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\llp\lib_al.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_io.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_lp.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_mes.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lib_table.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\llp.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\llp\lp_conf.h
 # End Source File
 # End Group
 # Begin Source File
