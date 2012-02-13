@@ -71,7 +71,7 @@ void llp_message_clr(llp_mes* in_mes)
 {
 	if(_llp_message_cf(in_mes, lib_array_clr)==LP_FAIL)
 		return;
-	llp_out_close(&in_mes->sio);
+	llp_out_clr(&in_mes->sio);
 }
 
 void  llp_message_free(llp_mes* in_mes)
