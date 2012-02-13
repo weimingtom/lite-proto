@@ -68,3 +68,11 @@ LUA_API int rpc_call_ret(lua_State* L, slice* sl)
 	lua_resume(L, len);	
 	return LP_TRUE;
 }
+
+
+LUA_API int rpc_loadfile(lua_State* L, const char* filename)
+{
+	int ret = luaL_loadfile(L, filename);
+	
+	return (ret)?(ret):(lua_resume(L, 0), 0);
+}
