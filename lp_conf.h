@@ -43,7 +43,8 @@ typedef struct _slice{
 	size_t sp_size;
 }slice;
 
-#define	 check_value(e, qe, r)	do{if((e)==(qe)) return (r);}while(0)	
+
+#define	 check_value(e, qe, r)	do{if((e)==(qe)) return ((r));}while(0)	
 #define	 check_fail(e, r)		check_value(e, LP_FAIL, r)
 #define  check_null(e, r)		check_value(e, NULL, r)	
 #define  print					printf
