@@ -1,21 +1,22 @@
 #ifndef		_LRPC_LIB_H_
 #define		_LRPC_LIB_H_
 
-
 typedef struct _llp_env llp_env;
 typedef struct _llp_mes llp_mes;
+typedef struct _slice   slice;
+typedef void(*rpc_cb)(slice*);
 
 typedef struct _lua_rpc{
 	llp_env* env;
 	llp_mes* llp_call;
 	llp_mes* llp_ret;
+	rpc_cb   llp_cb;
 }lua_rpc;
 
-#define  RPC_TABLE	   "rpc"
-#define  RPC_CALL      "rpc_lua_call"
-#define  RPC_RET	   "rpc_lua_ret"
-
-#define  RPC_MES_LPB   "rpc_lua.mes.lpb"
+#define  RPC_CALL       "rpc_lua_call"
+#define  RPC_RET	    "rpc_lua_ret"
+#define  RPC_REG_TABLE  "reg_func"
+#define  RPC_MES_LPB    "rpc_lua.mes.lpb"
 
 #define CALL_RPC_ERROR  "[rpc error]:%s\n"
 enum {

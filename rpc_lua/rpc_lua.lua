@@ -5,8 +5,13 @@ function func(a, b)
 end
 
 
+rpc.reg_func = {
+	['func'] = func,
+}
 
 print(rpc.call("func", 1, 2))
+
+
 --[[
 function foo(flag)
 	coroutine.yield()

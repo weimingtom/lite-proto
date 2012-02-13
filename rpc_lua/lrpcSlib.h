@@ -3,6 +3,5 @@
 #include "llp.h"
 #include "lua.h"
 
-slice* rpc_call_func(lua_State* L, slice* arg);
- 
+LUA_API slice* rpc_call_func(lua_State* L, slice* arg);
 #endif

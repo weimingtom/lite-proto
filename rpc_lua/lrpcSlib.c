@@ -4,10 +4,11 @@
 #include "lrpc.h"
 
 
-slice* rpc_call_func(lua_State* L, slice* arg)
+LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 {
+	int tt= 0;
 	slice* ret = NULL;
-	int len=0, i=0, ret_len = 0, b_top =0;
+	int len=0, i=0, ret_len = 0, b_top =0, h_top=0;
 	llp_mes* arg_ret = NULL;
 	llp_mes* arg_list = NULL;
 	char* func = NULL;
@@ -28,8 +29,12 @@ slice* rpc_call_func(lua_State* L, slice* arg)
 	}
 	arg_list = llp_Rmes_message(rpc_lua_call, "arg_lua_data", 0);	// 获得参数列表
 	len = llp_Rmes_size(arg_list, "lua_data");
+	
+	h_top = lua_gettop(L);
+	lua_getglobal(L, LUA_RPC);
+	lua_getfield(L, -1, RPC_REG_TABLE);
 	b_top = lua_gettop(L);
-	lua_getglobal(L, func);
+	lua_getfield(L, -1, func);
 	for(i=len-1; i>=0; i--)
 	{
 		arg_ret = llp_Rmes_message(arg_list, "lua_data", i);		// 获得参数
@@ -39,14 +44,14 @@ slice* rpc_call_func(lua_State* L, slice* arg)
 	if(lua_pcall(L, len, LUA_MULTRET, 0))
 	{
 		error = (char*)lua_tostring(L, -1);
+		print("[lua error]: %s\n", error);
 		llp_Wmes_string(rpc_lua_ret, "ret_error", error);
-		
 	}
 	else
 	{
 		ret_len = lua_gettop(L)-b_top;					// 获得返回值个数
 		rpc_in(L, ret_len, llp_Wmes_message(rpc_lua_ret, "ret_lua_data"));			// 从栈上获取返回值，同时将其序列化
-		lua_settop(L, b_top);
+		lua_settop(L, h_top);
 		ret = llp_out_message(rpc_lua_ret);
 		//  get in and send to client
 	}

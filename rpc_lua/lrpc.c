@@ -4,6 +4,8 @@
 #include "llp.h"
 #include "lrpc.h"
 
+int lua_rpc_call(lua_State* L);
+
 static int rpc_write_table(lua_State* L, int inx, llp_mes* rpc_table)
 {
 	if(lua_type(L, inx)!= LUA_TTABLE)
@@ -155,6 +157,8 @@ lua_rpc* lua_rpc_new()
 {
 	lua_rpc* ret = (lua_rpc*)malloc(sizeof(*ret));
 	check_null(ret, NULL);
+	ret->llp_cb = NULL;
+
 	// get message env
 	check_null(ret->env=llp_new_env(), (
 		print("the llp new env is error!\n"), 
@@ -189,4 +193,29 @@ void lua_rpc_free(lua_rpc* lr)
 	llp_message_free(lr->llp_call);
 	llp_free_env(lr->env);
 	free(lr);
+}
+
+
+LUALIB_API int luaopen_rpc(lua_State *L, rpc_cb r_cb) {
+	int top=0;
+	int b_len = lua_gettop(L);
+	lua_rpc* lr = lua_rpc_new();
+	
+	check_null(lr, (print(CALL_RPC_ERROR, "new rpc is error!"), 0));
+	lr->llp_cb = r_cb;
+	lua_setrpc(L, lr);
+	// new rpc table
+	lua_newtable(L);
+	top = lua_gettop(L);
+	// set rpc function call
+	lua_pushcfunction(L, lua_rpc_call);
+	lua_setfield(L, top, "call");
+	// set rpc regedit function table
+	lua_pushnil(L);
+	lua_setfield(L, top, RPC_REG_TABLE);
+	
+	// set rpc table
+	lua_setglobal(L, LUA_RPC);	// set table is rpc
+	lua_settop(L, b_len);
+	return 1;
 }
