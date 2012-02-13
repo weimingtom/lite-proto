@@ -11,7 +11,7 @@ rpc.reg_func = {
 
 print(rpc.call("func", 1, 2))
 
-
+print("test")
 --[[
 function foo(flag)
 	coroutine.yield()

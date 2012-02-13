@@ -30,13 +30,13 @@ int main()
 
 	lua_register(L, "t_time", lua_t_time);
 	// client call
-	if(luaL_loadfile(L, "rpc_lua.lua") != 0)
+	if(rpc_loadfile(L, "rpc_lua.lua"))
 	{
 		printf("[error]: %s", lua_tostring(L, -1));
 	}
-	lua_resume( L, 0);
 	
 	rpc_call_ret(L, rpc_call_func(L, temp));
+
 	lua_close(L);
 	mem_print();
 	return 0;
