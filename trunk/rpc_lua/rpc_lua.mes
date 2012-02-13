@@ -1,7 +1,7 @@
 
 # rpc_lua_value 
 
-
+# lua 基础数据类型封装
 message rpc_lua_data {
 	message rpc_lua_table {
 		message rpc_lua_table_one {
@@ -12,18 +12,27 @@ message rpc_lua_data {
 		rpc_lua_table_one[] table_value;
 	}
 	
-	int32   			rpc_data_type;	 #lua的类型 string: 1, number: 2, bool: 3, table: 4
-	int32   			rpc_number;
-	string  			rpc_str;
+	int32   			rpc_data_type;	 # lua的类型 string: 1, number: 2, bool: 3, table: 4
+	int32   			rpc_number;			 # 
+	string  			rpc_str;				  
 	int32   			rpc_bool;
 	rpc_lua_table	rpc_table;
 }
-     
+
+#  函数 返回值/参数列表 数据
 message rpc_lua {
-	rpc_lua_data[] rpc_ret;		
+	rpc_lua_data[] lua_data;
 }
 
-message rpc_call {
+
+# rpc  函数调用
+message rpc_lua_call {
 	string func_call;
-	rpc_lua_data[] arg_lua_data;
+	rpc_lua arg_lua_data;
+}
+
+#rpc 函数返回
+message rpc_lua_ret {
+	string ret_error;
+	rpc_lua ret_lua_data;
 }
