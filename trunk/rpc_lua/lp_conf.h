@@ -44,13 +44,12 @@ typedef struct _slice{
 }slice;
 
 
-#define	 check_value(e, qe, r)	do{if((e)==(qe)) return (error_func(), (r));}while(0)	
+#define	 check_value(e, qe, r)	do{if((e)==(qe)) return ((r));}while(0)	
 #define	 check_fail(e, r)		check_value(e, LP_FAIL, r)
 #define  check_null(e, r)		check_value(e, NULL, r)	
 #define  print					printf
 
 //void* lp_malloc(size_t len, char* file, int line);
-void error_func();
 void* lp_malloc(size_t len);
 void lp_free(void* p);
 long fsize( FILE *fp);
