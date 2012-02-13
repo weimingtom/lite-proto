@@ -4,6 +4,5 @@
 #include "lua.h"
 #include "llp.h"
 
-int lua_rpc_call(lua_State* L);
-void test_con(lua_State* L);
+LUA_API int rpc_call_ret(lua_State* L, slice* sl);
 #endif
