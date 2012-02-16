@@ -103,11 +103,6 @@ typedef LUA_NUMBER lua_Number;
 typedef LUA_INTEGER lua_Integer;
 
 
-// myself rpc api
-typedef struct _lua_rpc lua_rpc;
-LUA_API lua_rpc* lua_getrpc(lua_State* L);
-LUA_API void lua_setrpc(lua_State* L, lua_rpc* lr);
-
 /*
 ** state manipulation
 */

@@ -153,38 +153,32 @@ int rpc_out(lua_State* L, llp_mes* lm)
 }
 
 
-lua_rpc* lua_rpc_new()
+int rpc_new(lua_rpc* ret)
 {
-	lua_rpc* ret = (lua_rpc*)malloc(sizeof(*ret));
-	check_null(ret, NULL);
-	ret->llp_cb = NULL;
-
 	// get message env
 	check_null(ret->env=llp_new_env(), (
-		print("the llp new env is error!\n"), 
-		free(ret),
-		NULL));
+		print("the llp new env is error!\n"),
+		LP_FAIL));
 	// regedit rpc_lua.mes.lpb
 	check_fail(llp_reg_mes(ret->env, RPC_MES_LPB), (
 		print("reg %s is error!", RPC_MES_LPB), 
-		llp_free_env(ret->env), free(ret),
-		NULL));
+		llp_free_env(ret->env),
+		LP_FAIL));
 	// new rpc_call message obj
 	check_null(ret->llp_call=llp_message_new(ret->env, RPC_CALL), (
 		print("not find message: %s \n", RPC_CALL),
-		llp_free_env(ret->env), free(ret),
-		NULL));
+		llp_free_env(ret->env),
+		LP_FAIL));
 	// new rpc_ret message obj
 	check_null(ret->llp_ret=llp_message_new(ret->env, RPC_RET), (
 		print("not find message: %s\n", RPC_RET),
-		llp_message_free(ret->llp_call), llp_free_env(ret->env), free(ret),
-		NULL));
+		llp_message_free(ret->llp_call), llp_free_env(ret->env),
+		LP_FAIL));
 
-	return ret;
+	return LP_TRUE;
 }
 
-
-void lua_rpc_free(lua_rpc* lr)
+void rpc_free(lua_rpc* lr)
 {
 	if(lr==NULL)
 		return;
@@ -192,24 +186,54 @@ void lua_rpc_free(lua_rpc* lr)
 	llp_message_free(lr->llp_ret);
 	llp_message_free(lr->llp_call);
 	llp_free_env(lr->env);
-	free(lr);
 }
 
+int lua_rpc_free(lua_State* L)
+{
+	if(lua_type(L, -1) == LUA_TUSERDATA)
+	{
+		rpc_free(lua_touserdata(L, -1));
+	}
+	
+	return 0;
+}
 
-LUALIB_API int luaopen_rpc(lua_State *L, rpc_cb r_cb) {
+LUALIB_API int luaopen_rpc(lua_State *L, lua_CFunction r_cb) 
+{
 	int top=0;
 	int b_len = lua_gettop(L);
-	lua_rpc* lr = lua_rpc_new();
+	lua_rpc lr = {0};
+	lua_rpc* user_data = NULL;
+	int tt = 0;
 	
-	check_null(lr, (print(CALL_RPC_ERROR, "new rpc is error!"), 0));
-	lr->llp_cb = r_cb;
-	lua_setrpc(L, lr);
+	check_fail(rpc_new(&lr), (print(CALL_RPC_ERROR, "new rpc is error!"), 0));
+	
 	// new rpc table
 	lua_newtable(L);
 	top = lua_gettop(L);
+	tt = top;
+	// set userdata
+	user_data = (lua_rpc*)lua_newuserdata(L, sizeof(lr));
+	*user_data = lr;
+
+	// set gc
+	lua_newtable(L);
+	lua_pushstring(L, "__gc");
+	lua_pushcfunction(L, lua_rpc_free);
+	tt = lua_gettop(L);
+	lua_rawset(L, -3);
+	lua_setmetatable(L, -2);
+	tt = lua_gettop(L);
+	lua_setfield(L, top, RPC_LR);
+
+	// set cb
+	lua_pushcfunction(L, r_cb);
+	lua_setfield(L, top, RPC_CB);
+
 	// set rpc function call
 	lua_pushcfunction(L, lua_rpc_call);
-	lua_setfield(L, top, "call");
+	lua_setfield(L, top, RPC_RCALL);
+	
 	// set rpc regedit function table
 	lua_pushnil(L);
 	lua_setfield(L, top, RPC_REG_TABLE);

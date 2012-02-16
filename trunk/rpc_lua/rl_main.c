@@ -10,16 +10,19 @@
 #pragma comment(lib, ".\\srpc_lua___Win32_Debug\\srpc_lua.lib")
 
 
+
 static int lua_t_time(lua_State* L)
 {
 	lua_pushnumber(L, (int)GetTickCount());
 	return 1;
 }
 
+
 slice* temp = NULL;
-void rpc_call_back(slice* sl)
+int rpc_call_back(lua_State* L)
 {
-	temp = sl;
+	temp = (slice*)lua_touserdata(L, -1);
+	return 0;
 }
 
 int main()

@@ -45,17 +45,6 @@ const char lua_ident[] =
 #define api_incr_top(L)   {api_check(L, L->top < L->ci->top); L->top++;}
 
 
-LUA_API lua_rpc* lua_getrpc(lua_State* L)
-{
-	return L->lr;
-}
-
-LUA_API void lua_setrpc(lua_State* L, lua_rpc* lr)
-{
-	if(L->lr)
-		lua_rpc_free(L->lr);
-	L->lr = lr;
-}
 
 static TValue *index2adr (lua_State *L, int idx) {
   if (idx > 0) {

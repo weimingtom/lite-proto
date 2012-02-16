@@ -9,7 +9,8 @@ rpc.reg_func = {
 	['func'] = func,
 }
 
-print(rpc.call("func", 1, 2))
+print(rpc.call("func", 1))
+
 
 print("test")
 --[[

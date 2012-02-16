@@ -13,7 +13,6 @@
 #include "ltm.h"
 #include "lzio.h"
 
-#include "lrpc.h"
 
 struct lua_longjmp;  /* defined in ldo.c */
 
@@ -124,7 +123,6 @@ struct lua_State {
   GCObject *gclist;
   struct lua_longjmp *errorJmp;  /* current error recover point */
   ptrdiff_t errfunc;  /* current error handling function (stack index) */
-  lua_rpc* lr;
 };
 
 
