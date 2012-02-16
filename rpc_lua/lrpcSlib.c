@@ -52,8 +52,9 @@ LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 		ret_len = lua_gettop(L)-b_top;					// 获得返回值个数
 		rpc_in(L, ret_len, llp_Wmes_message(rpc_lua_ret, "ret_lua_data"));			// 从栈上获取返回值，同时将其序列化
 		lua_settop(L, h_top);
-		ret = llp_out_message(rpc_lua_ret);
 		//  get in and send to client
 	}
+
+	ret = llp_out_message(rpc_lua_ret);
 	return ret;
 }
