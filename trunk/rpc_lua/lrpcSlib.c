@@ -40,7 +40,6 @@ LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 		arg_ret = llp_Rmes_message(arg_list, "lua_data", i);		// 获得参数
 		rpc_out_value(L, arg_ret);									// 将参数展开到stack上
 	}
-	
 	if(lua_pcall(L, len, LUA_MULTRET, 0))
 	{
 		error = (char*)lua_tostring(L, -1);

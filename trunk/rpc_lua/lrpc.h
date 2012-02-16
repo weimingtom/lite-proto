@@ -39,5 +39,4 @@ int rpc_value_in(lua_State* L, int inx, llp_mes* rpc_lua_data);
 int rpc_out_value(lua_State* L, llp_mes* rpc_lua_data);
 
 lua_rpc* lua_getrpc(lua_State* L);
-lua_CFunction lua_getcb(lua_State* L);
 #endif

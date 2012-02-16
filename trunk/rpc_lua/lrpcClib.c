@@ -14,15 +14,19 @@ lua_rpc* lua_getrpc(lua_State* L)
 	return ret;
 }
 
-lua_CFunction lua_getcb(lua_State* L)
+void lua_pcall_cb(lua_State* L, slice* in)
 {
-	lua_CFunction ret = NULL;
-	lua_getglobal((L), LUA_RPC);
-	lua_getfield((L), -1, RPC_CB);
-	ret = lua_tocfunction(L, -1);
-	lua_pop(L, 2);
+	int top = lua_gettop(L);
+	lua_getglobal(L, LUA_RPC);
+	lua_getfield(L, -1, RPC_CB);
+	lua_pushlightuserdata(L, in);
 
-	return ret;
+	if(lua_pcall(L, 1, 0, 0))
+	{
+		lua_error(L);
+	}
+
+	lua_settop(L, top);
 }
 
 int _rpc_call_ret(lua_State* L, slice* ret)
@@ -58,7 +62,6 @@ int lua_rpc_call(lua_State* L)
 	slice* in = NULL;
 	lua_rpc* lr = lua_getrpc(L);
 	llp_mes* rpc_lua_call = NULL;
-	lua_CFunction cb = lua_getcb(L);
 
 	check_null(lr, 0);
 	rpc_lua_call = lr->llp_call;
@@ -74,12 +77,7 @@ int lua_rpc_call(lua_State* L)
 	llp_Wmes_string(rpc_lua_call, "func_call", (char*)lua_tostring(L, 1));
 	lua_pop(L, 1);
 	in = llp_out_message(rpc_lua_call);
-	if(cb)
-	{
-		lua_pushlightuserdata(L, in);
-		cb(L);
-		lua_pop(L, 1);
-	}
+	lua_pcall_cb(L, in);
 
 	return lua_yield( L, 0 );
 } 
