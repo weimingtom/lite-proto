@@ -25,13 +25,19 @@ int rpc_call_back(lua_State* L)
 	return 0;
 }
 
+int rpc_error_cb(lua_State* L)
+{
+	char* error = (char*)lua_tostring(L, -1);
+	return 0;
+}
+
 int main()
 {
 	int ret = 0;
 	lua_State* L = lua_open();
 	luaopen_base(L);
 	luaopen_table(L);
-	luaopen_rpc(L, rpc_call_back);
+	luaopen_rpc(L, rpc_call_back, rpc_error_cb);
 
 	lua_register(L, "t_time", lua_t_time);
 	// client call
