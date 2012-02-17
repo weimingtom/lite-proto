@@ -4,6 +4,6 @@
 #include "lua.h"
 #include "llp.h"
 
-LUA_API int rpc_call_ret(lua_State* L, slice* sl);
-LUA_API int rpc_loadfile(lua_State* L, const char* filename);
+LUALIB_API int rpc_call_ret(lua_State* L, slice* sl);
+LUALIB_API int rpc_loadfile(lua_State* L, const char* filename);
 #endif

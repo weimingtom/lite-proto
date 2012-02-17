@@ -1,10 +1,49 @@
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
-#include "llp.h"
 #include "lrpc.h"
 
+static int rpc_value_in(lua_State* L, int inx, llp_mes* rpc_lua_data);
 int lua_rpc_call(lua_State* L);
+
+void rpc_error(lua_State* L, char* error)
+{
+	int top = lua_gettop(L);
+	lua_getglobal(L, LUA_RPC);
+	lua_getfield(L, -1, RPC_ERROR);
+	lua_pushstring(L, error);
+
+	if(lua_type(L, -2)==LUA_TNIL || lua_pcall(L, 1, 0, 0))
+		lua_error(L);
+
+	lua_settop(L, top);
+}
+
+lua_rpc* lua_getrpc(lua_State* L)
+{
+	lua_rpc* ret = NULL;
+	lua_getglobal((L), LUA_RPC);
+	lua_getfield((L), -1, RPC_LR);
+	ret = lua_touserdata((L), -1);
+	lua_pop(L, 2);
+	
+	return ret;
+}
+
+void lua_pcall_cb(lua_State* L, slice* in)
+{
+	int top = lua_gettop(L);
+	lua_getglobal(L, LUA_RPC);
+	lua_getfield(L, -1, RPC_CB);
+	lua_pushlightuserdata(L, in);
+	
+	if(lua_type(L, -2)== LUA_TNIL)
+		rpc_error(L, "[rpc error]: you not set client rpc callback function!");
+	else if (lua_pcall(L, 1, 0, 0))
+		rpc_error(L, (char*)lua_tostring(L, -1));
+
+	lua_settop(L, top);
+}
 
 static int rpc_write_table(lua_State* L, int inx, llp_mes* rpc_table)
 {
@@ -35,7 +74,7 @@ static int rpc_write_table(lua_State* L, int inx, llp_mes* rpc_table)
 	return LP_TRUE;
 }
 
-int rpc_value_in(lua_State* L, int inx, llp_mes* rpc_lua_data)
+static int rpc_value_in(lua_State* L, int inx, llp_mes* rpc_lua_data)
 {
 	int tt = 0;
 	switch(tt=lua_type(L, inx))
@@ -64,12 +103,20 @@ int rpc_value_in(lua_State* L, int inx, llp_mes* rpc_lua_data)
 			rpc_write_table(L, inx, llp_Wmes_message(rpc_lua_data, "rpc_table"));
 		}
 		break;
-	default:
+	case LUA_TNIL:
 		{
-			int a=0;
-			a++;
+			llp_Wmes_int32(rpc_lua_data, "rpc_data_type", e_nil);
 		}
 		break;
+	default:
+		{
+			char error[128] = {0};
+			sprintf(error, "[rpc error]: rpc does not support type:%s", lua_typename(L, inx));
+			rpc_error(L, error);
+			// set nil filed
+			llp_Wmes_int32(rpc_lua_data, "rpc_data_type", e_nil);
+		}
+		return LP_FAIL;
 	}
 
 	return LP_TRUE;
@@ -79,9 +126,10 @@ int rpc_in(lua_State* L, int arg_len, llp_mes* arg_lua_data)
 {
 	int i=0;
 
+	check_null(arg_lua_data, LP_FAIL);
 	for(i=1; i<=arg_len; i++)
 	{
-		rpc_value_in(L, lua_gettop(L), llp_Wmes_message(arg_lua_data, "lua_data"));
+		check_fail(rpc_value_in(L, lua_gettop(L), llp_Wmes_message(arg_lua_data, "lua_data")), (lua_pop(L, 1),LP_FAIL));
 		lua_pop(L, 1);
 	}
 
@@ -117,7 +165,7 @@ static int rpc_out_table(lua_State* L, llp_mes* rpc_table)
 	return 1;
 }
 
-int rpc_out_value(lua_State* L, llp_mes* rpc_lua_data)
+void rpc_out_value(lua_State* L, llp_mes* rpc_lua_data)
 {
 	switch(llp_Rmes_int32(rpc_lua_data, "rpc_data_type", 0))
 	{
@@ -133,10 +181,11 @@ int rpc_out_value(lua_State* L, llp_mes* rpc_lua_data)
 	case e_table:
 			rpc_out_table(L, llp_Rmes_message(rpc_lua_data, "rpc_table", 0));
 		break;
-	default:
-		return 0;
+	case  e_nil:
+		default:
+			lua_pushnil(L);
+		break;
 	}
-	return 1;
 }
 
 int rpc_out(lua_State* L, llp_mes* lm)
@@ -198,20 +247,19 @@ int lua_rpc_free(lua_State* L)
 	return 0;
 }
 
-LUALIB_API int luaopen_rpc(lua_State *L, lua_CFunction r_cb) 
+LUALIB_API int luaopen_rpc(lua_State *L, lua_CFunction r_cb, lua_CFunction r_error) 
 {
 	int top=0;
 	int b_len = lua_gettop(L);
 	lua_rpc lr = {0};
 	lua_rpc* user_data = NULL;
-	int tt = 0;
 	
-	check_fail(rpc_new(&lr), (print(CALL_RPC_ERROR, "new rpc is error!"), 0));
+	check_fail(rpc_new(&lr), 0);
 	
 	// new rpc table
 	lua_newtable(L);
 	top = lua_gettop(L);
-	tt = top;
+
 	// set userdata
 	user_data = (lua_rpc*)lua_newuserdata(L, sizeof(lr));
 	*user_data = lr;
@@ -220,15 +268,17 @@ LUALIB_API int luaopen_rpc(lua_State *L, lua_CFunction r_cb)
 	lua_newtable(L);
 	lua_pushstring(L, "__gc");
 	lua_pushcfunction(L, lua_rpc_free);
-	tt = lua_gettop(L);
 	lua_rawset(L, -3);
 	lua_setmetatable(L, -2);
-	tt = lua_gettop(L);
 	lua_setfield(L, top, RPC_LR);
 
 	// set cb
-	lua_pushcfunction(L, r_cb);
+	(r_cb)?(lua_pushcfunction(L, r_cb)):(lua_pushnil(L));
 	lua_setfield(L, top, RPC_CB);
+
+	// set error
+	(r_error)?(lua_pushcfunction(L, r_error)):(lua_pushnil(L));
+	lua_setfield(L, top, RPC_ERROR);
 
 	// set rpc function call
 	lua_pushcfunction(L, lua_rpc_call);

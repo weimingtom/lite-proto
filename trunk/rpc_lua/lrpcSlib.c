@@ -6,9 +6,8 @@
 
 LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 {
-	int tt= 0;
 	slice* ret = NULL;
-	int len=0, i=0, ret_len = 0, b_top =0, h_top=0;
+	int len=0, i=0, ret_len = 0, b_top =0, h_top=lua_gettop(L);
 	llp_mes* arg_ret = NULL;
 	llp_mes* arg_list = NULL;
 	char* func = NULL;
@@ -20,25 +19,30 @@ LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 	// server code
 	llp_message_clr(rpc_lua_ret);
 	llp_message_clr(rpc_lua_call);
-	llp_in_message(arg, rpc_lua_call);							// 获得client 传送过来的rpc包，进行反序列化生成message obj
-	func = llp_Rmes_string(rpc_lua_call, "func_call", 0);		// 获得rpc call 的函数名
+
+	// get the lite-proto stream from client, and  create message obj by decoding 
+	check_fail(llp_in_message(arg, rpc_lua_call), (
+		rpc_error(L, "[rpc error]: the lite-proto stream decoding is error at call rpc function!"),	
+		NULL
+		));	
+	func = llp_Rmes_string(rpc_lua_call, "func_call", 0);		// get rpc call function name
 	if(func == NULL)
 	{
-		print(CALL_RPC_ERROR, "client try call a null function!");
+		rpc_error(L, "[rpc error]: the rpc request to call a nil function!");
 		return NULL;
 	}
-	arg_list = llp_Rmes_message(rpc_lua_call, "arg_lua_data", 0);	// 获得参数列表
+	arg_list = llp_Rmes_message(rpc_lua_call, "arg_lua_data", 0);	// get rpc reauest parameter list
 	len = llp_Rmes_size(arg_list, "lua_data");
 	
-	h_top = lua_gettop(L);
+	
 	lua_getglobal(L, LUA_RPC);
 	lua_getfield(L, -1, RPC_REG_TABLE);
 	b_top = lua_gettop(L);
 	lua_getfield(L, -1, func);
 	for(i=len-1; i>=0; i--)
 	{
-		arg_ret = llp_Rmes_message(arg_list, "lua_data", i);		// 获得参数
-		rpc_out_value(L, arg_ret);									// 将参数展开到stack上
+		arg_ret = llp_Rmes_message(arg_list, "lua_data", i);		// get rpc request Parameter
+		rpc_out_value(L, arg_ret);									// the parameters is pushed to the lua stack 
 	}
 	if(lua_pcall(L, len, LUA_MULTRET, 0))
 	{
@@ -48,12 +52,12 @@ LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 	}
 	else
 	{
-		ret_len = lua_gettop(L)-b_top;					// 获得返回值个数
-		rpc_in(L, ret_len, llp_Wmes_message(rpc_lua_ret, "ret_lua_data"));			// 从栈上获取返回值，同时将其序列化
-		lua_settop(L, h_top);
-		//  get in and send to client
+		ret_len = lua_gettop(L)-b_top;					// get the number of return value
+		// get the value from lua stack , and coding
+		check_fail(rpc_in(L, ret_len, llp_Wmes_message(rpc_lua_ret, "ret_lua_data")), NULL);		
 	}
 
+	lua_settop(L, h_top);
 	ret = llp_out_message(rpc_lua_ret);
 	return ret;
 }
