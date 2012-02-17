@@ -53,9 +53,9 @@ int lp_table_add(lp_table* lp_t, char* name)
 			back = head;
 			head = head->next;
 		}
-		head->next = (lp_table_one*)malloc(sizeof(lp_table_one));
-		memset(head->next, 0, sizeof(lp_table_one));
-		head->next->name = lp_string_new(name);
+		back->next = (lp_table_one*)malloc(sizeof(lp_table_one));
+		memset(back->next, 0, sizeof(lp_table_one));
+		back->next->name = lp_string_new(name);
 	}
 	return LP_TRUE;
 }
