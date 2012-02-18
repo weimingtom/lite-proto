@@ -47,7 +47,7 @@ LUA_API slice* rpc_call_func(lua_State* L, slice* arg)
 	if(lua_pcall(L, len, LUA_MULTRET, 0))
 	{
 		error = (char*)lua_tostring(L, -1);
-		print("[lua error]: %s\n", error);
+		print("[rpc lua error]: %s\n", error);
 		llp_Wmes_string(rpc_lua_ret, "ret_error", error);
 	}
 	else

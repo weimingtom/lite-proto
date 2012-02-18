@@ -8,7 +8,7 @@ int lua_rpc_call(lua_State* L);
 
 void rpc_error(lua_State* L, char* error)
 {
-	int top = lua_gettop(L);
+	int top = lua_gettop(L);	
 	lua_getglobal(L, LUA_RPC);
 	lua_getfield(L, -1, RPC_ERROR);
 	lua_pushstring(L, error);
@@ -206,21 +206,21 @@ int rpc_new(lua_rpc* ret)
 {
 	// get message env
 	check_null(ret->env=llp_new_env(), (
-		print("the llp new env is error!\n"),
+		print("[rpc error]: the llp new env is error!\n"),
 		LP_FAIL));
 	// regedit rpc_lua.mes.lpb
 	check_fail(llp_reg_mes(ret->env, RPC_MES_LPB), (
-		print("reg %s is error!", RPC_MES_LPB), 
+		print("[rpc error]: reg %s is error!\n", RPC_MES_LPB), 
 		llp_free_env(ret->env),
 		LP_FAIL));
 	// new rpc_call message obj
 	check_null(ret->llp_call=llp_message_new(ret->env, RPC_CALL), (
-		print("not find message: %s \n", RPC_CALL),
+		print("[rpc error]: not find message: %s!\n", RPC_CALL),
 		llp_free_env(ret->env),
 		LP_FAIL));
 	// new rpc_ret message obj
 	check_null(ret->llp_ret=llp_message_new(ret->env, RPC_RET), (
-		print("not find message: %s\n", RPC_RET),
+		print("[rpc error]: not find message: %s!\n", RPC_RET),
 		llp_message_free(ret->llp_call), llp_free_env(ret->env),
 		LP_FAIL));
 
