@@ -22,7 +22,6 @@ typedef struct _lua_rpc{
 
 #define  RPC_MES_LPB    "rpc_lua.mes.lpb"
 
-#define CALL_RPC_ERROR  "[rpc error]:%s\n"
 enum {
 	e_nil,
 	e_string,

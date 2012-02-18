@@ -44,7 +44,15 @@ int lua_rpc_call(lua_State* L)
 	rpc_in(L, lua_gettop(L)-1, llp_Wmes_message(rpc_lua_call, "arg_lua_data"));			// get arglist
 	if(lua_type(L, 1)!=LUA_TSTRING)		// check func call is string
 	{
-		rpc_error(L, "[rpc error]: the first parameter is not rpc function string!");
+		lua_Debug ar;
+		char error_buf[256] = {0};
+		lua_getstack(L, 1, &ar);
+		lua_getinfo(L, "nlfS", &ar);
+		sprintf(error_buf, "%s <lua file: %s line: %d>", 
+				"[rpc error]: the first parameter is not rpc function string!",
+				ar.source, ar.currentline
+				);
+		rpc_error(L, error_buf);
 		return 0;
 	}
 	llp_Wmes_string(rpc_lua_call, "func_call", (char*)lua_tostring(L, 1));
@@ -72,6 +80,9 @@ LUALIB_API int rpc_call_ret(lua_State* L, slice* sl)
 LUALIB_API int rpc_loadfile(lua_State* L, const char* filename)
 {
 	int ret = luaL_loadfile(L, filename);
-	
-	return (ret)?(ret):(lua_resume(L, 0), 0);
+	return (ret)?
+		(
+			print("[rpc error]: %s\n", (char*)lua_tostring(L, -1)), 
+			ret
+		):(lua_resume(L, 0), 0);
 }
