@@ -27,19 +27,19 @@ public class LlpJava {
 	
 	public void regMessage(String mes) throws Exception 
 	{
-		if(LlpJavaNative.llpRegMes(env, LlpJavaNative.strByte(mes)) == 0)
+		if(LlpJavaNative.llpRegMes(env, mes) == 0)
 			throw new Exception("[LlpJavaNative RegMes]: regedit message \""+mes+"\" is error.");
 	}
 	
 	public void delMessage(String mes) throws Exception
 	{
-		if(LlpJavaNative.llpDelMes(env, LlpJavaNative.strByte(mes)) == 0)
+		if(LlpJavaNative.llpDelMes(env,mes) == 0)
 			throw new Exception("[LlpJavaNative DelMes]: delete message \""+mes+"\" is error.");
 	}
 	
 	public LlpMessage getMessage(String mes) throws Exception
 	{
-		long handle = LlpJavaNative.llpMessageNew(env, LlpJavaNative.strByte(mes));
+		long handle = LlpJavaNative.llpMessageNew(env, mes);
 		if( handle == 0)
 			throw new Exception("[LlpJavaNative NewMes]: get message \""+mes+"\" is error.");
 		LlpMessage llpMessage = new LlpMessage(handle, mes);
@@ -48,7 +48,7 @@ public class LlpJava {
 	
 	public LlpMessage getMessage(String mes, byte[] buff) throws Exception
 	{
-		long handle = LlpJavaNative.llpMessageNew(env, LlpJavaNative.strByte(mes));
+		long handle = LlpJavaNative.llpMessageNew(env, mes);
 		if( handle == 0 || buff == null)
 			throw new Exception("[LlpJavaNative NewMes]: get message \""+mes+"\" is error.");
 		LlpMessage llpMessage = new LlpMessage(handle, mes, buff);
