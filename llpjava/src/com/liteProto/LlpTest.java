@@ -9,7 +9,7 @@ public class LlpTest  {
 		// TODO Auto-generated method stub
 		LlpJava llpJava = new LlpJava();
 		
-		llpJava.regMessage("at.mes.lpb");
+		llpJava.regMessage("test.mes.lpb");
 		LlpMessage mes = llpJava.getMessage("at");
 		LlpMessage mes2= llpJava.getMessage("at");
 		long t1, t2;
@@ -27,12 +27,12 @@ public class LlpTest  {
 		t2 = System.currentTimeMillis();
 		System.out.println("end time= "+t2);
 		System.out.println("all time= "+(t2-t1));
-		/*
+	
 		System.out.println( "aa = "+mes2.readInt("aa")+
 							"\nbb= "+mes2.readInt("bb")+
-							"\ncc= "+mes.readString("cc")
+							"\ncc= "+mes2.readString("cc")
 						  );
-	*/	
+	
 		mes2.destory();
 		mes.destory();
 		llpJava.destory();

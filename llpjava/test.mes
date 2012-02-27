@@ -1,0 +1,12 @@
+message at{
+	int32 aa;
+	int32 bb;
+	string cc;
+	
+	message info {
+		int32 data1;
+		int32 data2;
+	}
+	
+	info[] iol;
+}
