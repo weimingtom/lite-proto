@@ -38,11 +38,10 @@ public class LlpJavaNative {
 	static native byte[] llpOutMessage(long lms); 
 	static native int    llpInMessage(byte[] in, long lms);
 	
-	/*
 	static {
 		System.loadLibrary("llp");
 	}
-	*/
+
 	/*
 	public static byte[] strByte(String str)
 	{ 
