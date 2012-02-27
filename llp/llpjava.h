@@ -26,26 +26,26 @@ JNIEXPORT void JNICALL Java_com_liteProto_LlpJavaNative_llpFreeEnv
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRegMes
- * Signature: (J[B)I
+ * Signature: (JLjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpRegMes
-  (JNIEnv *, jclass, jlong, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpDelMes
- * Signature: (J[B)I
+ * Signature: (JLjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpDelMes
-  (JNIEnv *, jclass, jlong, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpMessageNew
- * Signature: (J[B)J
+ * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_com_liteProto_LlpJavaNative_llpMessageNew
-  (JNIEnv *, jclass, jlong, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
@@ -66,106 +66,122 @@ JNIEXPORT void JNICALL Java_com_liteProto_LlpJavaNative_llpMessageFree
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesInt32
- * Signature: (J[BI)I
+ * Signature: (JLjava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesInt32
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesInt64
- * Signature: (J[BJ)I
+ * Signature: (JLjava/lang/String;J)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesInt64
-  (JNIEnv *, jclass, jlong, jbyteArray, jlong);
+  (JNIEnv *, jclass, jlong, jstring, jlong);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesFloat32
- * Signature: (J[BF)I
+ * Signature: (JLjava/lang/String;F)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesFloat32
-  (JNIEnv *, jclass, jlong, jbyteArray, jfloat);
+  (JNIEnv *, jclass, jlong, jstring, jfloat);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesFloat64
- * Signature: (J[BD)I
+ * Signature: (JLjava/lang/String;D)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesFloat64
-  (JNIEnv *, jclass, jlong, jbyteArray, jdouble);
+  (JNIEnv *, jclass, jlong, jstring, jdouble);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesString
- * Signature: (J[B[B)I
+ * Signature: (JLjava/lang/String;Ljava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesString
-  (JNIEnv *, jclass, jlong, jbyteArray, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring, jstring);
+
+/*
+ * Class:     com_liteProto_LlpJavaNative
+ * Method:    llpWmesStream
+ * Signature: (JLjava/lang/String;[B)I
+ */
+JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesStream
+  (JNIEnv *, jclass, jlong, jstring, jbyteArray);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpWmesMessage
- * Signature: (J[B)J
+ * Signature: (JLjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_com_liteProto_LlpJavaNative_llpWmesMessage
-  (JNIEnv *, jclass, jlong, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesInt32
- * Signature: (J[BI)I
+ * Signature: (JLjava/lang/String;I)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpRmesInt32
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesInt64
- * Signature: (J[BI)J
+ * Signature: (JLjava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL Java_com_liteProto_LlpJavaNative_llpRmesInt64
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesFloat32
- * Signature: (J[BI)F
+ * Signature: (JLjava/lang/String;I)F
  */
 JNIEXPORT jfloat JNICALL Java_com_liteProto_LlpJavaNative_llpRmesFloat32
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesFloat64
- * Signature: (J[BI)D
+ * Signature: (JLjava/lang/String;I)D
  */
 JNIEXPORT jdouble JNICALL Java_com_liteProto_LlpJavaNative_llpRmesFloat64
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesString
- * Signature: (J[BI)[B
+ * Signature: (JLjava/lang/String;I)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_liteProto_LlpJavaNative_llpRmesString
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
+
+/*
+ * Class:     com_liteProto_LlpJavaNative
+ * Method:    llpRmesStream
+ * Signature: (JLjava/lang/String;I)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_liteProto_LlpJavaNative_llpRmesStream
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesMessage
- * Signature: (J[BI)J
+ * Signature: (JLjava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL Java_com_liteProto_LlpJavaNative_llpRmesMessage
-  (JNIEnv *, jclass, jlong, jbyteArray, jint);
+  (JNIEnv *, jclass, jlong, jstring, jint);
 
 /*
  * Class:     com_liteProto_LlpJavaNative
  * Method:    llpRmesSize
- * Signature: (J[B)I
+ * Signature: (JLjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpRmesSize
-  (JNIEnv *, jclass, jlong, jbyteArray);
+  (JNIEnv *, jclass, jlong, jstring);
 
 /*
  * Class:     com_liteProto_LlpJavaNative

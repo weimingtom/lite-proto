@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LLP_EXPORTS" /YX /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LLP_EXPORTS" /YX /FD /GZ /c
 # ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "../" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "LLP_EXPORTS" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -100,10 +100,6 @@ SOURCE=.\lib_io.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib_jni.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\lib_lp.c
 # End Source File
 # Begin Source File
@@ -116,16 +112,16 @@ SOURCE=.\lib_table.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\llpjava.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\lp_conf.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=.\com_liteProto_LlpJavaNative.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\jni.h
@@ -153,6 +149,10 @@ SOURCE=.\lib_mes.h
 # Begin Source File
 
 SOURCE=.\lib_table.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\llpjava.h
 # End Source File
 # Begin Source File
 

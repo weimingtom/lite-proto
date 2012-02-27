@@ -1,5 +1,5 @@
 #include "llp.h"
-#include "com_liteProto_LlpJavaNative.h"
+#include "llpjava.h"
 
 /*
 static char* jstringTostring(JNIEnv* env, jstring jstr)
@@ -33,7 +33,7 @@ static jstring stoJstring(JNIEnv* env, const char* pat)
 }
 */
 
-static jbyteArray sliceTojbyteArray(JNIEnv* env, slice* sl)
+jbyteArray sliceTojbyteArray(JNIEnv* env, slice* sl)
 {
 	if(sl==NULL)
 		return (*env)->NewByteArray(env, 0);
@@ -58,7 +58,7 @@ static jbyteArray stringTojbyteArray(JNIEnv* env, char* str)
 	}
 }
 
-static void jbyteArrayToSlice(JNIEnv* env, jbyteArray jarray, slice* sl_out)
+void jbyteArrayToSlice(JNIEnv* env, jbyteArray jarray, slice* sl_out)
 {
 	if(sl_out==NULL)
 		return;
@@ -81,28 +81,28 @@ Java_com_liteProto_LlpJavaNative_llpFreeEnv(JNIEnv* jenv, jclass js, jlong env)
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRegMes(JNIEnv* jenv, jclass js, jlong env, jbyteArray mesName)
+Java_com_liteProto_LlpJavaNative_llpRegMes(JNIEnv* jenv, jclass js, jlong env, jstring mesName)
 {
 	jint ret = 0;
-	char* mes_name = (char*)((*jenv)->GetByteArrayElements(jenv, mesName, JNI_FALSE));
+	char* mes_name = (char*)((*jenv)->GetStringUTFChars(jenv, mesName, NULL));
 	ret = (jint)(llp_reg_mes((llp_env*)env, mes_name));
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpDelMes(JNIEnv* jenv, jclass js, jlong env, jbyteArray mesName)
+Java_com_liteProto_LlpJavaNative_llpDelMes(JNIEnv* jenv, jclass js, jlong env, jstring mesName)
 {
 	jint ret = 0;
-	char* mes_name = (char*)((*jenv)->GetByteArrayElements(jenv, mesName, JNI_FALSE));
+	char* mes_name = (char*)((*jenv)->GetStringUTFChars(jenv, mesName, NULL));
 	ret = (jint)(llp_del_mes((llp_env*)env, mes_name));
 	return ret;
 }
 
 JNIEXPORT jlong JNICALL 
-Java_com_liteProto_LlpJavaNative_llpMessageNew(JNIEnv* jenv, jclass js, jlong env, jbyteArray mesName)
+Java_com_liteProto_LlpJavaNative_llpMessageNew(JNIEnv* jenv, jclass js, jlong env, jstring mesName)
 {
 	jlong ret = 0;
-	char* mes_name = (char*)((*jenv)->GetByteArrayElements(jenv, mesName, JNI_FALSE));
+	char* mes_name = (char*)((*jenv)->GetStringUTFChars(jenv, mesName, NULL));
 	ret = (jlong)(llp_message_new((llp_env*)env, mes_name));
 	return ret;
 }
@@ -120,120 +120,138 @@ Java_com_liteProto_LlpJavaNative_llpMessageFree(JNIEnv* jenv, jclass js, jlong i
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesInt32(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint number)
+Java_com_liteProto_LlpJavaNative_llpWmesInt32(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint number)
 {
 	jint ret = 0;
-	char* filede_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filede_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = llp_Wmes_int32((llp_mes*)lm, filede_str, (llp_int32)number);
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesInt64(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jlong number)
+Java_com_liteProto_LlpJavaNative_llpWmesInt64(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jlong number)
 {
 	jint ret = 0;
-	char* filede_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filede_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = llp_Wmes_int64((llp_mes*)lm, filede_str, (llp_int64)number);
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesFloat32(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jfloat number)
+Java_com_liteProto_LlpJavaNative_llpWmesFloat32(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jfloat number)
 {
 	jint ret = 0;
-	char* filede_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filede_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = llp_Wmes_float32((llp_mes*)lm, filede_str, (llp_float32)number);
 	return ret;
 }
 
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesFloat64(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jdouble number)
+Java_com_liteProto_LlpJavaNative_llpWmesFloat64(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jdouble number)
 {
 	jint ret = 0;
-	char* filede_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filede_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = llp_Wmes_float64((llp_mes*)lm, filede_str, (llp_float64)number);
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesString(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jbyteArray jstr)
+Java_com_liteProto_LlpJavaNative_llpWmesString(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jstring jstr)
 {
 	jint ret =0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
-	char* str = (char*)((*jenv)->GetByteArrayElements(jenv, jstr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
+	char* str = (char*)((*jenv)->GetStringUTFChars(jenv, jstr, NULL));
 	ret = llp_Wmes_string((llp_mes*)lm, filed_str, str);
 	return ret;
 }
 
+JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesStream(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jbyteArray jsl)
+{
+	slice sl = {0};
+	jint ret =0;
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
+	jbyteArrayToSlice(jenv, jsl, &sl);
+	return llp_Wmes_stream((llp_mes*)lm, filed_str, sl.sp, sl.sp_size);
+}
+
 JNIEXPORT jlong JNICALL 
-Java_com_liteProto_LlpJavaNative_llpWmesMessage(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr)
+Java_com_liteProto_LlpJavaNative_llpWmesMessage(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr)
 {
 	jlong ret = 0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jlong)(llp_Wmes_message((llp_mes*)lm, filed_str));
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesInt32(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesInt32(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	jint ret = 0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jint)llp_Rmes_int32((llp_mes*)lm, filed_str, (unsigned int)alInx);
 	return ret;
 }
 
 JNIEXPORT jlong JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesInt64(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesInt64(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	jlong ret = 0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jlong)llp_Rmes_int64((llp_mes*)lm, filed_str, (unsigned int)alInx);
 	return ret;
 }
 
 JNIEXPORT jfloat JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesFloat32(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesFloat32(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	jfloat ret = 0.0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jfloat)(llp_Rmes_float32((llp_mes*)lm, filed_str, (unsigned int)alInx));
 	return ret;
 }
 
 JNIEXPORT jdouble JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesFloat64(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesFloat64(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	jdouble ret = 0.0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jdouble)llp_Rmes_float64((llp_mes*)lm, filed_str, (unsigned int)alInx);
 	return ret;
 }
 
 JNIEXPORT jbyteArray JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesString(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesString(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	char* rets = NULL;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	rets = llp_Rmes_string((llp_mes*)lm, filed_str, (unsigned int)alInx);
 	return stringTojbyteArray(jenv, rets);
 }
 
+JNIEXPORT jbyteArray JNICALL Java_com_liteProto_LlpJavaNative_llpRmesStream(JNIEnv * jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
+{
+	slice* ret = NULL;
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
+	ret = llp_Rmes_stream((llp_mes*)lm, filed_str, (unsigned int)alInx);
+
+	return sliceTojbyteArray(jenv, ret);
+}
+
 JNIEXPORT jlong JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesMessage(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr, jint alInx)
+Java_com_liteProto_LlpJavaNative_llpRmesMessage(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jint alInx)
 {
 	jlong ret = 0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jlong)(llp_Rmes_message((llp_mes*)lm, filed_str, (unsigned int)alInx));
 	return ret;
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRmesSize(JNIEnv* jenv, jclass js, jlong lm, jbyteArray filedStr)
+Java_com_liteProto_LlpJavaNative_llpRmesSize(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr)
 {
 	jint ret = 0;
-	char* filed_str = (char*)((*jenv)->GetByteArrayElements(jenv, filedStr, JNI_FALSE));
+	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	ret = (jint)(llp_Rmes_size((llp_mes*)lm, filed_str));
 	return ret;
 }
