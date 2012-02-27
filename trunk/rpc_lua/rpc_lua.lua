@@ -14,10 +14,15 @@ end
 
 
 
-function func(a)
+function func(a, b)
 	print('here = '..a..b)
 	return a, a+b
 end
+
+function add(a, b)
+	return a+b
+end
+
 
 
 rpc.reg_func = {
@@ -30,8 +35,8 @@ rpc.reg_func = {
 -- call  rpc func
 
 	print('call rpc func ...\n')
-	print(rpc.call("func", 1))
-
+	print(rpc.call('func', 1, 2))
+--	print(rpc.call('add', 4, 5))
 --[[
 	print("call rpc add...\n")
 	print(rpc.call('add', 4, 5))
