@@ -43,7 +43,6 @@ llp_value* lib_array_inx(llp_array* al, unsigned int inx)
 	return &(al->vp[inx]);
 }
 
-typedef  void (*al_free)(llp_value*);
 void lib_array_clr(llp_array* al, al_free free_func)
 {
 	size_t i=0;
@@ -56,13 +55,12 @@ void lib_array_clr(llp_array* al, al_free free_func)
 	al->lens =0;
 }
 
-int lib_array_free(llp_array* al, al_free free_func)
+void lib_array_free(llp_array* al, al_free free_func)
 {
-	check_null(al, LP_FAIL);
+	if(al==NULL)
+		return;
 	lib_array_clr(al, free_func);
 	if(al->vp != al->vt)
 		free(al->vp);
 	memset(al, 0, sizeof(*al));
-
-	return LP_TRUE;
 }

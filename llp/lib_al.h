@@ -28,6 +28,6 @@ int lib_array_new(llp_array* al_out);
 int lib_array_add(llp_array* al, llp_value* llp_v);
 llp_value* lib_array_inx(llp_array* al, unsigned int inx);
 void lib_array_clr(llp_array* al, al_free free_func);
-int lib_array_free(llp_array* al, al_free free_func);
+void lib_array_free(llp_array* al, al_free free_func);
 
 #endif

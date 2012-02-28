@@ -40,7 +40,8 @@ typedef struct _t_reg_mes{
 */
 }t_reg_mes;
 
-typedef struct _t_def_mes;
+
+struct _t_def_mes;
 typedef struct _t_Mfield{
 	byte tag;					// tag
 	struct _t_def_mes* tms;		// if type message 
