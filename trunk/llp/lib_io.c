@@ -207,9 +207,8 @@ int sl_Rstring(slice* in, char** str_p)
 int sl_Rstream(slice* in, slice* sl)
 {
 	slice ret= {0};
-	size_t i=0;
 
-	check_fail(sl_Rint32(in, &ret.sp_size), LP_FAIL);
+	check_fail(sl_R32(in, &ret.sp_size), LP_FAIL);
 	if(sl_emp(in)<ret.sp_size)
 		return LP_FAIL;
 	

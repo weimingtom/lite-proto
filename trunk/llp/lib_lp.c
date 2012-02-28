@@ -57,7 +57,7 @@ int llp_reg_mes(llp_env* env, char* mes_name)
 	sl.b_sp = sl.sp;
 	f_read(sl.sp, 1, sl.sp_size, fd);
 	f_close(fd);
-	if( lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)) )
+	if( (lv=(lp_value*)lib_table_add(&env->mes, lib_Stable_add(&env->mesN, mes_name)))!= NULL )
 	{
 		check_fail( llp_reg_mes_value(env, &lv->value.reg_mesV, &sl), 
 					(llp_del_mes(env, mes_name), free(sl.b_sp), LP_FAIL)
