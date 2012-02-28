@@ -2,9 +2,9 @@
 #define _LLP_H_
 #include "lp_conf.h"
 
+
 typedef struct _llp_env llp_env;
 typedef struct _llp_mes llp_mes;
-
 // --------env
 llp_env* llp_new_env();
 void llp_free_env(llp_env* p);
@@ -27,7 +27,7 @@ int llp_Wmes_string(llp_mes* lm, char* filed_str, char* str);
 int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned int len);
 llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str);
 
-// ---------read a message object
+// ---------read a me   ssage object
 llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx);
 llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx);
