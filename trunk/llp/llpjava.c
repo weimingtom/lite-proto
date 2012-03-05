@@ -62,7 +62,7 @@ void jbyteArrayToSlice(JNIEnv* env, jbyteArray jarray, slice* sl_out)
 {
 	if(sl_out==NULL)
 		return;
-	sl_out->b_sp = (*env)->GetByteArrayElements(env, jarray, 0);
+	sl_out->b_sp = (byte*)((*env)->GetByteArrayElements(env, jarray, 0));
 	sl_out->sp = sl_out->b_sp;
 	sl_out->sp_size =  (size_t)((*env)->GetArrayLength(env, jarray));
 }
@@ -169,7 +169,6 @@ Java_com_liteProto_LlpJavaNative_llpWmesString(JNIEnv* jenv, jclass js, jlong lm
 JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesStream(JNIEnv* jenv, jclass js, jlong lm, jstring filedStr, jbyteArray jsl)
 {
 	slice sl = {0};
-	jint ret =0;
 	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	jbyteArrayToSlice(jenv, jsl, &sl);
 	return llp_Wmes_stream((llp_mes*)lm, filed_str, sl.sp, sl.sp_size);
