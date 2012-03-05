@@ -2,11 +2,8 @@
 #define  _LIB_TABLE_H_
 #include "lp_conf.h"
 
-#ifdef WIN32 
-typedef struct _lp_value;
-#else
+
 struct _lp_value;
-#endif
 typedef struct _llp_tableO{
 	char* name;
 	struct _lp_value* value;

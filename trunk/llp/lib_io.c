@@ -208,7 +208,7 @@ int sl_Rstream(slice* in, slice* sl)
 {
 	slice ret= {0};
 
-	check_fail(sl_R32(in, &ret.sp_size), LP_FAIL);
+	check_fail(sl_R32(in, (llp_uint32*)(&ret.sp_size)), LP_FAIL);
 	if(sl_emp(in)<ret.sp_size)
 		return LP_FAIL;
 	
