@@ -141,8 +141,8 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 	check_fail(sl_Rstr(sl, out_name), LP_FAIL);									// read message name
 	*out_name = lib_Stable_add(&env->mesN, *out_name);							// add name
 	check_null(lds=(lp_value*)lib_table_add(&env->dmes, *out_name), LP_FAIL);	// begin add message body
-	check_fail(sl_Ruint(sl, (size_t*)(&lds->value.def_mesV.message_id)), LP_FAIL);			// read id
-	check_fail(sl_Ruint(sl, (size_t*)(&lds->value.def_mesV.message_count)), LP_FAIL);		// read message count
+	check_fail(sl_Ruint(sl, &(lds->value.def_mesV.message_id)), LP_FAIL);			// read id
+	check_fail(sl_Ruint(sl, &(lds->value.def_mesV.message_count)), LP_FAIL);		// read message count
 	check_fail(llp_read_filed(env, &lds->value.def_mesV, sl), LP_FAIL);			// read filed
 
 	return LP_TRUE;
