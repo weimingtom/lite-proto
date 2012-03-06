@@ -52,7 +52,7 @@ typedef unsigned char byte;
 typedef struct _slice{
 	byte* sp;
 	byte* b_sp;
-	size_t sp_size;
+	llp_int32 sp_size;
 }slice;
 
 
