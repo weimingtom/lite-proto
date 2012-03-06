@@ -94,7 +94,7 @@ int cls_lex_env(lp_lex_env* le)
 int get_lex_env(lp_lex_env* le)
 {
 	int i=0;
-
+	
 	// init key
 	check_null(le, LP_FAIL);
 	for(i=0; lp_sk[i].s_key; i++)
