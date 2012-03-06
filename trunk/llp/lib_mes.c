@@ -169,7 +169,7 @@ int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned i
 {
 	slice temp = {0};
 	temp.b_sp = temp.sp = (byte*)ptr;
-	temp.sp_size = (size_t)len;
+	temp.sp_size = (llp_int32)len;
 	
 	check_fail(llp_Wmes(lm, filed_str, lpt_stream, (void*)(&temp)), LP_FAIL);
 	return LP_TRUE;
