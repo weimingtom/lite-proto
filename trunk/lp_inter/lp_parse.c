@@ -72,9 +72,9 @@ int lp_parse(lp_parse_env* lp_p)
 	return LP_TRUE;
 }
 
-int lp_parse_push(lp_parse_env* lp_p, void* data, size_t len)
+int lp_parse_push(lp_parse_env* lp_p, void* data, unsigned int len)
 {
-	size_t i=0;
+	unsigned int i=0;
 	check_null(data, LP_FAIL);
 	
 	for(i=0; i<len; i++)
@@ -85,7 +85,7 @@ int lp_parse_push(lp_parse_env* lp_p, void* data, size_t len)
 
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 {
-	size_t out_count = 0;
+	unsigned int out_count = 0;
 	int a_ret = LP_FAIL;
 	int ret = LP_FAIL;
 	unsigned int id = 0;
