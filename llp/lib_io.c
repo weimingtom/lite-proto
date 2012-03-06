@@ -92,11 +92,11 @@ int sl_Rbyte(slice* sl, byte* out)
 	return LP_TRUE;
 }
 
-int  sl_Ruint(slice* sl, size_t* out)
+int  sl_Ruint(slice* sl, unsigned int* out)
 {
 	check_sl(sl);
-	*out = *((size_t*)(sl->sp));
-	sl->sp += sizeof(size_t);
+	*out = *((unsigned int*)(sl->sp));
+	sl->sp += sizeof(unsigned int);
 	check_sl(sl);
 	
 	return LP_TRUE;
