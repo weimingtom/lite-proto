@@ -186,7 +186,7 @@ int sl_Wstring(slice* out, char* str)
 int sl_Wstream(slice* out, slice* sl)
 {
 	size_t i=0;
-	check_fail(sl_Wint32(out, sl->sp_size), LP_FAIL);
+	check_fail(sl_Wint32(out, (llp_int32)(sl->sp_size)), LP_FAIL);
 	for(i=0; i<sl->sp_size; i++)
 	{
 		sl_Wbyte(out, sl->b_sp[i]);
