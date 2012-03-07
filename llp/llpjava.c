@@ -67,6 +67,14 @@ void jbyteArrayToSlice(JNIEnv* env, jbyteArray jarray, slice* sl_out)
 	sl_out->sp_size =  (size_t)((*env)->GetArrayLength(env, jarray));
 }
 
+void RleaseJbyteArrayToSlice(JNIEnv* env, jbyteArray jarray, slice* sl)
+{
+	if(sl == NULL && sl->b_sp)
+		return;
+
+	(*env)->ReleaseByteArrayElements(env, jarray, (jbyte*)sl->b_sp, 0);
+}
+
 
 JNIEXPORT jlong JNICALL 
 Java_com_liteProto_LlpJavaNative_llpNewEnv(JNIEnv* jenv, jclass js)
@@ -182,6 +190,7 @@ JNIEXPORT jint JNICALL Java_com_liteProto_LlpJavaNative_llpWmesStream(JNIEnv* je
 	char* filed_str = (char*)((*jenv)->GetStringUTFChars(jenv, filedStr, NULL));
 	jbyteArrayToSlice(jenv, jsl, &sl);
 	ret = llp_Wmes_stream((llp_mes*)lm, filed_str, sl.sp, sl.sp_size);
+	RleaseJbyteArrayToSlice(jenv, jsl, &sl);
 	(*jenv)->ReleaseStringUTFChars(jenv, filedStr, filed_str);
 	return ret;
 }
@@ -287,7 +296,10 @@ JNIEXPORT jint JNICALL
 Java_com_liteProto_LlpJavaNative_llpInMessage(JNIEnv* jenv, jclass js, jbyteArray jba, jlong lm)
 {
 	slice sl_in = {0};
+	jint ret = 0;
 	jbyteArrayToSlice(jenv, jba, &sl_in);
-	return (jint)(llp_in_message(&sl_in, (llp_mes*)lm));
+	ret = (jint)(llp_in_message(&sl_in, (llp_mes*)lm));
+	RleaseJbyteArrayToSlice(jenv, jba, &sl_in);
+	return ret;
 }
 
