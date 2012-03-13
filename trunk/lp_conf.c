@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+static size_t mem_lens = 0;
 // 获取文件字节大小
 long fsize( FILE *fp)
 {
@@ -21,11 +22,17 @@ long fsize( FILE *fp)
 
 void* lp_malloc(size_t len)
 {
+	mem_lens++;
 	return malloc(len);
 }
 
 void lp_free(void* p)
 {
+	mem_lens--;
 	free(p);
 }
 
+void print_mem()
+{
+	printf("mem = %d\n", mem_lens);
+}
