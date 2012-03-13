@@ -52,7 +52,7 @@ typedef unsigned char byte;
 typedef struct _slice{
 	byte* sp;
 	byte* b_sp;
-	llp_int32 sp_size;
+	unsigned int sp_size;
 }slice;
 
 
@@ -65,4 +65,5 @@ typedef struct _slice{
 void* lp_malloc(size_t len);
 void lp_free(void* p);
 long fsize( FILE *fp);
+void print_mem();
 #endif
