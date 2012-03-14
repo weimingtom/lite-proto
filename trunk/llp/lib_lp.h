@@ -49,10 +49,10 @@ typedef struct _t_Mfield{
 
 // def message body
 typedef struct _t_def_mes{
-	unsigned int	message_id;			// message id
+	llp_uint32		message_id;			// message id
 	llp_table		message_filed;		// filed table
 	t_Mfield*		message_tfl;		// filed tag list
-	unsigned int	message_count;		// filed count
+	llp_uint32		message_count;		// filed count
 }t_def_mes;
 
 // def field at message
