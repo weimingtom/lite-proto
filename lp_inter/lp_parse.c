@@ -19,7 +19,7 @@
 #define lp_watch(p, t)	do{lp_check(p, t); ((p)->read_inx)++;}while(0)
 #define lp_get_token(p, t, d)	do{lp_check((p), (t)); (d)=lp_at_token(p); ((p)->read_inx)++;}while(0)
 
-static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, size_t* out_count, lp_table* ide_table, char* at_mes);
+static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes);
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes);
 static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name);
 
@@ -72,6 +72,22 @@ int lp_parse(lp_parse_env* lp_p)
 	return LP_TRUE;
 }
 
+void lp_parse_push_uint32(lp_parse_env* lp_p, llp_uint32 data)
+{
+	byte temp = 0;
+	temp = (byte)(data & 0x000000FF);
+	lp_list_add(&lp_p->parse_out, &temp);
+
+	temp = (byte)(data & ((0x0000FF00)>>8));
+	lp_list_add(&lp_p->parse_out, &temp);
+
+	temp = (byte)(data & ((0x00FF0000)>>16));
+	lp_list_add(&lp_p->parse_out, &temp);
+
+	temp = (byte)(data & ((0xFF000000)>>24));
+	lp_list_add(&lp_p->parse_out, &temp);
+}
+
 int lp_parse_push(lp_parse_env* lp_p, void* data, unsigned int len)
 {
 	unsigned int i=0;
@@ -85,10 +101,10 @@ int lp_parse_push(lp_parse_env* lp_p, void* data, unsigned int len)
 
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 {
-	unsigned int out_count = 0;
+	llp_uint32 out_count = 0;
 	int a_ret = LP_FAIL;
 	int ret = LP_FAIL;
-	unsigned int id = 0;
+	llp_uint32 id = 0;
 	lp_token* temp = NULL;
 	lp_token* mes_name = NULL;
 	lp_token* mes_id = NULL;
@@ -139,12 +155,11 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 		break;
 	}
 	
-	id = (mes_id)?(atoi((char*)mes_id->name.str.list_p)):(0);
+	id = (llp_uint32)((mes_id)?(atoi((char*)mes_id->name.str.list_p)):(0));
 
 	lp_parse_push(lp_p, mes.str.list_p, mes.str.list_len+1);	// write message name
-	lp_parse_push(lp_p, &id, sizeof(id));						// write message id
-	lp_parse_push(lp_p, &out_count, sizeof(out_count));			// write message count
-//	lp_parse_push(lp_p, &temp_out.list_len, sizeof(size_t));	// write message body lens
+	lp_parse_push_uint32(lp_p, id);								// write message id
+	lp_parse_push_uint32(lp_p, out_count);						// write message count
 	lp_parse_push(lp_p, temp_out.list_p, temp_out.list_len);	// write message body
 	
 	ret = LP_TRUE;
@@ -156,7 +171,7 @@ C_END:
 	return ret;
 }
 
-static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, size_t* out_count, lp_table* ide_table, char* at_mes)
+static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes)
 {
 	size_t back_out_lens = 0;
 	byte tag = 0;
