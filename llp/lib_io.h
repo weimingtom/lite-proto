@@ -18,10 +18,10 @@ typedef enum _e_ot{
 	o_stream
 }e_ot;
 
-int sl_Rstr(slice* sl, char** out);
-int sl_Rlens(slice* sl, unsigned int* out);
+int sl_Rstr(slice* sl,  char** out);
+int sl_Rlens(slice* sl, llp_uint32* out);
 int sl_Rbyte(slice* sl, byte* out);
-int sl_Ruint(slice* sl, unsigned int* out);
+int sl_Ruint(slice* sl, llp_uint32* out);
 
 int llp_out_close(slice* out);
 int llp_out_clr(slice* out);

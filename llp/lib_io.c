@@ -70,11 +70,10 @@ int sl_Rstr(slice* sl, char** out)
 	return LP_TRUE;
 }	
 
-int sl_Rlens(slice* sl, unsigned int* out)
+int sl_Rlens(slice* sl, llp_uint32* out)
 {
 	check_sl(sl);
-	*out = *((unsigned int*)(sl->sp));
-	sl->sp += sizeof(unsigned int);
+	check_fail(sl_Ruint(sl, out), LP_FAIL);
 	sl->sp += (*out);
 	check_sl(sl);
 	sl->sp -= (*out);
@@ -92,11 +91,16 @@ int sl_Rbyte(slice* sl, byte* out)
 	return LP_TRUE;
 }
 
-int  sl_Ruint(slice* sl, unsigned int* out)
+int  sl_Ruint(slice* sl, llp_uint32* out)
 {
 	check_sl(sl);
-	*out = *((unsigned int*)(sl->sp));
-	sl->sp += sizeof(unsigned int);
+
+	*out  = (unsigned int)(*(sl->sp));
+	*out |= (unsigned int)((*(sl->sp+1))<<8);
+	*out |= (unsigned int)((*(sl->sp+2))<<16);
+	*out |= (unsigned int)((*(sl->sp+3))<<24);
+	
+	sl->sp += 4;
 	check_sl(sl);
 	
 	return LP_TRUE;
@@ -133,7 +137,12 @@ int sl_Rint32(slice* in, llp_int32* num_p)
 
 int sl_Wfloat32(slice* out, llp_float32 num)
 {
-	return sl_W32(out, *((llp_uint32*)(&num)) );
+	union {
+		llp_float32 nf;
+		llp_uint32 ne;
+	}v;
+	v.nf = num;
+	return sl_W32(out, v.ne);
 }
 
 int sl_Rfloat32(slice* in, llp_float32* num_p)
@@ -164,7 +173,12 @@ int sl_Rint64(slice* in, llp_int64* num_p)
 
 int sl_Wfloat64(slice* out, llp_float64 num)
 {
-	return sl_W64(out, *((llp_uint64*)(&num)) );
+	union {
+		llp_float64 nf;
+		llp_uint64  ne;
+	}v;
+	v.nf = num;
+	return sl_W64(out, v.ne);
 }
 
 int sl_Rfloat64(slice* in, llp_float64* num_p)
