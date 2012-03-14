@@ -78,13 +78,13 @@ void lp_parse_push_uint32(lp_parse_env* lp_p, llp_uint32 data)
 	temp = (byte)(data & 0x000000FF);
 	lp_list_add(&lp_p->parse_out, &temp);
 
-	temp = (byte)(data & ((0x0000FF00)>>8));
+	temp = (byte)( (data&(0x0000FF00))>>8 );
 	lp_list_add(&lp_p->parse_out, &temp);
 
-	temp = (byte)(data & ((0x00FF0000)>>16));
+	temp = (byte)( (data&(0x00FF0000))>>16 );
 	lp_list_add(&lp_p->parse_out, &temp);
 
-	temp = (byte)(data & ((0xFF000000)>>24));
+	temp = (byte)( (data&(0xFF000000))>>24 );
 	lp_list_add(&lp_p->parse_out, &temp);
 }
 
