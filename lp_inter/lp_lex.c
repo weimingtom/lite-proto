@@ -180,8 +180,11 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 		case l_text:
 			{
 				char lc = now_char(buff);
-				for(; lc && lc!='\n'; next_char(buff))
+				for(; lc && lc!='\n'; )
+				{
+					next_char(buff);
 					lc = now_char(buff);
+				}
 			}
 			break;
 		case  l_n:
