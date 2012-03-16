@@ -1,38 +1,41 @@
-
+ï»¿#
 # rpc_lua_value 
+#
 
-# lua »ù´¡Êı¾İÀàĞÍ·â×°
+
+# lua æ•°æ®ç±»å‹
 message rpc_lua_data {
+  # lua table
 	message rpc_lua_table {
+	 # table ä¸­çš„ç»„å‘˜ç»“æ„
 		message rpc_lua_table_one {
-			string s_key;
-			int32  n_key;
-			rpc_lua_data value;
+			string s_key;  # key ä¸ºstring
+			int32  n_key;  # key ä¸ºnumber
+			rpc_lua_data value; # value
 		}
-		rpc_lua_table_one[] table_value;
+		rpc_lua_table_one[] table_value; # table ç»„å‘˜
 	}
 	
-	int32   			rpc_data_type;	 # luaµÄÀàĞÍ nil: 0, string: 1, number: 2, bool: 3, table: 4
-	int32   			rpc_number;			 # 
-	string  			rpc_str;				  
-	int32   			rpc_bool;         
-	rpc_lua_table	rpc_table;
+	int32   			rpc_data_type;   # luaçš„ç±»å‹ nil: 0, string: 1, number: 2, bool: 3, table: 4
+	int32   			rpc_number;      # number å€¼
+	string  			rpc_str;         # string å€¼
+	int32   			rpc_bool;        # bool   å€¼
+	rpc_lua_table	rpc_table;       # table  å€¼
 }
 
-#  º¯Êı ·µ»ØÖµ/²ÎÊıÁĞ±í Êı¾İ
+#  å‡½æ•° è¿”å›å€¼/å‚æ•°åˆ—è¡¨
 message rpc_lua {
-	rpc_lua_data[] lua_data;
+	rpc_lua_data[] lua_data;   
 }
 
-
-# rpc  º¯Êıµ÷ÓÃ
+# rpc  å‡½æ•°è°ƒç”¨
 message rpc_lua_call {
-	string func_call;
-	rpc_lua arg_lua_data;
+	string func_call;      # è°ƒç”¨å‡½æ•°å
+	rpc_lua arg_lua_data;  # å‚æ•°åˆ—è¡¨
 }
 
-#rpc º¯Êı·µ»Ø
+#rpc å‡½æ•°è¿”å›
 message rpc_lua_ret {
-	string ret_error;
-	rpc_lua ret_lua_data;
+	string ret_error;       # é”™è¯¯ä¿¡æ¯
+	rpc_lua ret_lua_data;   # è¿”å›å€¼æ•°æ®
 }
