@@ -9,7 +9,7 @@ public class LlpTest  {
 		// TODO Auto-generated method stub
 		LlpJava llpJava = new LlpJava();
 		
-		llpJava.regMessage("test.mes.lpb");
+		llpJava.regMessage("testLlp.mes.lpb");
 		LlpMessage mes = llpJava.getMessage("at");
 		LlpMessage mes2= llpJava.getMessage("at");
 		long t1, t2;
