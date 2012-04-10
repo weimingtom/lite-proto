@@ -48,7 +48,7 @@ int lp_inter(lp_env* lp, char* name)
 		goto FAIL_END;
 
 	lp_string_cats(&t_name, ".lpb");
-	fp = fopen((char*)t_name.str.list_p, "w");
+	fp = fopen((char*)t_name.str.list_p, "wb");
 	if(fp)
 	{
 		fwrite(lp->parse_envV.parse_out.list_p, lp->parse_envV.parse_out.list_len, 1, fp);
@@ -100,9 +100,8 @@ int main(int argc, char* args[])
 #ifndef _DEBUG
 	lp_arg(lp, args);
 #else
-	lp_inter(lp, "F:\\code\\lp\\test.mes");
+	lp_inter(lp, "F:\\happy_farm_net\\happy_farm\\lpb\\farm.mes");
 #endif
 	free_lp_env(lp);
-	print("\n\n----memory----\nmem = %d\n", mem);
 	return 0;
 }
