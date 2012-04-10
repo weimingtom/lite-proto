@@ -3,7 +3,6 @@
 #include "lp_conf.h"
 
 static void lib_tableOne_free(llp_table* lt, llp_tableO* lto);
-int lib_table_free(llp_table* lt);
 
 
 unsigned int _L_BKDRHash(char *str, int len)
