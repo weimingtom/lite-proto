@@ -52,8 +52,7 @@ typedef struct _llp_kv {
 llp_map* lib_map_new();
 void lib_map_free(llp_map* l_map);
 int lib_map_add(llp_map* l_map, llp_kv* kv);
-void* lib_map_find(llp_map* l_map, const char* key);
-
+void** lib_map_find(llp_map* l_map, const char* key);
 
 int lib_table_new(llp_table* lt, size_t size, byte type);
 struct _lp_value* lib_table_add(llp_table* lt, char* name);

@@ -3,18 +3,148 @@
 #include "lp_conf.h"
 
 static void lib_tableOne_free(llp_table* lt, llp_tableO* lto);
+static size_t calc_hash(const char* name);
+#define _L_BKDRHash(name, len)	((int)(calc_hash(name)%len))
 
+#define DEF_MAP_LENS		128
 
-unsigned int _L_BKDRHash(char *str, int len)
+// read from pbc
+static size_t calc_hash(const char* name)
 {
-	unsigned int seed = 131; 
-	unsigned int hash = 0;
-	
-	while (*str)
-		hash = hash * seed + (*str++);
-	
-	return (hash & 0x7FFFFFFF)%(len);
+	size_t len = strlen(name);
+	size_t h = len;
+	size_t step = (len>>5)+1;
+	size_t i;
+	for (i=len; i>=step; i-=step)
+		h = h ^ ((h<<5)+(h>>2)+(size_t)name[i-1]);
+	return h;
 }
+
+llp_map* lib_map_new()
+{
+	llp_map* ret = (llp_map*)malloc(sizeof(llp_map));
+	ret->size = DEF_MAP_LENS;
+	ret->cap = 0;
+	ret->table = (llp_slot*)malloc(sizeof(llp_slot)*DEF_MAP_LENS);
+	memset(ret->table, 0, sizeof(llp_slot)*DEF_MAP_LENS);
+
+	return ret;
+}
+
+
+void lib_map_free(llp_map* l_map)
+{
+	if(l_map)
+	{
+		free(l_map->table);
+		free(l_map);
+	}
+}
+
+
+static void lib_map_reflush(llp_map* l_map)
+{
+	size_t i, new_size=l_map->size+DEF_MAP_LENS, hash;
+	llp_slot* new_slot = (llp_slot*)malloc(sizeof(llp_slot)*new_size);
+	memset(new_slot, 0, sizeof(llp_slot)*new_size);
+
+	for(i=0; i<l_map->size; i++)
+	{
+		hash = l_map->table[i].hash % new_size;
+		if(new_slot[hash].key == NULL)
+		{
+			new_slot[hash].key = l_map->table[i].key;
+			new_slot[hash].hash = l_map->table[i].hash;
+			new_slot[hash].vp = l_map->table[i].vp;
+		}
+		else
+		{
+			size_t emp = hash;
+			for(;new_slot[emp].key!=NULL;)
+				emp = (emp + 1) % new_size;
+
+			new_slot[emp].key = l_map->table[i].key;
+			new_slot[emp].hash = l_map->table[i].hash;
+			new_slot[emp].vp = l_map->table[i].vp;
+			new_slot[emp].next = new_slot[hash].next;
+			new_slot[hash].next = emp+1;
+		}
+	}
+
+	free(l_map->table);
+	l_map->size = new_size;
+	l_map->table = new_slot;
+}
+
+
+void** lib_map_find(llp_map* l_map, const char* key)
+{
+	size_t hash_full, hash;
+	check_null(l_map, NULL);
+	check_null(key, NULL);
+	
+	hash_full = calc_hash(key);
+	hash = hash_full % l_map->size;
+
+	for(;l_map->table[hash].key!=NULL;)
+	{	
+		if(l_map->table[hash].hash==hash_full && strcmp(key, l_map->table[hash].key)==0)
+			return &(l_map->table[hash].vp);
+		if(l_map->table[hash].next==0)
+			return NULL;
+		hash = l_map->table[hash].next -1;
+	}
+
+	return NULL;
+}
+
+
+int lib_map_add(llp_map* l_map, llp_kv* kv)
+{
+	size_t hash, sh;
+	check_null(l_map, LP_FAIL);
+	check_null(kv, LP_FAIL);
+	check_null(kv->key, LP_FAIL);
+	
+	hash = calc_hash(kv->key);
+
+	if(l_map->cap >= l_map->size)
+		lib_map_reflush(l_map);
+
+	sh = hash % l_map->size;
+	if(l_map->table[sh].key == NULL)
+	{
+		l_map->table[sh].key = kv->key;
+		l_map->table[sh].hash = hash;
+		l_map->table[sh].vp = kv->vp;
+	}
+	else
+	{
+		size_t emp = sh;
+		size_t idx = sh;
+		for( ;; )
+		{
+			if(l_map->table[idx].hash == hash && strcmp(l_map->table[idx].key, kv->key)==0)
+				return LP_FAIL;
+			if(l_map->table[idx].next==0)
+				break;
+			idx = (idx +1)%l_map->size;
+		}
+
+		for( ;l_map->table[emp].key!=NULL; )
+			emp=(emp +1)%l_map->size;
+
+		l_map->table[emp].hash = hash;
+		l_map->table[emp].key = kv->key;
+		l_map->table[emp].vp = kv->vp;
+		l_map->table[emp].next = l_map->table[sh].next;
+		l_map->table[sh].next = emp+1;
+	}
+
+	l_map->cap++;
+	return LP_TRUE;
+}
+
 
 
 int lib_table_new(llp_table* lt, size_t size, byte type)
@@ -248,132 +378,3 @@ void lib_Stable_free(llp_strT* ls)
 	}
 }
 
-
-
-// read from pbc
-
-static size_t calc_hash(const char *name)
-{
-	size_t len = strlen(name);
-	size_t h = len;
-	size_t step = (len>>5)+1;
-	size_t i;
-	for (i=len; i>=step; i-=step)
-		h = h ^ ((h<<5)+(h>>2)+(size_t)name[i-1]);
-	return h;
-}
-
-#define DEF_MAP_LENS		128
-
-
-llp_map* lib_map_new()
-{
-	llp_map* ret = (llp_map*)malloc(sizeof(llp_map));
-	ret->size = DEF_MAP_LENS;
-	ret->cap = 0;
-	ret->table = (llp_slot*)malloc(sizeof(llp_slot)*DEF_MAP_LENS);
-	memset(ret->table, 0, sizeof(llp_slot)*DEF_MAP_LENS);
-
-	return ret;
-}
-
-
-void lib_map_free(llp_map* l_map)
-{
-	if(l_map)
-		free(l_map);
-}
-
-
-static void lib_map_reflush(llp_map* l_map)
-{
-	size_t i, new_size=l_map->size+DEF_MAP_LENS, hash;
-	llp_slot* new_slot = (llp_slot*)malloc(sizeof(llp_slot)*new_size);
-	memset(new_slot, 0, sizeof(llp_slot)*new_size);
-
-	for(i=0; i<l_map->size; i++)
-	{
-		hash = l_map->table[i].hash % new_size;
-		if(new_slot[hash].key == NULL)
-		{
-			new_slot[hash].key = l_map->table[i].key;
-			new_slot[hash].hash = l_map->table[i].hash;
-			new_slot[hash].vp = l_map->table[i].vp;
-		}
-		else
-		{
-			size_t emp = hash;
-			for(;new_slot[emp].key!=NULL;)
-				emp = (emp + 1) % new_size;
-
-			new_slot[emp].key = l_map->table[i].key;
-			new_slot[emp].hash = l_map->table[i].hash;
-			new_slot[emp].vp = l_map->table[i].vp;
-			new_slot[emp].next = l_map->table[hash].next;
-			l_map->table[hash].next = emp+1;
-		}
-	}
-
-	free(l_map->table);
-	l_map->size = new_size;
-	l_map->table = new_slot;
-}
-
-
-void* lib_map_find(llp_map* l_map, const char* key)
-{
-	size_t hash_full, hash;
-	check_null(l_map, NULL);
-	check_null(key, NULL);
-	
-	hash_full = calc_hash(key);
-	hash = hash_full % l_map->size;
-
-	for(;l_map->table[hash].key!=NULL;)
-	{	
-		if(l_map->table[hash].hash==hash_full && strcmp(key, l_map->table[hash].key)==0)
-			return l_map->table[hash].vp;
-		if(l_map->table[hash].next==0)
-			return NULL;
-		hash = l_map->table[hash].next -1;
-	}
-
-	return NULL;
-}
-
-
-int lib_map_add(llp_map* l_map, llp_kv* kv)
-{
-	size_t hash, sh;
-	check_null(l_map, LP_FAIL);
-	check_null(kv, LP_FAIL);
-	check_null(kv->key, LP_FAIL);
-	
-	hash = calc_hash(kv->key);
-	sh = hash % l_map->size;
-
-	if(l_map->cap >= l_map->size)
-		lib_map_reflush(l_map);
-
-	if(l_map->table[sh].key == NULL)
-	{
-		l_map->table[sh].key = kv->key;
-		l_map->table[sh].hash = hash;
-		l_map->table[sh].vp = kv->vp;
-	}
-	else
-	{
-		size_t emp = sh;
-		for( ;l_map->table[emp].key!=NULL; )
-			emp=(emp +1)%l_map->size;
-
-		l_map->table[emp].hash = hash;
-		l_map->table[emp].key = kv->key;
-		l_map->table[emp].vp = kv->vp;
-		l_map->table[emp].next = l_map->table[sh].next;
-		l_map->table[sh].next = emp+1;
-	}
-
-	l_map->cap++;
-	return LP_TRUE;
-}
