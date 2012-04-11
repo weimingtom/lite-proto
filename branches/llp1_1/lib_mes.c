@@ -28,7 +28,7 @@ llp_mes* _llp_message_new(t_def_mes* def_mesP)
 }
 
 // create a  message object
-llp_mes*  llp_message_new(llp_env* env, char* mes_name)
+LLP_API llp_mes*  llp_message_new(llp_env* env, char* mes_name)
 {
 	struct _lp_value* lv = NULL;
 	check_null(env, NULL);
@@ -67,14 +67,14 @@ int _llp_message_cf(llp_mes* in_mes, lib_array_cf_func cf_func)
 	return LP_TRUE;
 }
 
-void llp_message_clr(llp_mes* in_mes)
+LLP_API void llp_message_clr(llp_mes* in_mes)
 {
 	if(_llp_message_cf(in_mes, lib_array_clr)==LP_FAIL)
 		return;
 	llp_out_clr(&in_mes->sio);
 }
 
-void  llp_message_free(llp_mes* in_mes)
+LLP_API void  llp_message_free(llp_mes* in_mes)
 {
 	if(_llp_message_cf(in_mes, lib_array_free)==LP_FAIL)
 		return;
@@ -175,37 +175,37 @@ int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned i
 	return LP_TRUE;
 }
 
-int llp_Wmes_int32(llp_mes* lm, char* filed_str, llp_int32 number)
+LLP_API int llp_Wmes_int32(llp_mes* lm, char* filed_str, llp_int32 number)
 {
 	check_fail(llp_Wmes(lm, filed_str, lpt_int32, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
-int llp_Wmes_int64(llp_mes* lm, char* filed_str, llp_int64 number)
+LLP_API int llp_Wmes_int64(llp_mes* lm, char* filed_str, llp_int64 number)
 {
 	check_fail(llp_Wmes(lm, filed_str, lpt_int64, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
-int llp_Wmes_float32(llp_mes* lm, char* filed_str, llp_float32 number)
+LLP_API int llp_Wmes_float32(llp_mes* lm, char* filed_str, llp_float32 number)
 {
 	check_fail(llp_Wmes(lm, filed_str, lpt_float32, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
-int llp_Wmes_float64(llp_mes* lm, char* filed_str, llp_float64 number)
+LLP_API int llp_Wmes_float64(llp_mes* lm, char* filed_str, llp_float64 number)
 {
 	check_fail(llp_Wmes(lm, filed_str, lpt_float64, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
-int llp_Wmes_string(llp_mes* lm, char* filed_str, char* str)
+LLP_API int llp_Wmes_string(llp_mes* lm, char* filed_str, char* str)
 {
 	check_fail(llp_Wmes(lm, filed_str, lpt_string, (void*)str), LP_FAIL);
 	return LP_TRUE;
 }
 
-llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str)
+LLP_API llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str)
 {
 	llp_mes* lms = NULL;
 	check_fail(llp_Wmes(lm, filed_str, lpt_message, (void*)(&lms)), NULL);
@@ -244,7 +244,7 @@ static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned i
 	return lib_array_inx(&lm->filed_al[inx], al_inx);
 }
 
-slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_stream, al_inx), NULL);
@@ -252,7 +252,7 @@ slice* llp_Rmes_stream(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_stream;
 }
 
-llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_int32, al_inx), 0);
@@ -260,7 +260,7 @@ llp_int32 llp_Rmes_int32(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_int32;
 }
 
-llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_int64, al_inx), 0);
@@ -268,7 +268,7 @@ llp_int64 llp_Rmes_int64(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_int64;
 }
 
-llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_float32, al_inx), (float)0.0);
@@ -276,7 +276,7 @@ llp_float32 llp_Rmes_float32(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_float32;
 }
 
-llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_float64, al_inx), 0.0);
@@ -284,7 +284,7 @@ llp_float64 llp_Rmes_float64(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_float64;
 }
 
-char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_string, al_inx), NULL);
@@ -292,7 +292,7 @@ char* llp_Rmes_string(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_str;
 }
 
-llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx)
+LLP_API llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
 	check_null(lpv=llp_Rmes(lm, filed_str, lpt_message, al_inx), NULL);
@@ -300,7 +300,7 @@ llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_mes;
 }
 
-unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str)
+LLP_API unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str)
 {
 	struct _lp_value* lv = NULL;
 	int inx = 0;

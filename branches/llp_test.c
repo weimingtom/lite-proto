@@ -54,11 +54,11 @@ void test_stringpool()
 	{
 		int number = rand();
 		itoa(number, buff, 10);
-		lib_stringpool_add(str_pool, "aaaaaa", strlen("aaaaaa"));
+		lib_stringpool_add(str_pool, buff);
 	}
 
 	dump_stringpool(str_pool);
-	dump_map( *((llp_map**)(((size_t)str_pool)+4)) );
+//	dump_map( *((llp_map**)(((size_t)str_pool)+4)) );
 	lib_stringpool_free(str_pool);
 }
 

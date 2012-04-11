@@ -9,9 +9,8 @@ typedef struct _llp_mes llp_mes;
 llp_env* llp_new_env();
 void llp_free_env(llp_env* p);
 
-// --------regedit/delete .lpb files
+// --------regedit .lpb files
 int llp_reg_mes(llp_env* env, char* mes_name);
-int llp_del_mes(llp_env* env, char* mes_name);
 
 // --------new/delete a message object
 llp_mes*  llp_message_new(llp_env* env, char* mes_name);

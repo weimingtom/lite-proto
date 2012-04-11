@@ -23,11 +23,13 @@ typedef struct _llp_strTO{
 	struct _llp_strTO* next;
 }llp_strTO;
 
+
+/*
 #define DEF_STR_LEN		128
 typedef struct _llp_strT{
 	llp_strTO* lst[DEF_STR_LEN];	
 }llp_strT;
-
+*/
 
 
 typedef struct _llp_slot{
@@ -43,11 +45,11 @@ typedef struct _llp_map {
 	llp_slot* table;
 }llp_map;
 
-
 typedef struct _llp_kv {
 	char* key;
 	void* vp;
 }llp_kv;
+
 
 llp_map* lib_map_new();
 void lib_map_free(llp_map* l_map);
@@ -59,9 +61,5 @@ struct _lp_value* lib_table_add(llp_table* lt, char* name);
 struct _lp_value* lib_table_look(llp_table* lt, char* name);
 int lib_table_del(llp_table* lt, char* name);
 int lib_table_free(llp_table* lt);
-
-
-char* lib_Stable_add(llp_strT* ls, char* name);
-void lib_Stable_free(llp_strT* ls);
 
 #endif

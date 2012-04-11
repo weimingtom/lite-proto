@@ -16,7 +16,7 @@ typedef struct _string_pool{
 	llp_map* string_table;
 }string_pool;
 
-// the str's lens at string pool
+// the string's lens at string pool
 #define STR_PAGE_SIZE		 256
 
 string_pool* lib_stringpool_new()
@@ -93,13 +93,14 @@ static char* _lib_stringpool_add(string_pool_slot* sp, const char* str, size_t s
 }
 
 
-char* lib_stringpool_add(string_pool* sp, const char* str, size_t len)
+char* lib_stringpool_add(string_pool* sp, const char* str)
 {
+	size_t len =0;
 	char** ret = NULL;
 	check_null(sp, NULL);
 	check_null(str, NULL);
-	check_fail(len, NULL);
 
+	len = strlen(str)+1;
 	ret = (char**)lib_map_find(sp->string_table, str);
 
 	if(ret == NULL)
@@ -114,6 +115,7 @@ char* lib_stringpool_add(string_pool* sp, const char* str, size_t len)
 
 	return *ret;
 }
+
 
 void dump_stringpool(string_pool* sp)
 {

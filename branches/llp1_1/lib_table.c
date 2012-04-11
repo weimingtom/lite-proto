@@ -147,6 +147,125 @@ int lib_map_add(llp_map* l_map, llp_kv* kv)
 
 
 
+// def message body
+typedef struct _t_def_mes{
+	llp_uint32		message_id;			// message id
+	filed_map*		message_filed;		// filed table
+	t_Mfield*		message_tfl;		// filed tag list
+	llp_uint32		message_count;		// filed count
+}t_def_mes;
+
+
+t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
+{
+	llp_kv kv = {0};
+	kv.key = message_name;
+	kv.vp = malloc(sizeof(t_def_mes));
+
+	check_fail(lib_map_add(l_map, &kv), (free(kv.vp), NULL));
+	return kv.vp;
+}
+
+
+void lib_Mmap_free(llp_map* l_map)
+{
+	size_t i;
+	t_def_mes* temp = NULL;
+	if(l_map==NULL)
+		return;
+
+	for(i=0; i<l_map->size; i++)
+	{
+		if(l_map->table[i].key == NULL)
+			continue;
+
+		temp = (t_def_mes*)l_map->table[i].vp;
+		lib_Fmap_free(temp->message_filed);
+		free(temp->message_tfl);
+	}
+}
+
+typedef struct _filed_slot {
+	char* filed_name;
+	unsigned int id;
+	size_t next;
+}filed_slot;
+
+typedef struct _filed_map{
+	size_t size;
+	filed_slot* slot;
+}filed_map;
+
+filed_map* lib_Fmap_new(size_t size)
+{
+	filed_map* ret = (filed_map*)malloc(sizeof(filed_map) + size*sizeof(filed_slot));
+	check_null(ret, NULL);
+	
+	ret->size = size;
+	ret->slot = (filed_slot*)(ret + 1);
+	memset(ret->slot, 0, size(filed_slot)*size);
+
+	return ret;
+}
+
+void lib_Fmap_free(filed_map* f_map)
+{
+	if(f_map)
+		free(f_map);
+}
+
+
+int lib_Fmap_add(filed_map* f_map,  char* filed_name, unsigned int id)
+{
+	size_t hash, emp, sh;
+	check_null(f_map, LP_FAIL);
+	check_null(filed_name, LP_FAIL);
+	hash = calc_hash(filed_name) % f_map->size;
+	
+	sh = hash;
+	for( ;f_map->slot[sh].filed_name!= NULL; )
+	{	
+		if(strcmp(f_map->slot[sh], filed_name)==0)
+			return LP_FAIL;
+		if(f_map->slot[sh].next==0)
+			break;
+
+		sh = f_map->slot[sh].next -1;
+	}
+
+	emp = hash;
+	for(;f_map->slot[emp].filed_name!=NULL;)
+		emp = (emp + 1)%f_map->size;
+	
+	f_map->slot[emp].next = f_map->slot[hash].next;
+	f_map->slot[hash].next = emp + 1;
+	f_map->slot[emp].filed_name = filed_name;
+	f_map->slot[emp].id = id;
+
+	return LP_FAIL;
+}
+
+unsigned int* lib_Fmap_find(filed_map* f_map, char* filed_name)
+{
+	size_t hash;
+	check_null(f_map, NULL);
+	check_null(filed_name, NULL);
+	
+	hash = calc_hash(filed_name) % f_map->size;
+
+	for(;f_map->slot[hash].filed_name!= NULL;)
+	{
+		if(strcmp(filed_name, f_map->slot[hash].filed_name)==0)
+			return &f_map->slot[hash].id;
+		if(f_map->slot[hash].next==0)
+			return NULL;
+	}
+	return NULL;
+}
+
+
+
+
 int lib_table_new(llp_table* lt, size_t size, byte type)
 {
 	check_null(lt, LP_FAIL);
@@ -243,17 +362,6 @@ static int lib_value_free(llp_table* lt, lp_value* lpv)
 {	
 	switch(lt->type)
 	{
-	case reg_mes:
-		{
-			struct _nl* p = lpv->value.reg_mesV.mNs;
-			while(p)
-			{
-				struct _nl* np = p->next;
-				free(p);
-				p=np;
-			}
-		}
-		break;
 	case def_mes:
 		{
 			lib_table_free(&lpv->value.def_mesV.message_filed);
@@ -325,56 +433,5 @@ slice* malloc_slice(slice* sl)
 	ret->sp_size = sl->sp_size;
 	memcpy(ret->sp, sl->sp, ret->sp_size);
 	return ret;
-}
-
-char* lib_Stable_add(llp_strT* ls, char* name)
-{
-	llp_strTO* lsto = NULL;
-	llp_strTO* next_lsto = NULL;
-	int inx =0;
-	
-	check_null(ls, NULL);
-	check_null(name, NULL);
-	inx = _L_BKDRHash(name, DEF_STR_LEN);
-	lsto = ls->lst[inx];
-	while(lsto)
-	{
-		next_lsto = lsto->next;
-		if(strcmp(lsto->str, name)==0)
-			return lsto->str;
-		lsto = next_lsto;
-	}
-
-	lsto = (llp_strTO*)malloc(sizeof(llp_strTO));
-	memset(lsto, 0, sizeof(llp_strTO));
-	lsto->str = malloc_string(name);
-	
-	lsto->next = ls->lst[inx];
-	ls->lst[inx] = lsto;
-	return lsto->str;
-}
-
-void lib_Stable_free(llp_strT* ls)
-{
-	int i=0;
-	if(ls==NULL)
-		return;
-
-	for(i=0; i<DEF_STR_LEN; i++)
-	{
-		if(ls->lst[i])
-		{
-			llp_strTO* p = ls->lst[i];
-			llp_strTO*np = NULL;
-			while(p)
-			{
-				np = p->next;
-				free(p->str);
-				free(p);
-				p=np;
-			}
-			ls->lst[i]=NULL;
-		}
-	}
 }
 

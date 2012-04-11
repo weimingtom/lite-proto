@@ -2,6 +2,7 @@
 #define _LIB_LP_H_
 #include "lp_conf.h"
 #include "lib_table.h"
+#include "lib_stringpool.h"
 
 // filed type
 typedef enum _e_lpt{
@@ -20,7 +21,6 @@ typedef enum _e_lpf{
 }e_lpf;
 
 typedef enum _e_lt{
-	reg_mes,		// .mes file
 	def_mes,		// message
 	def_field		// filed at message body 
 }e_lt;
@@ -31,14 +31,12 @@ struct _nl{
 };
 
 // regedit .mes file 
+/*
 typedef struct _t_reg_mes{
 	struct _nl* mNs;		// all message at .mes
 	size_t mNs_count;		// all message count 
-	
-/*	byte* mes_p;			// .mes buff
-	size_t mes_size;		// .mes size
-*/
-}t_reg_mes;
+}t_reg_mes;*/
+
 
 
 struct _t_def_mes;
@@ -62,17 +60,16 @@ typedef struct _t_def_field{
 
 typedef struct _lp_value{
 	union{
-		t_reg_mes	reg_mesV;
+//		t_reg_mes	reg_mesV;
 		t_def_mes	def_mesV;
 		t_def_field def_fieldV;
 	}value;
 }lp_value;
 
-typedef struct _llp_env{
-	llp_table mes;
+typedef struct _llp_env{		
 	llp_table dmes;
 
-	llp_strT mesN;
+	string_pool* mesN;		// string pool
 }llp_env;
 
 #define DEF_MES_LEN		64

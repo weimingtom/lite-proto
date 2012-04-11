@@ -9,6 +9,9 @@
 #include <stdint.h>
 #endif
 
+
+#define LLP_API extern
+
 enum{
 	LP_FAIL,
 	LP_TRUE,
