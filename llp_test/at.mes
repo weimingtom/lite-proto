@@ -1,7 +1,0 @@
-message at{
-	int32 aa;
-	int32 bb;
-	
-	string[] cc;
-	
-}
