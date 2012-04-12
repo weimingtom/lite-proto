@@ -12,7 +12,7 @@ slice* malloc_slice(slice* sl);
 
 llp_mes* _llp_message_new(t_def_mes* def_mesP)
 {
-	size_t i=0;
+	llp_uint32 i=0;
 	llp_mes* out_mes = NULL;
 	check_null(def_mesP, NULL);
 	out_mes = (llp_mes*)malloc(sizeof(llp_mes));
@@ -30,12 +30,12 @@ llp_mes* _llp_message_new(t_def_mes* def_mesP)
 // create a  message object
 LLP_API llp_mes*  llp_message_new(llp_env* env, char* mes_name)
 {
-	struct _lp_value* lv = NULL;
+	t_def_mes* mes_p= NULL;
 	check_null(env, NULL);
 	check_null(mes_name, NULL);
 
-	check_null(lv=lib_table_look(&env->dmes, mes_name), NULL);
-	return _llp_message_new(&lv->value.def_mesV);
+	check_null(mes_p=lib_Mmap_find(env->dmes, mes_name), NULL);
+	return _llp_message_new(mes_p);
 }
 
 typedef void (*lib_array_cf_func)(llp_array* al, al_free free_func);
@@ -153,16 +153,14 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 // write a int at a message obj
 static int llp_Wmes(llp_mes* lm, char* filed_str, byte v_type, void* msd)
 {
-	int inx = 0;
-	struct _lp_value* lv = NULL;
-	
+	int* id_p = NULL;
+
 	check_null(lm, LP_FAIL);
 	check_null(filed_str, LP_FAIL);
 	check_null(msd, LP_FAIL);
-	check_null(lv=lib_table_look(&lm->d_mes->message_filed, filed_str), LP_FAIL);
-	inx = lv->value.def_fieldV.f_id;
+	check_null(id_p=lib_Fmap_find(lm->d_mes->message_filed, filed_str), LP_FAIL);
 
-	return _llp_Wmes(lm, inx, v_type, msd);
+	return _llp_Wmes(lm, *id_p, v_type, msd);
 }
 
 int llp_Wmes_stream(llp_mes* lm, char* filed_str, unsigned char* ptr, unsigned int len)
@@ -215,13 +213,13 @@ LLP_API llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_str)
 static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned int al_inx)
 {
 	int inx = 0;
+	int* id_p = NULL;
 	byte tag = 0;
-	struct _lp_value* lv = NULL;
 
 	check_null(lm, NULL);
 	check_null(filed_str, NULL);
-	check_null(lv=lib_table_look(&lm->d_mes->message_filed, filed_str), NULL);
-	inx = lv->value.def_fieldV.f_id;
+	check_null(id_p=lib_Fmap_find(lm->d_mes->message_filed, filed_str), NULL);
+	inx = *id_p;
 	tag = lm->d_mes->message_tfl[inx].tag;
 
 	if(tag_type(tag)!=v_type)
@@ -300,14 +298,13 @@ LLP_API llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_
 	return lpv->lp_mes;
 }
 
-LLP_API unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str)
+LLP_API llp_uint32 llp_Rmes_size(llp_mes* lm, char* filed_str)
 {
-	struct _lp_value* lv = NULL;
+	int* id_p = NULL;
 	int inx = 0;
 	check_null(lm, 0);
 	check_null(filed_str, 0);
-	check_null(lv=lib_table_look(&lm->d_mes->message_filed, filed_str), 0);
-	inx = lv->value.def_fieldV.f_id;
+	check_null(id_p=lib_Fmap_find(lm->d_mes->message_filed, filed_str), 0);
 
-	return lm->filed_al[inx].lens;
+	return lm->filed_al[*id_p].lens;
 }
