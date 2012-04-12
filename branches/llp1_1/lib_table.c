@@ -3,7 +3,7 @@
 #include "lp_conf.h"
 
 static size_t calc_hash(const char* name);
-#define DEF_MAP_LENS		128
+#define DEF_MAP_LENS		256
 
 // read from pbc
 static size_t calc_hash(const char* name)
@@ -125,7 +125,7 @@ int lib_map_add(llp_map* l_map, llp_kv* kv)
 				return LP_FAIL;
 			if(l_map->table[idx].next==0)
 				break;
-			idx = (idx +1)%l_map->size;
+			idx = l_map->table[idx].next -1;
 		}
 
 		for( ;l_map->table[emp].key!=NULL; )
@@ -150,6 +150,7 @@ t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
 	kv.vp = malloc(sizeof(t_def_mes));
 
 	check_fail(lib_map_add(l_map, &kv), (free(kv.vp), NULL));
+	
 	return kv.vp;
 }
 
@@ -178,7 +179,10 @@ void lib_Mmap_free(llp_map* l_map)
 		temp = (t_def_mes*)l_map->table[i].vp;
 		lib_Fmap_free(temp->message_filed);
 		free(temp->message_tfl);
+		free(temp);
 	}
+
+	lib_map_free(l_map);
 }
 
 filed_map* lib_Fmap_new(size_t size)
@@ -207,26 +211,34 @@ int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id)
 	hash = calc_hash(filed_name) % f_map->size;
 	
 	sh = hash;
-	for( ;f_map->slot[sh].filed_name!= NULL; )
-	{	
-		if(strcmp(f_map->slot[sh].filed_name, filed_name)==0)
-			return LP_FAIL;
-		if(f_map->slot[sh].next==0)
-			break;
-
-		sh = f_map->slot[sh].next -1;
+	if(f_map->slot[hash].filed_name == NULL)
+	{
+		f_map->slot[hash].filed_name = filed_name;
+		f_map->slot[hash].id = id;
+	}
+	else
+	{
+		for( ;; )
+		{	
+			if(strcmp(f_map->slot[sh].filed_name, filed_name)==0)
+				return LP_FAIL;
+			if(f_map->slot[sh].next==0)
+				break;
+			
+			sh = f_map->slot[sh].next -1;
+		}
+		
+		emp = hash;
+		for(;f_map->slot[emp].filed_name!=NULL;)
+			emp = (emp + 1)%f_map->size;
+		
+		f_map->slot[emp].next = f_map->slot[hash].next;
+		f_map->slot[hash].next = emp + 1;
+		f_map->slot[emp].filed_name = filed_name;
+		f_map->slot[emp].id = id;
 	}
 
-	emp = hash;
-	for(;f_map->slot[emp].filed_name!=NULL;)
-		emp = (emp + 1)%f_map->size;
-	
-	f_map->slot[emp].next = f_map->slot[hash].next;
-	f_map->slot[hash].next = emp + 1;
-	f_map->slot[emp].filed_name = filed_name;
-	f_map->slot[emp].id = id;
-
-	return LP_FAIL;
+	return LP_TRUE;
 }
 
 int* lib_Fmap_find(filed_map* f_map, char* filed_name)

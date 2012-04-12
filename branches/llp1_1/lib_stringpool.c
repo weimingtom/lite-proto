@@ -21,7 +21,6 @@ string_pool* lib_stringpool_new()
 	return ret;
 }
 
-
 void lib_stringpool_free(string_pool* sp)
 {
 	string_pool_slot* ssp = NULL;

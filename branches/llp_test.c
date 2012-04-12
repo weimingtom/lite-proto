@@ -24,15 +24,19 @@ int test_map(void)
 	int i=0;
 	llp_map* l_map =  lib_map_new();
 	llp_kv kv = {0};
-	char buff[24] = {0};
-
+//	char buff[24] = {0};
+	char* buff[] = {
+		"a",
+		"b",
+		"c"
+	};
 	srand(GetTickCount());
-	for(i=0; i<8; i++)
+	for(i=0; i<3; i++)
 	{
 		int number = rand();
-		memset(buff, 0, sizeof(buff));
+	/*	memset(buff, 0, sizeof(buff));
 		itoa(number, buff, 10);
-		kv.key = (buff);
+	*/	kv.key = (buff[i]);
 		kv.vp = (void*)number;
 		lib_map_add(l_map, &kv);
 	}
@@ -62,9 +66,18 @@ void test_stringpool()
 	lib_stringpool_free(str_pool);
 }
 
+
+
 int main(void)
 {
-	test_stringpool();
+//	test_stringpool();
+	int ret = 0;
+	llp_env* env = llp_new_env();
+	ret = llp_reg_mes(env, "farm.mes.lpb");
+
+	llp_free_env(env);
+	
+//	test_map();
 	print_mem(); 
 	return 0;
 }
