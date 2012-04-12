@@ -150,8 +150,13 @@ t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
 	kv.key = message_name;
 	kv.vp = malloc(sizeof(t_def_mes));
 
-	check_fail(ret=lib_map_add(l_map, &kv), (free(kv.vp), NULL));
-	if(ret==LP_EXIST)
+	ret=lib_map_add(l_map, &kv);
+	if(ret == LP_FAIL)
+	{
+		free(kv.vp);
+		return NULL;
+	}
+	else if(ret==LP_EXIST)
 	{
 		free(kv.vp);
 		kv.vp=*(lib_map_find(l_map, message_name));
@@ -288,7 +293,12 @@ slice* malloc_slice(slice* sl)
 	
 	check_null(ret, NULL);
 	check_null(sl, NULL);
-	check_null(ret->b_sp=ret->sp=(byte*)malloc(sl->sp_size), (free(ret), NULL));
+	ret->b_sp=ret->sp=(byte*)malloc(sl->sp_size);
+	if(ret->b_sp==NULL)
+	{
+		free(ret);
+		return NULL;
+	}
 	ret->sp_size = sl->sp_size;
 	memcpy(ret->sp, sl->sp, ret->sp_size);
 	return ret;
