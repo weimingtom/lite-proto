@@ -21,22 +21,18 @@ void at_test(llp_env* env)
 	print("begin time: %ld\n", tt[0]);
 	for(j=0; j<LENSS; j++)
 	{
-		ret = llp_Wmes_int32(lpm, "aa", 123);
-		ret = llp_Wmes_int32(lpm, "bb", 456);
-	//	for(i=0; i<10; i++)
-			ret = llp_Wmes_string(lpm, "cc", "test string!");
+		llp_Wmes_int32(lpm, "aa", 123);
+		llp_Wmes_int32(lpm, "bb", 456);
+		llp_Wmes_string(lpm, "cc", "hi, I am string!");
 		
-	/*	print("aa = %d\n", llp_Rmes_int32(lpm, "aa", 0));
-		print("bb = %d\n", llp_Rmes_int32(lpm, "bb", 0));
-		for(i=0; i<llp_Rmes_size(lpm, "cc"); i++)
-			print("cc = %s\n", llp_Rmes_string(lpm, "cc", i));
-	*/	llp_in_message(llp_out_message(lpm), lpm2);
+		llp_in_message(llp_out_message(lpm), lpm2);
 		llp_message_clr(lpm);
 		llp_message_clr(lpm2);
 	}
 	tt[1] = GetTickCount();
 	print("end time: %ld\n all time[lens = %ld]: %ld\n", tt[1], LENSS, tt[1]-tt[0]);
 	llp_message_free(lpm);
+	llp_message_free(lpm2);
 }
 
 int main(void)
@@ -45,12 +41,13 @@ int main(void)
 	
 	env = llp_new_env();
 	
-	llp_reg_mes(env, "test.mes.lpb");
+//	llp_reg_mes(env, "test.mes.lpb");
 	llp_reg_mes(env, "at.mes.lpb");
 	
 	at_test(env);
 
 	llp_free_env(env);
-	print("mem = %d\n", mem);
+	print_mem();
+	getchar();
 	return 0;
 }
