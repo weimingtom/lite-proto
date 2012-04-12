@@ -39,12 +39,12 @@ typedef struct _t_def_mes{
 	llp_uint32		message_count;		// filed count
 }t_def_mes;
 
-
 typedef struct _llp_env{		
 	llp_map* dmes;			// message body
 
 	string_pool* mesN;		// string pool
 }llp_env;
+
 
 // #define DEF_MES_LEN		64
 // #define DEF_DMES_LEN    128

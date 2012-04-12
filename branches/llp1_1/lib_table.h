@@ -33,15 +33,14 @@ typedef struct _llp_kv {
 	void* vp;
 }llp_kv;
 
-typedef struct _t_def_mes t_def_mes;
-
+struct _t_def_mes;
 llp_map* lib_map_new();
 void lib_map_free(llp_map* l_map);
 int lib_map_add(llp_map* l_map, llp_kv* kv);
 void** lib_map_find(llp_map* l_map, const char* key);
 
-t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name);
-t_def_mes* lib_Mmap_find(llp_map* l_map, char* message_name);
+struct _t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name);
+struct _t_def_mes* lib_Mmap_find(llp_map* l_map, char* message_name);
 void lib_Mmap_free(llp_map* l_map);
 
 filed_map* lib_Fmap_new(size_t size);

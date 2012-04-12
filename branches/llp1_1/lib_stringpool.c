@@ -4,17 +4,6 @@
 
 //  read from pbc 
 
-typedef struct _string_pool_slot{
-	char*  str;
-	size_t len;
-	struct _string_pool_slot* next;
-}string_pool_slot;
-
-
-typedef struct _string_pool{
-	string_pool_slot* pool;
-	llp_map* string_table;
-}string_pool;
 
 // the string's lens at string pool
 #define STR_PAGE_SIZE		 256

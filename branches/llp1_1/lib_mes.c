@@ -301,7 +301,7 @@ LLP_API llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_
 LLP_API llp_uint32 llp_Rmes_size(llp_mes* lm, char* filed_str)
 {
 	int* id_p = NULL;
-	int inx = 0;
+
 	check_null(lm, 0);
 	check_null(filed_str, 0);
 	check_null(id_p=lib_Fmap_find(lm->d_mes->message_filed, filed_str), 0);
