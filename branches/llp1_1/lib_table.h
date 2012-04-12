@@ -6,6 +6,7 @@
 typedef struct _filed_slot {
 	char* filed_name;
 	int id;
+	size_t hash;
 	size_t next;
 }filed_slot;
 

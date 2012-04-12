@@ -6,7 +6,7 @@
 
 
 // the string's lens at string pool
-#define STR_PAGE_SIZE		 256
+#define STR_PAGE_SIZE		 128
 
 string_pool* lib_stringpool_new()
 {
@@ -59,6 +59,7 @@ static char* _lib_stringpool_add(string_pool_slot* sp, const char* str, size_t s
 	if(len > STR_PAGE_SIZE)
 	{
 		ret = (string_pool_slot*)malloc(sizeof(string_pool_slot) + len);
+		ret->str = (char*)(ret+1);
 		ret->len = len;
 		ret->next = sp->next;
 		sp->next = ret;
@@ -103,7 +104,6 @@ char* lib_stringpool_add(string_pool* sp, const char* str)
 
 	return *ret;
 }
-
 
 void dump_stringpool(string_pool* sp)
 {

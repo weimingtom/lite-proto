@@ -15,7 +15,6 @@ typedef struct _llp_mes{
 }llp_mes;
 
 llp_mes* _llp_message_new(t_def_mes* def_mesP);
-void llp_message_clr(llp_mes* in_mes);
 int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd);
 
 #endif

@@ -36,6 +36,5 @@ void lp_free(void* p)
 
 void print_mem()
 {
-	int i=0;
 	printf("mem = %d\n", mem_lens);
 }
