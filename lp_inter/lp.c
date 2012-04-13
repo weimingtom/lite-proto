@@ -36,7 +36,8 @@ int lp_inter(lp_env* lp, char* name)
 {
 	FILE* fp = NULL;
 	slice sp = {0};
-	lp_string t_name ={0};
+	lp_string t_name;
+	memset(&t_name, 0, sizeof(t_name));
 
 	check_null(lp, (print("Serious error, not lp_env!\n"), LP_FAIL));
 	t_name =  lp_string_new(name);
@@ -94,7 +95,6 @@ void lp_arg(lp_env* lp, char* args[])
 
 int main(int argc, char* args[])
 {
-	FILE* fp = NULL;
 	lp_env* lp = get_lp_env();
 
 #ifndef _DEBUG

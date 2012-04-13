@@ -29,7 +29,6 @@ int lp_table_new(lp_table* lp_t)
 
 int lp_table_add(lp_table* lp_t, char* name)
 {
-	lp_table_one* lt_o = NULL;
 	lp_table_one* head = NULL;
 	int inx = 0;
 	check_null(lp_t, LP_FAIL);
@@ -109,16 +108,18 @@ int lp_table_one_free(lp_table_one* lt_o)
 
 lp_string lp_string_new(char* str)
 {
-	lp_string lp_s = {0};
+	lp_string lp_s;
+	memset(&lp_s, 0, sizeof(lp_s));
+
 	check_null(str, lp_s);
 	lp_list_new(&lp_s.str, 1, NULL, NULL);
 	while(*str)
 	{
-		lp_list_add(&lp_s.str, str);
+		lp_list_add(&lp_s.str, (byte*)str);
 		str++;
 	}
 
-	lp_list_add(&lp_s.str, str);
+	lp_list_add(&lp_s.str, (byte*)str);
 	lp_s.str.list_len--;
 	return lp_s;
 }
@@ -129,7 +130,7 @@ lp_string* lp_string_cats(lp_string* lp_s, char* str)
 	check_null(lp_s, NULL);
 	check_null(str, NULL);
 	for(i=0; i<strlen(str)+1; i++)
-		lp_list_add(&lp_s->str, str+i);
+		lp_list_add(&lp_s->str, (byte*)(str+i));
 	lp_s->str.list_len--;
 	return lp_s;
 }
@@ -139,8 +140,8 @@ lp_string* lp_string_cat(lp_string* lp_s, char at_char)
 	char a = 0;
 	check_null(lp_s, NULL);
 	
-	lp_list_add(&lp_s->str, &at_char);
-	lp_list_add(&lp_s->str, &a);
+	lp_list_add(&lp_s->str, (byte*)(&at_char));
+	lp_list_add(&lp_s->str, (byte*)(&a));
 	lp_s->str.list_len--;
 	return lp_s;
 }
