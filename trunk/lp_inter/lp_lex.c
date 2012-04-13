@@ -32,11 +32,16 @@ char* ts[] = {
 };
 
 #define now_char(p)					( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp)) ):(0)
-#define next_char(p)				( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp))++ ):(0)
+#define _next_char(p)				( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp))++ ):(0)
 #define char_type(p, c)				( (p)->char_enum[(byte)(c)] )
 
 static int lp_lex_char(lp_lex_env* env_p, slice* buff);
 static int lp_lex_number(lp_lex_env* env_p, slice* buff);
+
+char next_char(slice* p)
+{
+	return next_char(p);
+}
 
 static lp_token lp_new_token(lp_lex_env* env_p, byte tt, lp_string name)
 {
@@ -73,7 +78,6 @@ int lp_lex_token_free(lp_token* tp)
 
 void free_lex_env(lp_lex_env* le)
 {
-	int i=0;
 	if(le==NULL)
 		return;
 
@@ -139,7 +143,7 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 	char at_char = 0;
 	check_null(env_p, LP_FAIL);
 	check_null(buff, LP_FAIL);
-	for(;at_char=now_char(buff);)
+	for(; (at_char=now_char(buff))!=0 ; )
 	{
 		switch(char_type(env_p, at_char))
 		{

@@ -16,8 +16,10 @@
 								(p)->line = lp_t->line;	\
 						}while(0)
 
-#define lp_watch(p, t)	do{lp_check(p, t); ((p)->read_inx)++;}while(0)
+
+#define lp_watch(p, t)			do{lp_check(p, t); ((p)->read_inx)++;}while(0)
 #define lp_get_token(p, t, d)	do{lp_check((p), (t)); (d)=lp_at_token(p); ((p)->read_inx)++;}while(0)
+#define init0(v)				memset(&v, 0, sizeof(v))			
 
 static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes);
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes);
@@ -50,7 +52,6 @@ int free_parse_env(lp_parse_env* lp_p)
 
 int lp_parse(lp_parse_env* lp_p)
 {
-	int i=0;
 	check_null(lp_p, LP_FAIL);
 	check_null(lp_p->token_list, LP_FAIL);
 	
@@ -108,10 +109,14 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 	lp_token* temp = NULL;
 	lp_token* mes_name = NULL;
 	lp_token* mes_id = NULL;
-	lp_list temp_out = {0};
-	lp_string mes = {0};
-	lp_table ide_table = {0};
+	lp_list temp_out;
+	lp_string mes;
+	lp_table ide_table;
 	
+	init0(temp_out);
+	init0(mes);
+	init0(ide_table);
+
 	check_null(lp_p, LP_FAIL);
 	check_null(lp_p->token_list, LP_FAIL);
 
@@ -190,7 +195,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 	if(temp == NULL)
 		lp_watch(lp_p, t_rb);
 	
-	for( ;temp=lp_at_token(lp_p); )
+	for( ;(temp=lp_at_token(lp_p))!=NULL; )
 	{
 		switch(temp->type)
 		{
@@ -254,11 +259,11 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 					{
 						for(i=0; i<lp_p->mes_name.str.list_len; i++)
 							lp_list_add(lp_out, lp_p->mes_name.str.list_p+i);
-						lp_list_add(lp_out, &a);
+						lp_list_add(lp_out, (byte*)(&a));
 					}
 					for(i=0; i<ide->name.str.list_len; i++)	// push  ide name
 						lp_list_add(lp_out, ide->name.str.list_p+i);
-					lp_list_add(lp_out, &a);
+					lp_list_add(lp_out, (byte*)&a);
 					(*out_count)++;
 				}
 			}
@@ -289,12 +294,14 @@ CLO_END:
 static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 {
 	lp_token* o_clo = NULL;
-	size_t i=0;
 	int ret = LP_FAIL;
-	lp_string name = {0};
-	lp_string full_name = {0};
+	lp_string name;
+	lp_string full_name;
 	lp_token* np = NULL;
 
+	init0(name);
+	init0(full_name);
+	
 	check_null(lp_p, LP_FAIL);
 	check_null(out_name, LP_FAIL);
 	lp_get_token(lp_p, t_ide, o_clo);
