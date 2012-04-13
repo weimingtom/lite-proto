@@ -16,7 +16,7 @@ typedef union _llp_value{
 
 #define EXT_AL_LENS		32
 typedef struct _llp_array{
-	size_t lens;
+	llp_uint32 lens;
 
 	llp_value* vp;
 	llp_value vt[1];	// defoult value;

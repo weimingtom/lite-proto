@@ -57,7 +57,7 @@ typedef struct _t_def_mes{
 
 // def field at message
 typedef struct _t_def_field{
-	unsigned int f_id;			// id
+	 int f_id;			// id
 }t_def_field;
 
 typedef struct _lp_value{

@@ -300,7 +300,7 @@ llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_str, unsigned int al_inx)
 	return lpv->lp_mes;
 }
 
-unsigned int llp_Rmes_size(llp_mes* lm, char* filed_str)
+llp_uint32 llp_Rmes_size(llp_mes* lm, char* filed_str)
 {
 	struct _lp_value* lv = NULL;
 	int inx = 0;
