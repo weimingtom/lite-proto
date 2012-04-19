@@ -13,7 +13,7 @@ typedef struct _lp_parse_env{
 	lp_table	parse_table;
 	lp_list*	token_list;
 	size_t		read_inx;
-	size_t		line;
+	unsigned int	line;
 	
 	lp_list		clo_stack;		//  ±Õ°ü¶ÑÕ»
 	lp_string   mes_name;

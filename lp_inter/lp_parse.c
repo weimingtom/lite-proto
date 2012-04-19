@@ -9,7 +9,7 @@
 								(lp_t=lp_at_token(p))==NULL || (lp_t->type==t_error || lp_t->type!=(t)) 	\
 							  ) \
 							{\
-							print("parse[error line: %d] you are missing \"%s\" at \"%s\"!\n", (p)->line, watchs(t), (lp_t==NULL)?("text end"):( (lp_t->name.str.list_p)?((char*)lp_t->name.str.list_p):watchs(lp_t->type) ) );	\
+							print("parse[error line: %u] you are missing \"%s\" at \"%s\"!\n", (p)->line, watchs(t), (lp_t==NULL)?("text end"):( (lp_t->name.str.list_p)?((char*)lp_t->name.str.list_p):watchs(lp_t->type) ) );	\
 								return LP_FAIL;	\
 							}	\
 							else	\
