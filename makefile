@@ -44,7 +44,8 @@ LP_CONF_O = lp_conf.o
 BUILD_LLP_O = $(foreach s, $(LLP_O), $(LLP_PATH)$(N)$(s))
 BUILD_LLP_JO = .$(N)$(LLP_PATH)$(N)$(LLP_JO)
 BUILD_LP_O  = $(foreach s, $(LP_INTERPRETER_O), $(LP_PATH)$(N)$(s)) 
-	
+
+
 ALL : BUILD_PATH  $(OUT)
 	$(CP) lp_conf.h  .$(N)$(LLP_OUT)
 	$(CP) llp.h   .$(N)$(LLP_OUT)
@@ -75,8 +76,11 @@ $(_LLPJAVA): $(LP_CONF_O) $(BUILD_LLP_O) $(BUILD_LLP_JO)
 
 $(_LP): $(LP_CONF_O) $(BUILD_LP_O)
 	$(CC) -o $@ $?
+
 	
+OD  = $(BUILD_LLP_O) $(BUILD_LLP_JO) $(BUILD_LP_O) $(LP_CONF_O) 
+OD := $(OD) $(foreach s, $(OD), $(basename $(s)).d)
 clean:
-	$(RM) $(BUILD_LLP_O) $(BUILD_LLP_JO) $(BUILD_LP_O) $(LP_CONF_O)
+	$(RM)  $(OD)
 	$(RMDIR) $(LLP_OUT)
 	
