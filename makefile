@@ -20,10 +20,11 @@ else
  JNI = $(JDK)$(N)bin$(N)java
  OUT = $(_LLP) $(_LLPJAVA)
  JNI = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+ DLLARG = -Wl
 endif
 
 CC = gcc
-CFLAGS= -O2 -Wall 
+CFLAGS= -O2 -Wall  -fPIC
 AR = ar rcu
 
 # lite-proto interpreter exec 
@@ -72,8 +73,8 @@ $(LP_CONF_O):
 $(_LLP): $(LP_CONF_O) $(BUILD_LLP_O)
 	$(AR) $(_LLP) $?
 	
-$(_LLPJAVA): $(LP_CONF_O) $(BUILD_LLP_O) $(BUILD_LLP_JO)
-	$(CC) -shared  $(DLLARG) -o $(_LLPJAVA)  $?
+$(_LLPJAVA):  $(_LLP) $(BUILD_LLP_JO)
+	$(CC) -shared  $(DLLARG) -o $(_LLPJAVA)  $? $(_LLP)
 
 $(_LP): $(LP_CONF_O) $(BUILD_LP_O)
 	$(CC) -o $@ $?
