@@ -65,5 +65,5 @@ typedef struct _slice{
 void* lp_malloc(size_t len);
 void lp_free(void* p);
 long f_size( FILE *fp);
-void print_mem();
+/*void print_mem();*/
 #endif
