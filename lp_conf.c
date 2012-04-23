@@ -3,7 +3,7 @@
 
 static size_t mem_lens = 0;
 
-long fsize( FILE *fp)
+long f_size( FILE *fp)
 {
     long int save_pos;
     long size_of_file;
