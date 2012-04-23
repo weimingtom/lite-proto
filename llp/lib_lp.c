@@ -47,7 +47,7 @@ int llp_reg_mes(llp_env* env, char* mes_name)
 {
 	slice sl = {0};
 	lp_value* lv = NULL;
-	f_handle fd = f_open(mes_name, "r");
+	f_handle fd = f_open(mes_name, "rb");
 	sl.sp_size = fsize(fd);
 	check_null(env, LP_FAIL);
 	check_null(mes_name, LP_FAIL);
