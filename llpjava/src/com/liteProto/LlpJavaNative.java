@@ -39,7 +39,7 @@ public class LlpJavaNative {
 	static native int    llpInMessage(byte[] in, long lms);
 	
 	static {
-		System.loadLibrary("llp");
+		System.loadLibrary("llpjava");
 	}
 
 	/*
