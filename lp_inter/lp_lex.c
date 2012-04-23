@@ -40,7 +40,14 @@ static int lp_lex_number(lp_lex_env* env_p, slice* buff);
 
 char next_char(slice* p)
 {
-	return next_char(p);
+	char ret = 0;
+	if(p&&p->sp&&*(p->sp))
+	{
+		ret = *((char*)(p->sp));
+		(p->sp)++;
+	}
+
+	return ret;
 }
 
 static lp_token lp_new_token(lp_lex_env* env_p, byte tt, lp_string name)
