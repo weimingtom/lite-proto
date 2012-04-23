@@ -45,14 +45,17 @@ int llp_del_mes(llp_env* env, char* mes_name)
 
 int llp_reg_mes(llp_env* env, char* mes_name)
 {
+	long file_size =0;
 	slice sl = {0};
 	lp_value* lv = NULL;
 	f_handle fd = f_open(mes_name, "rb");
-	sl.sp_size = fsize(fd);
+	file_size = f_size(fd);
+	if(file_size<=0)	return LP_FAIL;
 	check_null(env, LP_FAIL);
 	check_null(mes_name, LP_FAIL);
 	check_null(fd, LP_FAIL);
 	
+	sl.sp_size = (unsigned int )file_size;
 	sl.sp = (byte*)malloc(sl.sp_size);
 	sl.b_sp = sl.sp;
 	f_read(sl.sp, 1, sl.sp_size, fd);
