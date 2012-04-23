@@ -8,6 +8,7 @@ ifeq ($(OS),Windows_NT)
  N = \\
  OUT = $(_LLP) $(_LLPJAVA) $(_LP)
  JNI = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
+ DLLARG = -Wl,--kill-at -o
 else
  LP = lp
  LLP=libllp.a
@@ -22,7 +23,7 @@ else
 endif
 
 CC = gcc
-CFLAGS= -O2 -Wall -MMD 
+CFLAGS= -O2 -Wall 
 AR = ar rcu
 
 # lite-proto interpreter exec 
@@ -72,7 +73,7 @@ $(_LLP): $(LP_CONF_O) $(BUILD_LLP_O)
 	$(AR) $(_LLP) $?
 	
 $(_LLPJAVA): $(LP_CONF_O) $(BUILD_LLP_O) $(BUILD_LLP_JO)
-	$(CC) -shared  -o $(_LLPJAVA)  $?
+	$(CC) -shared  $(DLLARG) $(_LLPJAVA)  $?
 
 $(_LP): $(LP_CONF_O) $(BUILD_LP_O)
 	$(CC) -o $@ $?
