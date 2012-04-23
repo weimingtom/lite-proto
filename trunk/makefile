@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
  N = \\
  OUT = $(_LLP) $(_LLPJAVA) $(_LP)
  JNI = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
- DLLARG = -Wl,--kill-at -o
+ DLLARG = -Wl,--kill-at 
 else
  LP = lp
  LLP=libllp.a
@@ -73,7 +73,7 @@ $(_LLP): $(LP_CONF_O) $(BUILD_LLP_O)
 	$(AR) $(_LLP) $?
 	
 $(_LLPJAVA): $(LP_CONF_O) $(BUILD_LLP_O) $(BUILD_LLP_JO)
-	$(CC) -shared  $(DLLARG) $(_LLPJAVA)  $?
+	$(CC) -shared  $(DLLARG) -o $(_LLPJAVA)  $?
 
 $(_LP): $(LP_CONF_O) $(BUILD_LP_O)
 	$(CC) -o $@ $?
