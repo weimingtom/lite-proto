@@ -46,17 +46,35 @@ LP_CONF_O = lp_conf.o
 BUILD_LLP_O = $(foreach s, $(LLP_O), $(LLP_PATH)$(N)$(s))
 BUILD_LLP_JO = .$(N)$(LLP_PATH)$(N)$(LLP_JO)
 BUILD_LP_O  = $(foreach s, $(LP_INTERPRETER_O), $(LP_PATH)$(N)$(s)) 
+BULID_LLP_JC = $(foreach s, $(BUILD_LLP_JO), $(basename $(s)).c)
 
+
+AND_JNI = android$(N)jni
+AND_JNIP = $(AND_JNI)$(N)src
 
 ALL : BUILD_PATH  $(OUT)
 	$(CP) lp_conf.h  .$(N)$(LLP_OUT)
 	$(CP) llp.h   .$(N)$(LLP_OUT)
 	@echo  -----build success------
+
+android:
+	mkdir android
+	mkdir $(AND_JNI)
+	mkdir $(AND_JNIP)
+	$(CP) Android.mk $(AND_JNI)
+	$(CP) Application.mk $(AND_JNI)
+	
+	$(CP) $(LLP_PATH)$(N)*.c $(AND_JNIP)
+	$(CP) $(LLP_PATH)$(N)*.h $(AND_JNIP)
+	$(CP) lp_conf.c $(AND_JNIP)
+	$(CP) lp_conf.h $(AND_JNIP)
+	$(CP) llp.h     $(AND_JNIP)
+	ndk-build -C.$(N)$(AND_JNI)$(N)
+	
+BUILD_PATH:
+	mkdir $(LLP_OUT) 	 
 	
 
-
-BUILD_PATH:
-	mkdir $(LLP_OUT) 	
 	
 $(BUILD_LLP_O) : 
 	$(CC) $(CFLAGS) -c -o $@  -I.  $(basename $@).c
@@ -82,7 +100,9 @@ $(_LP): $(LP_CONF_O) $(BUILD_LP_O)
 	
 OD  = $(BUILD_LLP_O) $(BUILD_LLP_JO) $(BUILD_LP_O) $(LP_CONF_O) 
 OD := $(OD) $(foreach s, $(OD), $(basename $(s)).d)
+
+.PHONY : clean
 clean:
 	$(RM)  $(OD)
 	$(RMDIR) $(LLP_OUT)
-	
+	$(RMDIR)  android
