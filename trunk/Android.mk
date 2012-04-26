@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := \
 	src/lib_io.c \
 	src/lib_lp.c \
 	src/lib_mes.c \
+	src/lib_stringpool.c \
 	src/lib_table.c \
 	src/llpjava.c \
 	src/lp_conf.c \
