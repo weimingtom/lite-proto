@@ -99,14 +99,27 @@ Java_com_liteProto_LlpJavaNative_llpFreeEnv(JNIEnv* jenv, jclass js, jlong env)
 }
 
 JNIEXPORT jint JNICALL 
-Java_com_liteProto_LlpJavaNative_llpRegMes(JNIEnv* jenv, jclass js, jlong env, jstring mesName)
+Java_com_liteProto_LlpJavaNative_llpRegMes(JNIEnv* jenv, jclass js, jlong env, jstring fileName)
 {
 	u_longPtr lp = {0};
 	jint ret = 0;
-	char* mes_name = (char*)((*jenv)->GetStringUTFChars(jenv, mesName, NULL));
+	char* mes_name = (char*)((*jenv)->GetStringUTFChars(jenv, fileName, NULL));
 	lp.l = env;
 	ret = (jint)(llp_reg_mes((llp_env*)lp.p, mes_name));
-	(*jenv)->ReleaseStringUTFChars(jenv, mesName, mes_name);
+	(*jenv)->ReleaseStringUTFChars(jenv, fileName, mes_name);
+	return ret;
+}
+
+JNIEXPORT jint JNICALL 
+Java_com_liteProto_LlpJavaNative_llpRegSMes(JNIEnv * jenv, jclass js, jlong env, jbyteArray buff)
+{
+	slice sl = {0};
+	u_longPtr lp = {0};
+	int ret=0;
+	lp.l = env;
+	jbyteArrayToSlice(jenv, buff, &sl);
+	ret = llp_reg_Smes(lp.p, &sl);
+	RleaseJbyteArrayToSlice(jenv, buff, &sl);
 	return ret;
 }
 

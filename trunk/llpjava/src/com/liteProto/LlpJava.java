@@ -28,7 +28,13 @@ public class LlpJava {
 	public void regMessage(String mes) throws Exception 
 	{
 		if(LlpJavaNative.llpRegMes(env, mes) == 0)
-			throw new Exception("[LlpJavaNative RegMes]: regedit message \""+mes+"\" is error.");
+			throw new Exception("[LlpJavaNative RegMes]: regedit message from \""+mes+"\" file is error.");
+	}
+	
+	public void regMessage(byte[] buff) throws Exception
+	{
+		if(LlpJavaNative.llpRegSMes(env, buff) == 0)
+			throw new Exception("[LlpJavaNative RegMes]: regedit message from buff is error.");
 	}
 	
 	public LlpMessage getMessage(String mes) throws Exception

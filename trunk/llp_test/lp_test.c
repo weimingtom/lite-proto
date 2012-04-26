@@ -1,10 +1,10 @@
 #include "llp.h"
 #include <windows.h>
 
-#pragma comment(lib, "..\\llp\\sllp___Win32_Release\\sllp.lib")
+#pragma comment(lib, "..\\llp\\sllp___Win32_Debug\\sllp.lib")
 
 
-#define LENSS 1000000
+#define LENSS 1
 void at_test(llp_env* env)
 {
 	int ret = 0;
@@ -26,6 +26,9 @@ void at_test(llp_env* env)
 		llp_Wmes_string(lpm, "cc", "hi, I am string!");
 		
 		llp_in_message(llp_out_message(lpm), lpm2);
+		print("%d %d %s\n", llp_Rmes_int32(lpm2, "aa", 0),
+			llp_Rmes_int32(lpm2, "bb", 0),
+			llp_Rmes_string(lpm2, "cc", 0));
 		llp_message_clr(lpm);
 		llp_message_clr(lpm2);
 	}
@@ -37,12 +40,21 @@ void at_test(llp_env* env)
 
 int main(void)
 {
+	byte buff[1024]={0};
+	slice sl;
+	long lens;
 	llp_env* env = NULL;
-	
+	FILE* fp = NULL;
 	env = llp_new_env();
 	
-//	llp_reg_mes(env, "test.mes.lpb");
-	llp_reg_mes(env, "at.mes.lpb");
+	fp = fopen("at.mes.lpb", "rb");
+	lens=f_size(fp);
+	fread(buff, 1, lens, fp);
+	sl.b_sp = sl.sp = buff;
+	sl.sp_size = lens;
+
+//	llp_reg_mes(env, "at.mes.lpb");
+	llp_reg_Smes(env, &sl);
 	
 	at_test(env);
 
