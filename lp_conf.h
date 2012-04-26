@@ -9,6 +9,9 @@
 #include <stdint.h>
 #endif
 
+
+#define LLP_API extern
+
 enum{
 	LP_FAIL,
 	LP_TRUE,
@@ -38,7 +41,7 @@ extern size_t mem;
 #undef  malloc
 #undef free
 
-//#define malloc(s)	lp_malloc(s,  __FILE__,  __LINE__)
+//#define malloc(s)	 lp_malloc(s,  __FILE__,  __LINE__)
 #define malloc      lp_malloc
 #define free		lp_free
 

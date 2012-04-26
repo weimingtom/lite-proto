@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
  N = \\
  OUT = $(_LLP) $(_LLPJAVA) $(_LP)
  JNI = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
- DLLARG = -Wl,--kill-at 
+ DLLARG = -Wl,--kill-at -fPIC
 else
  LP = lp
  LLP=libllp.a
@@ -20,7 +20,7 @@ else
  JNI = $(JDK)$(N)bin$(N)java
  OUT = $(_LLP) $(_LLPJAVA)
  JNI = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
- DLLARG = -Wl
+ DLLARG = -Wl -fPIC
 endif
 
 CC = gcc
@@ -35,7 +35,7 @@ _LP = .$(N)$(LLP_OUT)$(N)$(LP)
 # lite-proto lib
 LLP_OUT = out
 LLP_PATH = .$(N)llp
-LLP_O = lib_al.o lib_io.o lib_lp.o lib_mes.o lib_table.o
+LLP_O = lib_al.o lib_io.o lib_lp.o lib_mes.o lib_table.o lib_stringpool.o
 _LLP = .$(N)$(LLP_OUT)$(N)$(LLP)
 
 # lite-proto llpJava dll
