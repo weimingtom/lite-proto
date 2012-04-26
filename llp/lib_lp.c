@@ -30,6 +30,17 @@ LLP_API void llp_free_env(llp_env* p)
 	}
 }
 
+LLP_API int llp_reg_Smes(llp_env* env, slice* buff)
+{
+	check_null(env, LP_FAIL);
+	check_null(buff, LP_FAIL);
+	check_null(buff->b_sp, LP_FAIL);
+	if(buff->sp_size == 0) return LP_FAIL;
+	
+	check_fail( llp_reg_mes_value(env, buff), LP_FAIL);
+	return LP_TRUE;
+}
+
 LLP_API int llp_reg_mes(llp_env* env, char* mes_name)
 {
 	long file_size =0;

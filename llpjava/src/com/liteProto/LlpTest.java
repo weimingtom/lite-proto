@@ -1,5 +1,8 @@
 package com.liteProto;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 public class LlpTest  {
 
 	/**
@@ -8,8 +11,13 @@ public class LlpTest  {
 	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		LlpJava llpJava = new LlpJava();
+		FileInputStream file = new FileInputStream("testLlp.mes.lpb");
+		byte[] buff = new byte[file.available()];
+		file.read(buff);
+		file.close();
+		//llpJava.regMessage("testLlp.mes.lpb");
+		llpJava.regMessage(buff);
 		
-		llpJava.regMessage("testLlp.mes.lpb");
 		System.out.println("regedit testLlp.mes.lpb is success!");
 		
 		LlpMessage lm = llpJava.getMessage("testLlpDataType");
