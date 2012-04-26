@@ -21,10 +21,11 @@ else
  OUT = $(_LLP) $(_LLPJAVA)
  JNI = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
  DLLARG = -Wl -fPIC
+ CFLAGS += -fPIC
 endif
 
 CC = gcc
-CFLAGS= -O2 -Wall  
+CFLAGS += -O2 -Wall  
 AR = ar rcu
 
 # lite-proto interpreter exec 
