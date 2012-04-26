@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libllp
+LOCAL_MODULE := libllpjava
 
 # compile in ARM mode, since the glyph loader/renderer is a hotspot
 # when loading complex pages in the browser
