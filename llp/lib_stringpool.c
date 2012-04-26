@@ -105,6 +105,7 @@ char* lib_stringpool_add(string_pool* sp, const char* str)
 	return *ret;
 }
 
+/*
 void dump_stringpool(string_pool* sp)
 {
 	int i=0;
@@ -124,3 +125,4 @@ void dump_stringpool(string_pool* sp)
 		i++;
 	}
 }
+*/
