@@ -31,12 +31,6 @@ public class LlpJava {
 			throw new Exception("[LlpJavaNative RegMes]: regedit message \""+mes+"\" is error.");
 	}
 	
-	public void delMessage(String mes) throws Exception
-	{
-		if(LlpJavaNative.llpDelMes(env,mes) == 0)
-			throw new Exception("[LlpJavaNative DelMes]: delete message \""+mes+"\" is error.");
-	}
-	
 	public LlpMessage getMessage(String mes) throws Exception
 	{
 		long handle = LlpJavaNative.llpMessageNew(env, mes);

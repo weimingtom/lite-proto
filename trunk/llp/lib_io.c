@@ -274,8 +274,8 @@ int llp_out_clr(slice* out)
 	return LP_TRUE;
 }
 
-// API
-int llp_in_message(slice* in, llp_mes* lms)
+
+LLP_API int llp_in_message(slice* in, llp_mes* lms)
 {
 	size_t Ri = 0;
 	byte   tt = 0;
@@ -462,7 +462,7 @@ static int _llp_out_message(llp_mes* lms)
 }
 
 // api
-slice* llp_out_message(llp_mes* lms)
+LLP_API slice* llp_out_message(llp_mes* lms)
 {
 	check_fail(_llp_out_message(lms), NULL);
 	
