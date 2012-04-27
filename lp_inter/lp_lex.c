@@ -33,10 +33,11 @@ char* ts[] = {
 
 #define now_char(p)					( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp)) ):(0)
 #define _next_char(p)				( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp))++ ):(0)
-#define char_type(p, c)				( (p)->char_enum[(byte)(c)] )
+#define char_type(p, c)				( (c>=0 || c<128)?((p)->char_enum[(byte)(c)]):(l_null) )
 
 static int lp_lex_char(lp_lex_env* env_p, slice* buff);
 static int lp_lex_number(lp_lex_env* env_p, slice* buff);
+
 
 char next_char(slice* p)
 {
@@ -122,6 +123,7 @@ int get_lex_env(lp_lex_env* le)
 	memset(le->char_enum, 0, sizeof(le->char_enum));
 	le->char_enum['\t']= l_skip;
 	le->char_enum[' ']= l_skip;
+	le->char_enum['\r'] = l_skip;
 	le->char_enum['\n']= l_n;
 	le->char_enum['_']= l_char;
 	le->char_enum['{']= l_lb;

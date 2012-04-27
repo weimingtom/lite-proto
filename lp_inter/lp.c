@@ -100,7 +100,7 @@ int main(int argc, char* args[])
 #ifndef _DEBUG
 	lp_arg(lp, args);
 #else
-	lp_inter(lp, "F:\\code\\lp\\out\\gamelist.mes");
+	lp_inter(lp, "F:\\code\\lp\\lp_inter\\simtower.mes");
 #endif
 	free_lp_env(lp);
 	return 0;

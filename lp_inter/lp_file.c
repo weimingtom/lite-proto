@@ -9,7 +9,7 @@ int read_file(char* file_name, slice* sp)
 	long fs = 0;
 	
 	check_null(file_name, (print("parse file not exist!\n"), LP_FAIL));
-	fp = fopen(file_name, "r");
+	fp = fopen(file_name, "rb");
 	fs = f_size(fp);
 	check_null(fp, (print("read file: %s is error!\n", file_name), LP_FAIL));
 	sp->sp_size = (size_t)fs + 2;
