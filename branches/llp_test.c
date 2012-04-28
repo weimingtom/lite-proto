@@ -102,14 +102,108 @@ void test_llp(llp_env* env)
 }
 
 
+
+
+void dump_lvaue(lvalue* lv, int tab)
+{
+	int i=0;
+	static char* type_s[] = {
+		"int32",
+		"int64",
+		"float32",
+		"float64",
+		"string",
+		"stream",
+		"message"
+	};
+
+	static char* is_rep[] = {
+		" ",
+		"[0]"
+	};
+	
+	for(i=0; i<tab; i++) print(" ");
+	switch(lv->t)
+	{
+	case LLPT_INT32:
+		print("%s %s%s = %d\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.i32);
+		break;
+	case  LLPT_INT64:
+		print("%s %s%s = %ld\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.i64);
+		break;
+	case  LLPT_FLOAT32:
+		print( "%s %s%s = %f\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.f32);
+		break;
+	case LLPT_FLOAT64:
+		print( "%s %s%s = %lf\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.i64);
+		break;
+	case LLPT_STRING:
+		print( "%s %s%s = %s\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.str);
+		break;
+	case LLPT_STREAM:
+		print( "%s %s%s = %p\n", type_s[lv->t], lv->filed_name, is_rep[lv->is_repeated], lv->v.stream);
+		break;
+	case LLPT_MESSAGE:
+		print("%s %s%s = %p\n", lv->v.mes.mes_name, lv->filed_name, is_rep[lv->is_repeated], lv->v.mes.lm);
+		{
+			int idx=1;
+			lvalue llv={0};
+			while(idx=llp_next(lv->v.mes.lm, idx, &llv))
+				dump_lvaue(&llv, tab+2);
+		}
+		break;
+	default:
+		print("fail lvalue!\n");
+		break;
+	}
+
+}
+
+
+
+void test_llp_next(llp_env* env)
+{
+	llp_mes* lms;
+	byte buffer[] = {1,2,3,4,5,6};
+	llp_uint32 idx =1;
+	lvalue lv ={0};
+	llp_mes* lm = llp_message_new(env, "test");
+	slice sl;
+	sl.b_sp = sl.sp = buffer;
+	sl.sp_size = sizeof(buffer);
+
+	llp_Wmes_int32(lm, "aa", 123);
+	llp_Wmes_int32(lm, "aa", 1111);
+	llp_Wmes_float32(lm, "cc", (float)6.797);
+	llp_Wmes_int64(lm, "bb", 456);
+	//llp_Wmes_float64(lm, "dd", 1.2234);
+	llp_Wmes_string(lm, "ee", "test string!");
+	llp_Wmes_stream(lm, "ff", buffer, sizeof(buffer));
+
+	lms=llp_Wmes_message(lm, "io");
+	llp_Wmes_int32(lms, "ia", 8888);
+	llp_Wmes_string(lms, "ib", "i am info message!");
+
+	while(idx=llp_next(lm, idx, &lv))
+	{
+		dump_lvaue(&lv, 0);
+	}
+
+	llp_message_free(lm);
+}
+
+
 int main(void)
 {
 //	test_stringpool();
 	int ret = 0;
 	llp_env* env = llp_new_env();
-	ret = llp_reg_mes(env, "test.mes.lpb");
 
-	test_llp(env);
+	ret = llp_reg_mes(env, "F:\\code\\llp_branches\\llp1_1obj\\test.mes.lpb");
+
+	test_llp_next(env);
+
+//	test_llp(env);
 
 	llp_free_env(env);
 

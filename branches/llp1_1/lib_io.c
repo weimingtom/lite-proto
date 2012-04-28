@@ -2,6 +2,7 @@
 #include "lib_lp.h"
 #include "lib_io.h"
 #include "lib_mes.h"
+#include "llp.h"
 
 static int sl_W32(slice* out, llp_uint32 num);
 static int sl_W64(slice* out, llp_uint64 num);
@@ -471,4 +472,73 @@ LLP_API slice* llp_out_message(llp_mes* lms)
 	lms->sret.sp_size = lms->sio.sp - lms->sio.b_sp;
 
 	return &lms->sret;
+}
+
+
+LLP_API llp_uint32 llp_next(llp_mes* lms, llp_uint32 idx, lvalue* lv_out)
+{
+	llp_uint32 i;
+	llp_value* lv;
+	t_Mfield* tmd_p = NULL;
+	check_null(lms, 0);
+	check_null(lv_out, 0);
+	
+	for(i=(idx-1); i<lms->filed_lens; i++)
+	{
+		if(lms->filed_al[i].lens>0)
+			break;
+		idx++;
+	}
+	if(i>=lms->filed_lens)
+		return 0;
+
+	tmd_p = &lms->d_mes->message_tfl[idx-1];
+	lv = lib_array_inx(&lms->filed_al[idx-1], 0);
+
+	// set filed name
+	lv_out->filed_name = tmd_p->filed_name;
+	
+	// set type
+	switch(tag_type(tmd_p->tag))
+	{
+	case lpt_int32:
+		lv_out->t = LLPT_INT32;
+		lv_out->v.i32 = lv->lp_int32;
+		break;
+	case lpt_int64:
+		lv_out->t = LLPT_INT64;
+		lv_out->v.i64 = lv->lp_int64;
+		break;
+	case lpt_float32:
+		lv_out->t = LLPT_FLOAT32;
+		lv_out->v.f32 = lv->lp_float32;
+		break;
+	case lpt_float64:
+		lv_out->t = LLPT_FLOAT64;
+		lv_out->v.f64 = lv->lp_float64;
+		break;
+	case lpt_string:
+		lv_out->t = LLPT_STRING;
+		lv_out->v.str = lv->lp_str;
+		break;
+	case lpt_stream:
+		lv_out->t = LLPT_STREAM;
+		lv_out->v.stream = lv->lp_stream;
+		break;
+	case lpt_message:
+		lv_out->t = LLPT_MESSAGE;
+		lv_out->v.mes.mes_name = tmd_p->tms_name;
+		lv_out->v.mes.lm = lv->lp_mes;
+		break;
+	default:
+		return 0;
+	}
+
+	// set is_repeated
+	if(tag_state(tmd_p->tag)==lpf_rep)
+		lv_out->is_repeated = 1;
+	else
+		lv_out->is_repeated = 0;
+
+	return idx+1;
 }
