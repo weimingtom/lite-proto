@@ -28,7 +28,9 @@ typedef enum _e_lt{
 struct _t_def_mes;
 typedef struct _t_Mfield{
 	byte tag;					// tag
-	struct _t_def_mes* tms;		// if type message 
+	char* filed_name;			// filed's name
+	struct _t_def_mes* tms;		// if type message
+	char* tms_name;				// if type message , the message name
 }t_Mfield;
 
 // def message body
@@ -37,6 +39,7 @@ typedef struct _t_def_mes{
 	filed_map*		message_filed;		// filed table
 	t_Mfield*		message_tfl;		// filed tag list
 	llp_uint32		message_count;		// filed count
+	char*			message_name;		// message name
 }t_def_mes;
 
 typedef struct _llp_env{		

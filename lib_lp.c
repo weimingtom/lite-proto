@@ -111,11 +111,14 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 				mes_p = lib_Mmap_add(env->dmes, lib_stringpool_add(env->mesN, fms));
 				check_null(mes_p, LP_FAIL);
 			}
+			des_mes->message_tfl[i].tms_name = mes_p->message_name;
 			des_mes->message_tfl[i].tms = mes_p;
 		}
 		
 		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
-		check_fail( lib_Fmap_add(des_mes->message_filed, lib_stringpool_add(env->mesN, f_name), i),
+		check_fail( lib_Fmap_add(des_mes->message_filed, 
+								 des_mes->message_tfl[i].filed_name = lib_stringpool_add(env->mesN, f_name), 
+								 i),
 					LP_FAIL
 				  );
 	}
