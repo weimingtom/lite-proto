@@ -1,5 +1,8 @@
 
 #include "llp.h"
+#include "llp_lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 #include "lp_conf.h"
 #include "lib_table.h"
 #include "lib_stringpool.h"
@@ -197,17 +200,29 @@ int main(void)
 {
 //	test_stringpool();
 	int ret = 0;
-	llp_env* env = llp_new_env();
+	lua_State* L = lua_open();
+	luaopen_base(L);
+	luaopen_string(L);
+	luaopen_table(L);
+	llpL_open(L, NULL);
 
-	ret = llp_reg_mes(env, "F:\\code\\llp_branches\\llp1_1obj\\test.mes.lpb");
+	if(luaL_dofile(L, "test.lua"))
+	{
+		printf("<error>: %s\n", lua_tostring(L, -1));
+	}
 
-	test_llp_next(env);
-
-//	test_llp(env);
-
-	llp_free_env(env);
-
+// 	llp_env* env = llp_new_env();
+// 
+// 	ret = llp_reg_mes(env, "F:\\code\\llp_branches\\llp1_1obj\\test.mes.lpb");
+// 
+// 	test_llp_next(env);
+// 
+// //	test_llp(env);
+// 
+// 	llp_free_env(env);
+	
+	print("call here!\n");
+	lua_close(L);
 	print_mem(); 
-	getchar();
 	return 0;
 }
