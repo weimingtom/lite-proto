@@ -1,15 +1,5 @@
 message test {
 	int32 aa;
-	int64 bb;
-	float32 cc;
-	float64 dd;
-	string ee;
-	stream ff;
-
-	message info {
-		int32 ia;
-		string ib;
-	}
-
-	info  io;
+	int32 bb;
+	string cc;
 }
