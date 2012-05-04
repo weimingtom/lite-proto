@@ -73,8 +73,8 @@ void* lp_malloc(size_t len);
 void lp_free(void* p);
 long f_size( FILE *fp);
 
-#ifdef _DEBUG
+
 void print_mem();
-#endif
+
 
 #endif
