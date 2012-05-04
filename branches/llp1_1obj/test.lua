@@ -31,14 +31,9 @@ local t = {
 	cc = 'hi, i am string!'
 }
 
-local b = t_time()
-for _=1, 1000000 do
-	local buffer = llp:encode('test', t)
-	local tt = llp:decode('test', buffer)
-end
-local e =t_time()
+local buffer = llp:encode('test', t)
+local tt = llp:decode('test', buffer)
 
-print('b = '..b..'  e='..e..' all='..(e-b))
---print(dump(tt))
+print(dump(tt))
 
 
