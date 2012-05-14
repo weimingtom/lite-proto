@@ -79,7 +79,7 @@ void** lib_map_find(llp_map* l_map, const char* key)
 	size_t hash_full, hash;
 	check_null(l_map, NULL);
 	check_null(key, NULL);
-	
+	if(!(l_map->size))	return NULL;
 	hash_full = calc_hash(key);
 	hash = hash_full % l_map->size;
 
@@ -260,6 +260,7 @@ int* lib_Fmap_find(filed_map* f_map, char* filed_name)
 	size_t hash, hash_full;
 	check_null(f_map, NULL);
 	check_null(filed_name, NULL);
+	if(!(f_map->size))	return NULL;
 	hash_full = calc_hash(filed_name);
 	hash = hash_full % f_map->size;
 
