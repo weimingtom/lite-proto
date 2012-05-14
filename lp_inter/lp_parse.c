@@ -250,7 +250,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 					}
 					else if(ret == LP_FAIL)
 					{
-						print("Serious error[lin: %d]: add ide is error! \n", lp_p->line);
+						print("Serious error[line: %d]: add ide is error! \n", lp_p->line);
 						return LP_FAIL;
 					}
 					for(i=0; i<sizeof(tag); i++)
@@ -273,11 +273,11 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 			break;
 		case t_rb:
 			lp_watch(lp_p, t_rb);
-			if(back_out_lens >= lp_out->list_len)
-			{
-				print("parse[error line: %d] at message \"%s\" is empty body!\n", lp_p->line, at_mes);
-				return LP_FAIL;
-			}
+// 			if(back_out_lens >= lp_out->list_len)
+// 			{
+// 				print("parse[error line: %d] at message \"%s\" is empty body!\n", lp_p->line, at_mes);
+// 				return LP_FAIL;
+// 			}
 			goto CLO_END;
 		default:
 			print("parse[error line: %d] at {} not allow!\n", temp->line);
