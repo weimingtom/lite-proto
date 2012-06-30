@@ -6,6 +6,7 @@
 
 typedef struct _l_env{
 	llp_env* env;
+	byte	is_self;
 }l_env;
 
 typedef struct _l_mes {
@@ -211,10 +212,10 @@ static void _llpL_new_mes(lua_State* L, char* mes_name, llp_mes* lm, lua_CFuncti
 //  free env
 static int _llpL_close(lua_State* L)
 {
-	llp_env* env;
-
-	env = get_llpenv(L);
-	llp_free_env(env);
+	l_env* le = lua_touserdata(L, -1);
+	
+	if(le->is_self)
+		llp_free_env(le->env);
 	return 0;
 }
 
@@ -376,6 +377,7 @@ static int llpL_reg_mes(lua_State* L)
 
 int llpL_open(lua_State* L, llp_env* env)
 {
+	byte flag = LP_FAIL;
 	int top, i;
 	int llpt_idx;
 	l_env* le ;
@@ -390,6 +392,7 @@ int llpL_open(lua_State* L, llp_env* env)
 	{
 		env = llp_new_env();
 		check_null(env, LP_FAIL);
+		flag = LP_TRUE;
 	}
 
 	top = lua_gettop(L);
@@ -401,6 +404,7 @@ int llpL_open(lua_State* L, llp_env* env)
 	// set env
 	le=lua_newuserdata(L, sizeof(l_env));
 	le->env = env;
+	le->is_self = flag;
 
 	// set metatable
 	lua_newtable(L);
