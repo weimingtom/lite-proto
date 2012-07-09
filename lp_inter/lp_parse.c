@@ -24,6 +24,8 @@
 static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes);
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes);
 static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name);
+static int lp_parse_extern(lp_parse_env* lp_p);
+
 
 int get_parse_env(lp_parse_env* lp_p, lp_list* token_list)
 {
@@ -64,6 +66,9 @@ int lp_parse(lp_parse_env* lp_p)
 		case t_Kmessage:
 			check_fail(lp_parse_message(lp_p, NULL), LP_FAIL);
 			break;
+		case t_Kextern:
+			check_fail(lp_parse_extern(lp_p), LP_FAIL);
+			break;
 		default:
 			print("parse[error line: %d] the error token!\n", lp_t->line);
 			return LP_FAIL;
@@ -99,6 +104,79 @@ int lp_parse_push(lp_parse_env* lp_p, void* data, unsigned int len)
 	return LP_TRUE;
 }
 
+static int lp_parse_mes(lp_parse_env* lp_p, lp_string* mes)
+{
+	int ret = LP_TRUE;
+	lp_token* lp_t=lp_at_token(lp_p);
+
+	if(lp_t==NULL){
+		print("parse[error line: %d] read file end!\n", lp_p->line);
+		return LP_FAIL;
+	}
+
+	for( ;lp_t; ){
+		lp_get_token(lp_p, t_ide, lp_t);
+		lp_string_cats(mes, (char*)lp_t->name.str.list_p);
+		if( (lp_t=lp_at_token(lp_p))==NULL )
+			goto M_END;
+		switch(lp_t->type)
+		{
+		case t_clo:
+			lp_watch(lp_p, t_clo);
+			lp_string_cat(mes, '.');
+			break;
+		default:
+			goto M_END;
+		}
+	}
+
+M_END:
+	return LP_TRUE;
+}
+
+static int lp_parse_extern(lp_parse_env* lp_p)
+{
+	check_null(lp_p, LP_FAIL);
+	lp_watch(lp_p, t_Kextern);
+
+	for(;;)
+	{
+		lp_token* lp_t;
+		lp_string mes = lp_string_new("");
+		
+		if(lp_parse_mes(lp_p, &mes) ==LP_FAIL)
+		{
+			lp_string_free(&mes);
+			return LP_FAIL;
+		}
+		
+		if(lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p) == LP_EXIST)
+		{
+			print("parse[error line:%d] the extern message name \"%s\" is already def!\n", 
+				  lp_p->line, (char*)mes.str.list_p);
+			lp_string_free(&mes);
+			return LP_FAIL;
+		}
+
+		lp_string_free(&mes);
+		if( (lp_t=lp_at_token(lp_p))==NULL )
+			lp_check(lp_p, t_end);
+		
+		switch(lp_t->type)
+		{
+		case t_end:
+			lp_watch(lp_p, t_end);
+			goto E_END;
+		case t_ca:
+		default:
+			lp_watch(lp_p, t_ca);
+			break;
+		}
+	}
+
+E_END:
+	return LP_TRUE;
+}
 
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 {
@@ -293,7 +371,7 @@ CLO_END:
 
 static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 {
-	lp_token* o_clo = NULL;
+	lp_token* lp_t = NULL;
 	int ret = LP_FAIL;
 	lp_string name;
 	lp_string full_name;
@@ -304,32 +382,19 @@ static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 	
 	check_null(lp_p, LP_FAIL);
 	check_null(out_name, LP_FAIL);
-	lp_get_token(lp_p, t_ide, o_clo);
 	
 	at_mes = (at_mes)?(at_mes):("");
 	full_name = lp_string_new(at_mes);
-	name = lp_string_new((char*)o_clo->name.str.list_p);
+	name = lp_string_new("");
 
-	for(;;)
+	if(lp_parse_mes(lp_p, &name)==LP_FAIL)
+		goto DEFM_ERROR_END;
+	
+	if( (lp_t=lp_at_token(lp_p))==NULL )
+		lp_check(lp_p, t_ide);
+
+	switch(lp_t->type)
 	{
-		np = lp_at_token(lp_p);
-		if(np==NULL)
-			goto DEFM_ERROR_END;
-		
-		switch(np->type)
-		{
-		case t_clo:
-			lp_watch(lp_p, t_clo);
-			np = lp_at_token(lp_p);
-			if(np==NULL || np->type!=t_ide)
-				goto DEFM_ERROR_END;
-			else
-			{
-				lp_string_cat(&name, '.');
-				lp_string_cats(&name, (char*)np->name.str.list_p);
-				lp_watch(lp_p, t_ide);
-			}
-			break;
 		case t_ll:
 		case t_ide:
 			{
@@ -354,7 +419,6 @@ static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 			break;
 		default:
 			goto DEFM_ERROR_END;
-		}
 	}
 
 DEFM_ERROR_END:

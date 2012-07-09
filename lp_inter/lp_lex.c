@@ -21,14 +21,16 @@ char* ts[] = {
 	".",
 
 	"t_stream",
-	
+	"t_extern",
+	",",
 	"NULL"
 	};
 
 
  static lp_key lp_sk[] = {
 	{"message", t_Kmessage}, {"int32", t_Kint32}, {"int64", t_Kint64}, {"string", t_kstring},
-	{"float32", t_Kfloat32}, {"float64", t_Kfloat64}, {"stream", t_Kstream}, {NULL, t_error}
+	{"float32", t_Kfloat32}, {"float64", t_Kfloat64}, {"stream", t_Kstream}, {"extern", t_Kextern}, 
+	{NULL, t_error}
 };
 
 #define now_char(p)					( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp)) ):(0)
@@ -131,6 +133,7 @@ int get_lex_env(lp_lex_env* le)
 	le->char_enum['=']= l_ass;
 	le->char_enum['[']= l_ll;
 	le->char_enum[']']= l_rl;
+	le->char_enum[',']= l_ca;
 	le->char_enum['#']= l_text;
 	le->char_enum[';']= l_end;
 	le->char_enum['.']= l_clo;
@@ -184,6 +187,10 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 			break;
 		case l_rb:
 			lp_add_token(env_p, lp_new_token(env_p, t_rb, lp_string_new(NULL)));
+			next_char(buff);
+			break;
+		case l_ca:
+			lp_add_token(env_p, lp_new_token(env_p, t_ca, lp_string_new(NULL)));
 			next_char(buff);
 			break;
 		case l_rl:

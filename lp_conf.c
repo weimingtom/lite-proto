@@ -28,6 +28,8 @@ void* lp_malloc(size_t len)
 
 void lp_free(void* p)
 {
+	if(p==NULL)
+		return;
 	mem_lens--;
 	free(p);
 }
