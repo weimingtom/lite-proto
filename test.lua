@@ -31,8 +31,12 @@ local t = {
 	cc = 'hi, i am string!'
 }
 
-local buffer = llp:encode('test', t)
-local tt = llp:decode('test', buffer)
+-- encode
+local lm = llp:encode('test', t)
+-- decode 
+local tt = llp:decode('test', lm)
+-- clear 
+llp:clear(lm)
 
 print(dump(tt))
 
