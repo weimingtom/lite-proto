@@ -294,10 +294,24 @@ static void _llpL_encode_table(lua_State* L, llp_mes* lm,  char* deep_name)
 }
 
 
+// clear 
+static int llpL_clear(lua_State* L)
+{
+	l_mes* l_m = NULL;
+	luaL_checktype(L, 2, LUA_TTABLE);
+	lua_getfield(L, 2, LM_CO);
+	luaL_checktype(L, -1, LUA_TUSERDATA);
+
+	l_m = (l_mes*)(lua_touserdata(L, -1));
+	llp_message_free(l_m->mes);
+	l_m->mes = NULL;
+
+	return 0;
+}
+
 // encode 
 static int llpL_encode(lua_State* L)
 {
-	slice* sl;
 	int top;
 	char* mes_name;
 	llp_env* env;
@@ -318,44 +332,55 @@ static int llpL_encode(lua_State* L)
 
 	// set message out
 	lua_pushvalue(L, top);
-	sl = llp_out_message(lm);
-	if(sl==NULL)
-		luaL_error(L, "[encode error]: encode error.");
-	lua_pushlightuserdata(L, sl);
-	lua_setfield(L, -2, LM_SL);
 	return 	1;
 }
 
 // decode
 static int llpL_decode(lua_State* L)
 {
+	l_mes* l_m = NULL;
 	char* mes_name;
-	slice* sl;
 	llp_env* env;
-	llp_mes* lm;
 	check_llpenv(L);
 	env = get_llpenv(L);
 
 	mes_name = (char*)luaL_checkstring(L, 2);
 	luaL_checktype(L, 3, LUA_TTABLE);
-	lua_getfield(L, 3, LM_SL);
-	luaL_checktype(L, -1, LUA_TLIGHTUSERDATA);
-	sl = (slice*)lua_touserdata(L, -1);
+	lua_getfield(L, 3, LM_CO);
+	luaL_checktype(L, -1, LUA_TUSERDATA);
 
-	lm = llp_message_new(env, mes_name);
-	if(lm==NULL || llp_in_message(sl, lm) ==LP_FAIL)
-	{
-		llp_message_free(lm);
+	l_m = (l_mes*)(lua_touserdata(L, -1));
+	if(l_m->mes==NULL)
 		luaL_error(L, "[decode error]: decode message '%s' is error.", mes_name);
-	}
 	
 	lua_newtable(L);
-	_llpL_dump_data(L, lm);
+	_llpL_dump_data(L, l_m->mes);
 
-	llp_message_free(lm);
 	return 1;
 }
 
+// push a message obj with no gc function
+void lua_pushlm(lua_State* L, llp_mes* lm)
+{
+	if(lm==NULL)
+		return;
+
+	_llpL_new_mes(L, lm->d_mes->message_name, lm, NULL);
+}
+
+// pop a message obj
+llp_mes* lua_tolm(lua_State* L, int idx)
+{
+	l_mes* l_m=NULL;
+	if(lua_type(L, idx)!=LUA_TTABLE)
+		return NULL;
+	lua_getfield(L, idx, LM_CO);
+	if(lua_type(L, -1)!=LUA_TLIGHTUSERDATA)
+		return NULL;
+
+	l_m=(l_mes*)(lua_touserdata(L, -1));
+	return l_m->mes;
+}
 
 // reg message
 static int llpL_reg_mes(lua_State* L)
@@ -384,7 +409,8 @@ int llpL_open(lua_State* L, llp_env* env)
 	luaL_Reg reg[] = {
 		{"reg_message", llpL_reg_mes},
 		{"decode", llpL_decode},
-		{"encode", llpL_encode}
+		{"encode", llpL_encode},
+		{"clear", llpL_clear}
 	};
 
 	check_null(L, LP_FAIL);

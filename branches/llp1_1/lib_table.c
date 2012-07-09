@@ -79,7 +79,7 @@ void** lib_map_find(llp_map* l_map, const char* key)
 	size_t hash_full, hash;
 	check_null(l_map, NULL);
 	check_null(key, NULL);
-	
+	if(!(l_map->size))	return NULL;
 	hash_full = calc_hash(key);
 	hash = hash_full % l_map->size;
 
@@ -149,7 +149,7 @@ t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
 	llp_kv kv = {0};
 	kv.key = message_name;
 	kv.vp = malloc(sizeof(t_def_mes));
-	((t_def_mes*)kv.vp)->message_name = message_name;
+	memset(kv.vp, 0, sizeof(t_def_mes));
 
 	ret=lib_map_add(l_map, &kv);
 	if(ret == LP_FAIL)
@@ -261,6 +261,7 @@ int* lib_Fmap_find(filed_map* f_map, char* filed_name)
 	size_t hash, hash_full;
 	check_null(f_map, NULL);
 	check_null(filed_name, NULL);
+	if(!(f_map->size))	return NULL;
 	hash_full = calc_hash(filed_name);
 	hash = hash_full % f_map->size;
 

@@ -28,13 +28,15 @@ void* lp_malloc(size_t len)
 
 void lp_free(void* p)
 {
+	if(p==NULL)
+		return;
 	mem_lens--;
 	free(p);
 }
 
-
+#ifdef _DEBUG
 void print_mem()
 {
 	printf("mem = %u\n", mem_lens);
 }
-
+#endif
