@@ -149,6 +149,7 @@ t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
 	llp_kv kv = {0};
 	kv.key = message_name;
 	kv.vp = malloc(sizeof(t_def_mes));
+	memset(kv.vp, 0, sizeof(t_def_mes));
 
 	ret=lib_map_add(l_map, &kv);
 	if(ret == LP_FAIL)

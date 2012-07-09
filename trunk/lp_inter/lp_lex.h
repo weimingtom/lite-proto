@@ -18,7 +18,8 @@ typedef enum _e_c{
 	l_text,
 	l_end,
 	l_clo,
-	l_skip
+	l_skip,
+	l_ca
 }e_c;
 
 typedef struct _lp_key{   
@@ -54,7 +55,8 @@ typedef enum _e_t{
 	t_clo,
 
 	t_Kstream,
-
+	t_Kextern,
+	t_ca,
 	t_count
 }e_t;
 

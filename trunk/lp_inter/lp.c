@@ -100,8 +100,9 @@ int main(int argc, char* args[])
 #ifndef _DEBUG
 	lp_arg(lp, args);
 #else
-	lp_inter(lp, "F:\\code\\lp\\test.mes");
+	lp_inter(lp, "../testA.mes");
 #endif
 	free_lp_env(lp);
+//	print_mem();
 	return 0;
 }
