@@ -15,6 +15,7 @@ llp_mes* _llp_message_new(t_def_mes* def_mesP)
 	llp_uint32 i=0;
 	llp_mes* out_mes = NULL;
 	check_null(def_mesP, NULL);
+	check_null(def_mesP->message_filed, NULL);
 	out_mes = (llp_mes*)malloc(sizeof(llp_mes));
 	memset(out_mes, 0, sizeof(llp_mes));
 	

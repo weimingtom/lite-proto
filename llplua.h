@@ -30,7 +30,11 @@ typedef struct _ltype{
 // return:	the next idx (the end is 0)
 llp_uint32 llp_Tnext(llp_mes* lms, llp_uint32 idx, ltype* lt_out);
 
-
+// open env
 int llpL_open(lua_State* L, llp_env* env);
+// push a message obj
+void lua_pushlm(lua_State* L, llp_mes* lm);
+// pop a message obj
+llp_mes* lua_tolm(lua_State* L, int idx);
 
 #endif
