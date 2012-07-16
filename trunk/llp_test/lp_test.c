@@ -4,6 +4,7 @@
 #pragma comment(lib, "../llp/sllp/Debug/sllp.lib")
 
 
+
 #define LENSS 1
 void at_test(llp_env* env)
 {
@@ -91,9 +92,9 @@ int main(void)
 	
 
 
-	
+	llp_reg_mes(env, "../testB.mes.lpb");
 	llp_reg_mes(env, "../testA.mes.lpb");
-//	llp_reg_mes(env, "../testB.mes.lpb");
+	
 	ex_test(env);
 
 	llp_free_env(env);
