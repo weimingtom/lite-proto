@@ -16,7 +16,8 @@ LLP_API llp_env* llp_new_env()
 	ret->dmes = lib_map_new();
 	// new string pool
 	ret->mesN = lib_stringpool_new();
-	
+	// NULL rs list
+	ret->rs_p = NULL;
 	return ret;
 }
 
@@ -24,8 +25,14 @@ LLP_API void llp_free_env(llp_env* p)
 {
 	if(p)
 	{
+		rs_node* tp=NULL;
 		lib_Mmap_free(p->dmes);
 		lib_stringpool_free(p->mesN);
+		for( ;p->rs_p; ){
+			tp=p->rs_p->next;
+			free(p->rs_p);
+			p->rs_p=tp;
+		}
 		free(p);
 	}
 }
@@ -65,6 +72,30 @@ LLP_API int llp_reg_mes(llp_env* env, char* mes_name)
 	return LP_TRUE;
 }
 
+static int llp_rs_add(llp_env* env, t_def_mes* tp)
+{
+	rs_node* rs = (rs_node*)malloc(sizeof(rs_node));
+	check_null(rs, LP_FAIL);
+	rs->p = tp;
+	rs->next = env->rs_p;
+	env->rs_p = rs;
+	return LP_TRUE;
+}
+
+static int llp_rs_check(llp_env* env)
+{
+	rs_node* tp = NULL;
+	for(;env->rs_p; ){
+		tp = env->rs_p->next;
+		//  if the self message is not defined 
+		check_null(env->rs_p->p->message_filed, LP_FAIL);
+		free(env->rs_p);
+		env->rs_p = tp;
+	}
+
+	return LP_TRUE;
+}
+
 static int llp_reg_mes_value(llp_env* env, slice* sl)
 {
 	char* out_name = NULL;
@@ -83,6 +114,7 @@ static int llp_reg_mes_value(llp_env* env, slice* sl)
 		}
 	}
 RMV_END:
+	check_fail(llp_rs_check(env), LP_FAIL);
 	return LP_TRUE;
 }
 
@@ -110,6 +142,7 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 			{
 				mes_p = lib_Mmap_add(env->dmes, lib_stringpool_add(env->mesN, fms));
 				check_null(mes_p, LP_FAIL);
+				check_fail(llp_rs_add(env, mes_p), LP_FAIL);
 			}
 			des_mes->message_tfl[i].tms = mes_p;
 		}

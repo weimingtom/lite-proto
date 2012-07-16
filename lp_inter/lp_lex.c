@@ -170,8 +170,16 @@ int lp_lex(lp_lex_env* env_p, slice* buff)
 			next_char(buff);
 			break;
 		case l_clo:
-			lp_add_token(env_p, lp_new_token(env_p, t_clo, lp_string_new(NULL)));
-			next_char(buff);
+			{
+				lp_add_token(env_p, lp_new_token(env_p, t_clo, lp_string_new(NULL)));
+				next_char(buff);
+				at_char=now_char(buff);
+				if(char_type(env_p, at_char) != l_char)
+				{
+					print("lex[error line: %d] token \".\" must be followed identifier!\n", env_p->line);
+					return LP_FAIL;
+				}
+			}
 			break;
 		case l_ass:
 			lp_add_token(env_p, lp_new_token(env_p, t_ass, lp_string_new(NULL)));
