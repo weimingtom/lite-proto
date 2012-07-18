@@ -2,34 +2,32 @@
 #include "lp_conf.h"
 #include "lp_table.h"
 
+// token typer to string
 char* ts[] = {
-	"t_error",
-	"message",
-	"int32",
-	"int64",
-	"string",
-	"float32",
-	"float64",	
-	"t_num",
+	"error char",
+	"number",
 	"{",
 	"}",
 	"=",
 	"[",
 	"]",
-	"t_ide",
+	"identifier",
 	";",
 	".",
-
-	"t_stream",
-	"t_extern",
 	",",
-	"NULL"
-	};
+
+	"message",
+	"integer",
+	"bytes",
+	"extern",
+	"null"
+};
 
 
+//	key
  static lp_key lp_sk[] = {
-	{"message", t_Kmessage}, {"int32", t_Kint32}, {"int64", t_Kint64}, {"string", t_kstring},
-	{"float32", t_Kfloat32}, {"float64", t_Kfloat64}, {"stream", t_Kstream}, {"extern", t_Kextern}, 
+	 {"message", t_Kmessage}, {"integer", t_Kinteger}, {"string", t_kstring},
+	 {"real", t_Kreal}, {"bytes", t_Kbytes}, {"extern", t_Kextern}, 
 	{NULL, t_error}
 };
 
@@ -116,7 +114,7 @@ int get_lex_env(lp_lex_env* le)
 		int inx = _BKDRHash(lp_sk[i].s_key, LEX_KEY_MAX);
 		if(le->lp_k[inx].s_key)
 		{
-			print("lp_key is not null! key=\"%s\" \n", le->lp_k[inx].s_key);
+			print("[init error]lp_key is not null! key=\"%s\" \n", le->lp_k[inx].s_key);
 			return LP_FAIL;
 		}
 		else
@@ -268,7 +266,7 @@ static int lp_lex_number(lp_lex_env* env_p, slice* buff)
 	return LP_TRUE;
 }
 
-
+/*
 int lp_lex_print(lp_lex_env* env_p)
 {
 	
@@ -290,4 +288,4 @@ int lp_lex_print(lp_lex_env* env_p)
 
 	return LP_TRUE;
 }
-
+*/
