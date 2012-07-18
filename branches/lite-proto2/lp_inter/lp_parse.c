@@ -277,12 +277,10 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 	{
 		switch(temp->type)
 		{
-		case t_Kint32:
-		case t_Kint64:
-		case t_Kfloat32:
-		case t_Kfloat64:
+		case t_Kinteger:
+		case t_Kreal:
 		case t_kstring:
-		case t_Kstream:
+		case t_Kbytes:
 		case t_ide:
 			{
 				lp_token* tt = NULL;
