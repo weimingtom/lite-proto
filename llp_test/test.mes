@@ -1,35 +1,7 @@
-# test 描述文本···
-message test1 {
-	int32 a;
-	int32 b;
-	string name;
-}
 
-
-message test2 {
-	int64 id;
-	string name;
-	int32 rgb;
-	
-	message info{
-		int32 al;
-		int32 b;
-	}
-	
-	
-	message info2{
-		string str;
-		string[] l_str;
-		
-		message like_info2{
-			int32 a;
-			int32 b;
-		}
-	}
-	
-	int32[] al;
-	info[]  i_al;
-	
-	info2 io2;
-	info2.like_info2 ili;	
+message testM {
+	integer aa;
+	string  bb;
+	real    cc;
+	bytes   dd;
 }

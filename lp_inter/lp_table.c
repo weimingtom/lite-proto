@@ -160,3 +160,6 @@ void lp_string_free(lp_string* lp_s)
 
 	lp_list_free(&lp_s->str);
 }
+
+
+

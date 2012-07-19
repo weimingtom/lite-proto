@@ -145,6 +145,10 @@ SOURCE=.\lp_parse.h
 
 SOURCE=.\lp_table.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\lp_type.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
