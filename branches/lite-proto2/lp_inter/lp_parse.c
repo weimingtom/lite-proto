@@ -106,7 +106,6 @@ int lp_parse_push(lp_parse_env* lp_p, void* data, unsigned int len)
 
 static int lp_parse_mes(lp_parse_env* lp_p, lp_string* mes)
 {
-	int ret = LP_TRUE;
 	lp_token* lp_t=lp_at_token(lp_p);
 
 	if(lp_t==NULL){
@@ -256,7 +255,6 @@ C_END:
 
 static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes)
 {
-	size_t back_out_lens = 0;
 	byte tag = 0;
 	lp_token* temp = NULL;
 	lp_token* ide = NULL;
@@ -265,7 +263,6 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 	check_null(at_mes, LP_FAIL);
 	check_null(ide_table, LP_FAIL);
 	check_null(out_count, LP_FAIL);
-	back_out_lens = lp_out->list_len;
 
 	lp_watch(lp_p, t_lb);
 	
@@ -373,7 +370,6 @@ static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 	int ret = LP_FAIL;
 	lp_string name;
 	lp_string full_name;
-	lp_token* np = NULL;
 
 	init0(name);
 	init0(full_name);
@@ -426,3 +422,5 @@ DEFM_END:
 	lp_string_free(&full_name);
 	return ret;
 }
+
+

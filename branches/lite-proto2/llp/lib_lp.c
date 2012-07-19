@@ -48,15 +48,15 @@ LLP_API int llp_reg_Smes(llp_env* env, slice* buff)
 	return LP_TRUE;
 }
 
-LLP_API int llp_reg_mes(llp_env* env, char* mes_name)
+LLP_API int llp_reg_mes(llp_env* env, char* lpb_file_name)
 {
 	long file_size =0;
 	slice sl = {0};
-	f_handle fd = f_open(mes_name, "rb");
+	f_handle fd = f_open(lpb_file_name, "rb");
 	file_size = f_size(fd);
 	if(file_size<=0)	return LP_FAIL;
 	check_null(env, LP_FAIL);
-	check_null(mes_name, LP_FAIL);
+	check_null(lpb_file_name, LP_FAIL);
 	check_null(fd, LP_FAIL);
 	
 	sl.sp_size = (unsigned int )file_size;
@@ -132,7 +132,7 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 	{
 		char* f_name = NULL;
 		check_fail(sl_Rbyte(sl, &des_mes->message_tfl[i].tag), LP_FAIL);
-		if(tag_type(des_mes->message_tfl[i].tag) == lpt_message)
+		if(tag_type(des_mes->message_tfl[i].tag) == t_Kmessage)
 		{
 			char* fms = NULL;
 			t_def_mes* mes_p = NULL;
@@ -169,3 +169,5 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 
 	return LP_TRUE;
 }
+
+

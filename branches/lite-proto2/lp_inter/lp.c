@@ -39,7 +39,7 @@ int lp_inter(lp_env* lp, char* name)
 	lp_string t_name;
 	memset(&t_name, 0, sizeof(t_name));
 
-	check_null(lp, (print("Serious error, not lp_env!\n"), LP_FAIL));
+	check_null(lp, (print("[Serious error]: not lp_env!\n"), LP_FAIL));
 	t_name =  lp_string_new(name);
 	if(read_file(name, &sp)==LP_FAIL)
 		goto FAIL_END;
@@ -73,20 +73,24 @@ void lp_arg(lp_env* lp, char* args[])
 {
 	if(args[1]==0 || strcmp(args[1], "-h")==0)
 	{
-		print("%s%s%s%s", 
-			  "lp.exe help:\n",
-			  "-o :  interpretation a .mes file. EXP: lp.exe -o [fileName]\n",
-			  "-a :  interpretation all .mes file at specify the path. EXP: lp.exe -a [path] \n",
-			  "-h :  lp help, by benniey.\n"
+		print("%s\n%s%s\n%s\n%s\n", 
+			  "lp    help:",
+			  "-v :  ", LP_VERSION,
+			  "-o :  parse the .mes file into .mes.lpb data file. exp: lp mesfile[ mesfile[ mesfile[ ...]]]",
+			  "-h :  lp help, by zixunlv."
 			 );
+	}
+	else if(strcmp(args[1], "-v")==0)
+	{
+		print("%s\n", LP_VERSION);
 	}
 	else if(strcmp(args[1], "-o")==0)
 	{
-		lp_inter(lp, args[2]);
-	}
-	else if(strcmp(args[1], "-a")==0)
-	{
-		lp_path(lp, args[2]);
+		int i;
+		for(i=2; args[i]!=NULL; i++){
+			if(lp_inter(lp, args[i])==LP_FAIL)
+				return;
+		}
 	}
 	else
 		print("%s cmd is error! please input %s -h  see help.\n", args[0], args[0]);
@@ -106,3 +110,4 @@ int main(int argc, char* args[])
 //	print_mem();
 	return 0;
 }
+

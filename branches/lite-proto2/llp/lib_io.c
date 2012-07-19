@@ -137,7 +137,7 @@ int sl_Rint32(slice* in, llp_int32* num_p)
 
 int sl_Wfloat32(slice* out, llp_float32 num)
 {
-	union {
+	union {  
 		llp_float32 nf;
 		llp_uint32 ne;
 	}v;
@@ -171,6 +171,16 @@ int sl_Rint64(slice* in, llp_int64* num_p)
 	return sl_R64(in, (llp_uint64*)num_p);
 }
 
+int sl_Winteger(slice* out, llp_integer num)
+{
+	return sl_W64(out, *((llp_uint64*)(&num)) );
+}
+
+int sl_Rinteger(slice* in, llp_integer* num_p)
+{
+	return sl_R64(in, (llp_uint64*)num_p);
+}
+
 int sl_Wfloat64(slice* out, llp_float64 num)
 {
 	union {
@@ -186,6 +196,21 @@ int sl_Rfloat64(slice* in, llp_float64* num_p)
 	return sl_R64(in, (llp_uint64*)num_p);
 }
 
+int sl_Wreal(slice* out, llp_real num)
+{
+	union{
+		llp_real   nf;
+		llp_uint64 ne; 
+	}v;
+	v.nf = num;
+	return sl_W64(out, v.ne);
+}
+
+int sl_Rreal(slice* in, llp_real* num_p)
+{
+	return sl_R64(in, (llp_uint64*)num_p);
+}
+
 int sl_Wstring(slice* out, char* str)
 {
 	while(*str)
@@ -197,7 +222,7 @@ int sl_Wstring(slice* out, char* str)
 	return LP_TRUE;
 }
 
-int sl_Wstream(slice* out, slice* sl)
+int sl_Wbytes(slice* out, slice* sl)
 {
 	size_t i=0;
 	check_fail(sl_Wint32(out, (llp_int32)(sl->sp_size)), LP_FAIL);
@@ -218,7 +243,7 @@ int sl_Rstring(slice* in, char** str_p)
 	return LP_TRUE;
 }
 
-int sl_Rstream(slice* in, slice* sl)
+int sl_Rbytes(slice* in, slice* sl)
 {
 	slice ret= {0};
 
@@ -294,43 +319,25 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 		// check tag type is true
 		switch(tt=(byte)tag_type(lms->d_mes->message_tfl[Ri].tag))
 		{
-		case lpt_int32:
+		case t_Kinteger:
 			{
-				llp_int32 temp = 0;
+				llp_integer temp=0;
 				if(Rtag_type(Rtag)!= o_num)
 					return LP_FAIL;
-				check_fail(sl_Rint32(in, &temp), LP_FAIL);
+				check_fail(sl_Rinteger(in, &temp), LP_FAIL);
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case lpt_int64:
+		case t_Kreal:
 			{
-				llp_int64 temp =0;
+				llp_real temp = 0.0;
 				if(Rtag_type(Rtag)!= o_num)
 					return LP_FAIL;
-				check_fail(sl_Rint64(in, &temp), LP_FAIL);
+				check_fail(sl_Rreal(in, &temp), LP_FAIL);
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case lpt_float32:
-			{
-				llp_float32 temp = 0.0;
-				if(Rtag_type(Rtag)!= o_num)
-					return LP_FAIL;
-				check_fail(sl_Rfloat32(in, &temp), LP_FAIL);
-				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
-			}
-			break;
-		case lpt_float64:
-			{
-				llp_float64 temp = 0.0;
-				if(Rtag_type(Rtag)!= o_num)
-					return LP_FAIL;
-				check_fail(sl_Rfloat64(in, &temp), LP_FAIL);
-				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
-			}
-			break;
-		case  lpt_string:
+		case  t_kstring:
 			{
 				char* temp = NULL;
 				if(Rtag_type(Rtag)!= o_str)
@@ -339,16 +346,16 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(temp)), LP_FAIL);
 			}
 			break;
-		case lpt_stream:
+		case t_Kbytes:
 			{
 				slice temp = {0};
-				if(Rtag_type(Rtag)!= o_stream)
+				if(Rtag_type(Rtag)!= o_bytes)
 					return LP_FAIL;
-				check_fail(sl_Rstream(in, &temp), LP_FAIL);
+				check_fail(sl_Rbytes(in, &temp), LP_FAIL);
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case lpt_message:
+		case t_Kmessage:
 			{
 				slice st = {0};
 				llp_mes* temp = NULL;
@@ -382,47 +389,27 @@ static int _llp_out_message(llp_mes* lms)
 	{
 		switch(tag_type(lms->d_mes->message_tfl[i].tag))
 		{
-		case lpt_int32:
+		case t_Kinteger:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
 					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
 					sl_Wtag(&lms->sio, o_num, i);
-					sl_Wint32(&lms->sio, lv->lp_int32);
+					sl_Winteger(&lms->sio, lv->lp_integer);
 				}
 			}
 			break;
-		case lpt_int64:
+		case t_Kreal:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
 					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
 					sl_Wtag(&lms->sio, o_num, i);
-					sl_Wint64(&lms->sio, lv->lp_int64);
+					sl_Wreal(&lms->sio, lv->lp_real);
 				}
 			}
 			break;
-		case lpt_float32:
-			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
-				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
-					sl_Wtag(&lms->sio, o_num, i);
-					sl_Wfloat32(&lms->sio, lv->lp_float32);
-				}
-			}
-			break;
-		case  lpt_float64:
-			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
-				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
-					sl_Wtag(&lms->sio, o_num, i);
-					sl_Wfloat64(&lms->sio, lv->lp_float64);
-				}
-			}
-			break;
-		case lpt_string:
+		case t_kstring:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -432,17 +419,17 @@ static int _llp_out_message(llp_mes* lms)
 				}
 			}
 			break;
-		case lpt_stream:
+		case t_Kbytes:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
 					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
-					sl_Wtag(&lms->sio, o_stream, i);
-					sl_Wstream(&lms->sio, lv->lp_stream);
+					sl_Wtag(&lms->sio, o_bytes, i);
+					sl_Wbytes(&lms->sio, lv->lp_bytes);
 				}
 			}
 			break;
-		case lpt_message:
+		case t_Kmessage:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -472,3 +459,4 @@ LLP_API slice* llp_out_message(llp_mes* lms)
 
 	return &lms->sret;
 }
+

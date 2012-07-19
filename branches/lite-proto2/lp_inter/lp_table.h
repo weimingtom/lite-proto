@@ -33,3 +33,4 @@ void lp_string_free(lp_string* lp_s);
 void lp_string_clear(lp_string* lp_s);
 
 #endif
+

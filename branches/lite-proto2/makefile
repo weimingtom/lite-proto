@@ -6,7 +6,8 @@ ifeq ($(OS),Windows_NT)
  RMDIR = rmdir /S /Q
  CP = copy
  N = \\
- OUT = $(_LLP) $(_LLPJAVA) $(_LP)
+ OUT = $(_LLP) $(_LP) 
+ #<--- $(_LLPJAVA)
  JNI = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
  DLLARG = -Wl,--kill-at -fPIC
 else
@@ -71,7 +72,11 @@ android:
 	$(CP) lp_conf.h $(AND_JNIP)
 	$(CP) llp.h     $(AND_JNIP)
 	ndk-build -C.$(N)$(AND_JNI)$(N)
-	
+
+LP: BUILD_PATH $(_LP)
+
+LLP: BUILD_PATH $(_LLP)
+
 BUILD_PATH:
 	mkdir $(LLP_OUT) 	 
 	

@@ -3,17 +3,18 @@
 #include "lp_conf.h"
 #include "lib_table.h"
 #include "lib_stringpool.h"
+#include "./lp_inter/lp_type.h"
 
 // filed type
-typedef enum _e_lpt{
-	lpt_int32 = 2,
-	lpt_int64 = 3,
-	lpt_string = 4,
-	lpt_float32 = 5,
-	lpt_float64 = 6,
-	lpt_stream = 16,
-	lpt_message = 13
-}e_lpt;
+// typedef enum _e_lpt{
+// 	lpt_int32 = 2,
+// 	lpt_int64 = 3,
+// 	lpt_string = 4,
+// 	lpt_float32 = 5,
+// 	lpt_float64 = 6,
+// 	lpt_stream = 16,
+// 	lpt_message = 13
+// }e_lpt;
 
 typedef enum _e_lpf{
 	lpf_req,		// required
@@ -60,3 +61,4 @@ typedef struct _llp_env{
 #define  tag_state(t)	( ((byte)(t)) & 0x07 ) 
 
 #endif
+

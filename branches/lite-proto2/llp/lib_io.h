@@ -15,7 +15,7 @@ typedef enum _e_ot{
 	o_num,
 	o_str,
 	o_mes,
-	o_stream
+	o_bytes
 }e_ot;
 
 int sl_Rstr(slice* sl,  char** out);

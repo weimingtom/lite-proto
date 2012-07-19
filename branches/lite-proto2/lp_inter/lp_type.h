@@ -1,6 +1,8 @@
 #ifndef  _LP_TYPE_H_
 #define	 _LP_TYPE_H_
 
+#define LP_VERSION  "lite-proto interpreter version:2.0"
+
 typedef enum _e_t{
 	t_error,		// null
 	t_num,			// num

@@ -33,7 +33,8 @@ char* ts[] = {
 
 #define now_char(p)					( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp)) ):(0)
 #define _next_char(p)				( (p)&&((p)->sp)&&(*((p)->sp)) )?( *((char*)((p)->sp))++ ):(0)
-#define char_type(p, c)				( (c>=0 || c<128)?((p)->char_enum[(byte)(c)]):(l_null) )
+#define char_type(p, c)				( (p)->char_enum[(int)(c)] )
+//#define char_type(p, c)			( (((int)c)>=0 || ((int)c)<128)?((p)->char_enum[(int)(c)]):(l_null) )
 
 static int lp_lex_char(lp_lex_env* env_p, slice* buff);
 static int lp_lex_number(lp_lex_env* env_p, slice* buff);
@@ -289,3 +290,4 @@ int lp_lex_print(lp_lex_env* env_p)
 	return LP_TRUE;
 }
 */
+

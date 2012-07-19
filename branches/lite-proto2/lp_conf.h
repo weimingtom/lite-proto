@@ -23,19 +23,21 @@ enum{
 #ifdef WIN32
 typedef signed __int32		llp_int32;
 typedef unsigned __int32	llp_uint32;
-
 typedef signed __int64		llp_int64;
 typedef unsigned __int64	llp_uint64;
+
 #elif defined(__linux__)
 typedef int32_t				llp_int32;
 typedef uint32_t			llp_uint32;
-
 typedef int64_t				llp_int64;
 typedef uint64_t			llp_uint64;
 #endif
 
+
 typedef float				llp_float32;
 typedef double				llp_float64;
+typedef llp_int64			llp_integer;
+typedef	llp_float64			llp_real;
 
 extern size_t mem;
 #undef  malloc
