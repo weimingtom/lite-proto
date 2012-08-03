@@ -15,11 +15,14 @@ char* ts[] = {
 	";",
 	".",
 	",",
-
-	"message",
-	"integer",
-	"bytes",
 	"extern",
+
+	"integer",
+	"real",
+	"string",
+	"bytes",
+	"message",
+
 	"null"
 };
 

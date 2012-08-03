@@ -3,18 +3,7 @@
 #include "lp_conf.h"
 #include "lib_table.h"
 #include "lib_stringpool.h"
-#include "./lp_inter/lp_type.h"
 
-// filed type
-// typedef enum _e_lpt{
-// 	lpt_int32 = 2,
-// 	lpt_int64 = 3,
-// 	lpt_string = 4,
-// 	lpt_float32 = 5,
-// 	lpt_float64 = 6,
-// 	lpt_stream = 16,
-// 	lpt_message = 13
-// }e_lpt;
 
 typedef enum _e_lpf{
 	lpf_req,		// required
@@ -29,12 +18,14 @@ typedef enum _e_lt{
 struct _t_def_mes;
 typedef struct _t_Mfield{
 	byte tag;					// tag
+	char* filed_name;			// filed name
 	struct _t_def_mes* tms;		// if type message 
 }t_Mfield;
 
 // def message body
 typedef struct _t_def_mes{
 	llp_uint32		message_id;			// message id
+	char*			message_name;		// message name
 	filed_map*		message_filed;		// filed table
 	t_Mfield*		message_tfl;		// filed tag list
 	llp_uint32		message_count;		// filed count

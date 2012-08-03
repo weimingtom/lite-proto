@@ -14,7 +14,5 @@ typedef struct _llp_mes{
 	slice		 sret;			//  ret slice
 }llp_mes;
 
-llp_mes* _llp_message_new(t_def_mes* def_mesP);
 int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd);
-
 #endif
