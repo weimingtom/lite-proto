@@ -291,18 +291,18 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 				tt= lp_at_token(lp_p);
 				if(tt == NULL)
 					lp_watch(lp_p, t_rb);
-				if(tt->type == t_ll)			// int32[] a; 
+				if(tt->type == t_ll)			// if is arraylist []
 				{	
 					lp_watch(lp_p, t_ll);
 					lp_watch(lp_p, t_rl);
-					tag = lp_tag(temp->type, e_rep);
+					tag = lp_tag(tt2lt(temp->type), e_rep);
 					lp_get_token(lp_p, t_ide, ide);
 					lp_watch(lp_p, t_end);
 				}
 				else if(tt->type == t_ide)
 				{
 					ide = tt;
-					tag = lp_tag(temp->type, e_req);
+					tag = lp_tag(tt2lt(temp->type), e_req);
 					lp_watch(lp_p, t_ide);
 					lp_watch(lp_p, t_end);		// ;
 				}

@@ -2,10 +2,10 @@
 #define  _LP_LEX_H
 #include "lp_conf.h"
 #include "lp_table.h"
-#include "lp_type.h"
 
 extern char* ts[];
 
+// char type
 typedef enum _e_c{
 	l_null,		// null
 	l_char,		// a-z, A-Z, _
@@ -22,6 +22,35 @@ typedef enum _e_c{
 	l_skip,		// space, \r, \t
 	l_ca		// ,
 }e_c;
+
+// token type
+typedef enum _e_t{
+	t_error,		// null
+	t_num,			// num
+	t_lb,			// {
+	t_rb,			// }
+	t_ass,			// =
+	t_ll,			// [
+	t_rl,			// ]
+	t_ide,			// IDE
+	t_end,			// ;
+	t_clo,			// .
+	t_ca,			// ,
+	t_Kextern,		// extern
+
+	t_Kinteger,		// integer
+	t_Kreal,		// real
+	t_kstring,		// string
+	t_Kbytes,		// bytes
+	t_Kmessage,		// message
+	
+	t_count
+}e_t;
+
+
+// token type to llp type
+#define tt2lt(tt)	((tt)-t_Kinteger)
+
 
 typedef struct _lp_key{   
 	char* s_key;

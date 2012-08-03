@@ -3,14 +3,16 @@
 #include "lib_lp.h"
 #include "lib_table.h"
 #include "lib_io.h"
+#include "llp.h"
 
-void llp_message_freeV(llp_value* lp_v);
-void llp_string_freeV(llp_value* lp_v);
-void llp_bytes_freeV(llp_value* lp_v);
+static void llp_message_freeV(llp_value* lp_v);
+static void llp_string_freeV(llp_value* lp_v);
+static void llp_bytes_freeV(llp_value* lp_v);
 char* malloc_string(char* str);
 slice* malloc_slice(slice* sl);
 
-llp_mes* _llp_message_new(t_def_mes* def_mesP)
+
+static llp_mes* _llp_message_new(t_def_mes* def_mesP)
 {
 	llp_uint32 i=0;
 	llp_mes* out_mes = NULL;
@@ -39,8 +41,16 @@ LLP_API llp_mes*  llp_message_new(llp_env* env, char* mes_name)
 	return _llp_message_new(mes_p);
 }
 
+// get a message name 
+LLP_API char* llp_message_name(llp_mes* lm)
+{
+	check_null(lm, NULL);
+	return lm->d_mes->message_name;
+}
+
+
 typedef void (*lib_array_cf_func)(llp_array* al, al_free free_func);
-int _llp_message_cf(llp_mes* in_mes, lib_array_cf_func cf_func)
+static int _llp_message_cf(llp_mes* in_mes, lib_array_cf_func cf_func)
 {
 	size_t i=0;
 	if(in_mes == NULL)
@@ -50,13 +60,13 @@ int _llp_message_cf(llp_mes* in_mes, lib_array_cf_func cf_func)
 	{
 		switch(tag_type(in_mes->d_mes->message_tfl[i].tag))
 		{
-		case t_Kmessage:
+		case LLPT_MESSAGE:
 			cf_func(&in_mes->filed_al[i], llp_message_freeV);
 			break;
-		case t_kstring:
+		case LLPT_STRING:
 			cf_func(&in_mes->filed_al[i], llp_string_freeV);
 			break;
-		case t_Kbytes:
+		case LLPT_BYTES:
 			cf_func(&in_mes->filed_al[i], llp_bytes_freeV);
 			break;
 		default:
@@ -84,18 +94,18 @@ LLP_API void  llp_message_free(llp_mes* in_mes)
 	free(in_mes);
 }
 
-void llp_message_freeV(llp_value* lp_v)
+static void llp_message_freeV(llp_value* lp_v)
 {
 	llp_message_free(lp_v->lp_mes);
 }
 
-void llp_string_freeV(llp_value* lp_v)
+static void llp_string_freeV(llp_value* lp_v)
 {
 	if(lp_v->lp_str)
 		free(lp_v->lp_str);
 }
 
-void llp_bytes_freeV(llp_value* lp_v)
+static void llp_bytes_freeV(llp_value* lp_v)
 {
 	if(lp_v->lp_bytes){
 		free(lp_v->lp_bytes->b_sp);
@@ -115,19 +125,19 @@ int _llp_Wmes(llp_mes* lm, int inx, byte v_type, void* msd)
 	
 	switch(tag_type(tag))
 	{
-	case t_Kinteger:
+	case LLPT_INTEGER:
 		lpv.lp_integer = *((llp_integer*)msd);
 		break;
-	case t_Kreal:
+	case LLPT_REAL:
 		lpv.lp_real = *((llp_real*)msd);
 		break;
-	case t_kstring:
+	case LLPT_STRING:
 		lpv.lp_str = malloc_string((char*)msd);
 		break;
-	case t_Kbytes:
+	case LLPT_BYTES:
 		lpv.lp_bytes = malloc_slice((slice*)msd);
 		break;
-	case t_Kmessage:
+	case LLPT_MESSAGE:
 		{
 			lpv.lp_mes = _llp_message_new(lm->d_mes->message_tfl[inx].tms);
 			*((llp_mes**)msd) = lpv.lp_mes;
@@ -156,32 +166,32 @@ static int llp_Wmes(llp_mes* lm, char* filed_str, byte v_type, void* msd)
 
 LLP_API int llp_Wmes_bytes(llp_mes* lm, char* filed_name, slice* sl)
 {	
-	check_fail(llp_Wmes(lm, filed_name, t_Kbytes, (void*)sl), LP_FAIL);
+	check_fail(llp_Wmes(lm, filed_name, LLPT_BYTES, (void*)sl), LP_FAIL);
 	return LP_TRUE;
 }
 
 LLP_API int llp_Wmes_integer(llp_mes* lm, char* filed_name, llp_integer number)
 {
-	check_fail(llp_Wmes(lm, filed_name, t_Kinteger, (void*)(&number)), LP_FAIL);
+	check_fail(llp_Wmes(lm, filed_name, LLPT_INTEGER, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
 LLP_API int llp_Wmes_real(llp_mes* lm, char* filed_name, llp_real number)
 {
-	check_fail(llp_Wmes(lm, filed_name, t_Kreal, (void*)(&number)), LP_FAIL);
+	check_fail(llp_Wmes(lm, filed_name, LLPT_REAL, (void*)(&number)), LP_FAIL);
 	return LP_TRUE;
 }
 
 LLP_API int llp_Wmes_string(llp_mes* lm, char* filed_name, char* str)
 {
-	check_fail(llp_Wmes(lm, filed_name, t_kstring, (void*)str), LP_FAIL);
+	check_fail(llp_Wmes(lm, filed_name, LLPT_STRING, (void*)str), LP_FAIL);
 	return LP_TRUE;
 }
 
 LLP_API llp_mes* llp_Wmes_message(llp_mes* lm, char* filed_name)
 {
 	llp_mes* lms = NULL;
-	check_fail(llp_Wmes(lm, filed_name, t_Kmessage, (void*)(&lms)), NULL);
+	check_fail(llp_Wmes(lm, filed_name, LLPT_MESSAGE, (void*)(&lms)), NULL);
 	return lms;
 }
 
@@ -202,11 +212,11 @@ static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned i
 
 	switch(tag_type(tag))
 	{
-	case t_Kinteger:
-	case t_Kreal:
-	case t_kstring:
-	case t_Kmessage:
-	case t_Kbytes:
+	case LLPT_INTEGER:
+	case LLPT_REAL:
+	case LLPT_STRING:
+	case LLPT_MESSAGE:
+	case LLPT_BYTES:
 		break;
 	default:
 		return NULL;
@@ -218,7 +228,7 @@ static llp_value* llp_Rmes(llp_mes* lm, char* filed_str, byte v_type, unsigned i
 LLP_API slice* llp_Rmes_bytes(llp_mes* lm, char* filed_name, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_name, t_Kbytes, al_inx), NULL);
+	check_null(lpv=llp_Rmes(lm, filed_name, LLPT_BYTES, al_inx), NULL);
 	
 	return lpv->lp_bytes;
 }
@@ -226,7 +236,7 @@ LLP_API slice* llp_Rmes_bytes(llp_mes* lm, char* filed_name, unsigned int al_inx
 LLP_API llp_integer llp_Rmes_integer(llp_mes* lm, char* filed_name, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_name, t_Kinteger, al_inx), (llp_integer)0);
+	check_null(lpv=llp_Rmes(lm, filed_name, LLPT_INTEGER, al_inx), (llp_integer)0);
 	
 	return lpv->lp_integer;
 }
@@ -234,7 +244,7 @@ LLP_API llp_integer llp_Rmes_integer(llp_mes* lm, char* filed_name, unsigned int
 LLP_API llp_real llp_Rmes_real(llp_mes* lm, char* filed_name, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_name, t_Kreal, al_inx), (llp_real)0.0);
+	check_null(lpv=llp_Rmes(lm, filed_name, LLPT_REAL, al_inx), (llp_real)0.0);
 	
 	return lpv->lp_real;
 }
@@ -242,7 +252,7 @@ LLP_API llp_real llp_Rmes_real(llp_mes* lm, char* filed_name, unsigned int al_in
 LLP_API char* llp_Rmes_string(llp_mes* lm, char* filed_name, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_name, t_kstring, al_inx), NULL);
+	check_null(lpv=llp_Rmes(lm, filed_name, LLPT_STRING, al_inx), NULL);
 	
 	return lpv->lp_str;
 }
@@ -250,7 +260,7 @@ LLP_API char* llp_Rmes_string(llp_mes* lm, char* filed_name, unsigned int al_inx
 LLP_API llp_mes* llp_Rmes_message(llp_mes* lm, char* filed_name, unsigned int al_inx)
 {
 	llp_value* lpv = NULL;
-	check_null(lpv=llp_Rmes(lm, filed_name, t_Kmessage, al_inx), NULL);
+	check_null(lpv=llp_Rmes(lm, filed_name, LLPT_MESSAGE, al_inx), NULL);
 	
 	return lpv->lp_mes;
 }
@@ -266,3 +276,30 @@ LLP_API llp_uint32 llp_Rmes_size(llp_mes* lm, char* filed_name)
 	return lm->filed_al[*id_p].lens;
 }
 
+LLP_API llp_uint32 llp_message_next(llp_mes* lm, llp_uint32 idx, filed_type* ft_out)
+{
+	llp_uint32 i;
+	t_Mfield* tmd_p = NULL;
+	check_null(lm, 0);
+	check_null(ft_out, 0);
+	
+	for(i=(idx-1); i<lm->filed_lens; i++)
+	{
+		if(lm->filed_al[i].lens>0)
+			break;
+		idx++;
+	}
+	if(i>=lm->filed_lens)
+		return 0;
+	
+	tmd_p = &lm->d_mes->message_tfl[idx-1];
+	
+	// set filed name
+	ft_out->name = tmd_p->filed_name;
+	// set type
+	ft_out->type = tag_type(tmd_p->tag);
+	// set size
+	ft_out->size = lm->filed_al[i].lens;
+	
+	return idx+1;
+}

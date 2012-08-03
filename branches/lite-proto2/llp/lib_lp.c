@@ -2,6 +2,7 @@
 #include "lp_conf.h"
 #include "lib_mes.h"
 #include "lib_io.h"
+#include "llp.h"
 
 static int llp_reg_mes_value(llp_env* env, slice* sl);
 static int llp_read_message(llp_env* env, char** out_name, slice* sl);
@@ -132,7 +133,7 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 	{
 		char* f_name = NULL;
 		check_fail(sl_Rbyte(sl, &des_mes->message_tfl[i].tag), LP_FAIL);
-		if(tag_type(des_mes->message_tfl[i].tag) == t_Kmessage)
+		if(tag_type(des_mes->message_tfl[i].tag) == LLPT_MESSAGE)
 		{
 			char* fms = NULL;
 			t_def_mes* mes_p = NULL;
@@ -148,7 +149,8 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 		}
 		
 		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
-		check_fail( lib_Fmap_add(des_mes->message_filed, lib_stringpool_add(env->mesN, f_name), i),
+		check_fail( lib_Fmap_add(des_mes->message_filed, 
+			  		des_mes->message_tfl->filed_name = lib_stringpool_add(env->mesN, f_name), i),
 					LP_FAIL
 				  );
 	}
@@ -163,6 +165,7 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 	check_fail(sl_Rstr(sl, out_name), LP_FAIL);										// read message name
 	*out_name = lib_stringpool_add(env->mesN, *out_name);							// add name
 	check_null(mes_p=lib_Mmap_add(env->dmes, *out_name), LP_FAIL);					// begin add message body
+	mes_p->message_name = *out_name;												// set message name
 	check_fail(sl_Ruint(sl, &(mes_p->message_id)), LP_FAIL);						// read id
 	check_fail(sl_Ruint(sl, &(mes_p->message_count)), LP_FAIL);						// read message count
 	check_fail(llp_read_filed(env, mes_p, sl), LP_FAIL);							// read filed

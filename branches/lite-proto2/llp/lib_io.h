@@ -23,6 +23,7 @@ int sl_Rlens(slice* sl, llp_uint32* out);
 int sl_Rbyte(slice* sl, byte* out);
 int sl_Ruint(slice* sl, llp_uint32* out);
 
+int  llp_out_open(slice* out);
 int llp_out_close(slice* out);
 int llp_out_clr(slice* out);
 #endif

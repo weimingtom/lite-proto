@@ -2,6 +2,7 @@
 #include "lib_lp.h"
 #include "lib_io.h"
 #include "lib_mes.h"
+#include "llp.h"
 
 static int sl_W32(slice* out, llp_uint32 num);
 static int sl_W64(slice* out, llp_uint64 num);
@@ -107,7 +108,7 @@ int  sl_Ruint(slice* sl, llp_uint32* out)
 }
 
 
-int sl_Wtag(slice* out, e_ot ot, unsigned int id)
+static int sl_Wtag(slice* out, e_ot ot, unsigned int id)
 {
 	return sl_W32(out, ((id<<3)|((unsigned int)ot)) );
 }
@@ -125,17 +126,18 @@ static int sl_R32(slice* in, llp_uint32* num_p)
 }
 
 
-int sl_Wint32(slice* out, llp_int32 num)
+static int sl_Wint32(slice* out, llp_int32 num)
 {
 	return  sl_W32(out, *((llp_uint32*)(&num)) );
 }
 
-int sl_Rint32(slice* in, llp_int32* num_p)
+/*
+static int sl_Rint32(slice* in, llp_int32* num_p)
 {
 	return sl_R32(in, (llp_uint32*)num_p);
 }
 
-int sl_Wfloat32(slice* out, llp_float32 num)
+static int sl_Wfloat32(slice* out, llp_float32 num)
 {
 	union {  
 		llp_float32 nf;
@@ -145,10 +147,11 @@ int sl_Wfloat32(slice* out, llp_float32 num)
 	return sl_W32(out, v.ne);
 }
 
-int sl_Rfloat32(slice* in, llp_float32* num_p)
+static int sl_Rfloat32(slice* in, llp_float32* num_p)
 {
 	return sl_R32(in, (llp_uint32*)num_p); 
 }
+*/
 
 static int sl_W64(slice* out, llp_uint64 num)
 {
@@ -161,27 +164,30 @@ static int sl_R64(slice* in, llp_uint64* num_p)
 	sl_Rnum(in, num_p);
 }
 
-int sl_Wint64(slice* out, llp_int64 num)
+/*
+static int sl_Wint64(slice* out, llp_int64 num)
 {
 	return sl_W64(out, *((llp_uint64*)(&num)) );
 }
 
-int sl_Rint64(slice* in, llp_int64* num_p)
+static int sl_Rint64(slice* in, llp_int64* num_p)
 {
 	return sl_R64(in, (llp_uint64*)num_p);
 }
+*/
 
-int sl_Winteger(slice* out, llp_integer num)
+static int sl_Winteger(slice* out, llp_integer num)
 {
 	return sl_W64(out, *((llp_uint64*)(&num)) );
 }
 
-int sl_Rinteger(slice* in, llp_integer* num_p)
+static int sl_Rinteger(slice* in, llp_integer* num_p)
 {
 	return sl_R64(in, (llp_uint64*)num_p);
 }
 
-int sl_Wfloat64(slice* out, llp_float64 num)
+/*
+static int sl_Wfloat64(slice* out, llp_float64 num)
 {
 	union {
 		llp_float64 nf;
@@ -191,12 +197,13 @@ int sl_Wfloat64(slice* out, llp_float64 num)
 	return sl_W64(out, v.ne);
 }
 
-int sl_Rfloat64(slice* in, llp_float64* num_p)
+static int sl_Rfloat64(slice* in, llp_float64* num_p)
 {
 	return sl_R64(in, (llp_uint64*)num_p);
 }
+*/
 
-int sl_Wreal(slice* out, llp_real num)
+static int sl_Wreal(slice* out, llp_real num)
 {
 	union{
 		llp_real   nf;
@@ -206,12 +213,12 @@ int sl_Wreal(slice* out, llp_real num)
 	return sl_W64(out, v.ne);
 }
 
-int sl_Rreal(slice* in, llp_real* num_p)
+static int sl_Rreal(slice* in, llp_real* num_p)
 {
 	return sl_R64(in, (llp_uint64*)num_p);
 }
 
-int sl_Wstring(slice* out, char* str)
+static int sl_Wstring(slice* out, char* str)
 {
 	while(*str)
 	{
@@ -222,7 +229,7 @@ int sl_Wstring(slice* out, char* str)
 	return LP_TRUE;
 }
 
-int sl_Wbytes(slice* out, slice* sl)
+static int sl_Wbytes(slice* out, slice* sl)
 {
 	size_t i=0;
 	check_fail(sl_Wint32(out, (llp_int32)(sl->sp_size)), LP_FAIL);
@@ -233,7 +240,7 @@ int sl_Wbytes(slice* out, slice* sl)
 	return LP_TRUE;
 }
 
-int sl_Rstring(slice* in, char** str_p)
+static int sl_Rstring(slice* in, char** str_p)
 {
 	size_t len = strlen((char*)in->sp)+1;
 	sl_check_lens(in, len);
@@ -243,7 +250,7 @@ int sl_Rstring(slice* in, char** str_p)
 	return LP_TRUE;
 }
 
-int sl_Rbytes(slice* in, slice* sl)
+static int sl_Rbytes(slice* in, slice* sl)
 {
 	slice ret= {0};
 
@@ -257,7 +264,7 @@ int sl_Rbytes(slice* in, slice* sl)
 	return LP_TRUE;
 }
 
-int sl_Wmessage(slice* out, llp_mes* lms)
+static int sl_Wmessage(slice* out, llp_mes* lms)
 {
 	int i=0;
 	check_fail(sl_W32(out, (llp_uint32)sl_lens(&lms->sio)), LP_FAIL);			// write lens
@@ -319,7 +326,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 		// check tag type is true
 		switch(tt=(byte)tag_type(lms->d_mes->message_tfl[Ri].tag))
 		{
-		case t_Kinteger:
+		case LLPT_INTEGER:
 			{
 				llp_integer temp=0;
 				if(Rtag_type(Rtag)!= o_num)
@@ -328,7 +335,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case t_Kreal:
+		case LLPT_REAL:
 			{
 				llp_real temp = 0.0;
 				if(Rtag_type(Rtag)!= o_num)
@@ -337,7 +344,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case  t_kstring:
+		case  LLPT_STRING:
 			{
 				char* temp = NULL;
 				if(Rtag_type(Rtag)!= o_str)
@@ -346,7 +353,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(temp)), LP_FAIL);
 			}
 			break;
-		case t_Kbytes:
+		case LLPT_BYTES:
 			{
 				slice temp = {0};
 				if(Rtag_type(Rtag)!= o_bytes)
@@ -355,7 +362,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 				check_fail(_llp_Wmes(lms, Ri, tt, (void*)(&temp)), LP_FAIL);
 			}
 			break;
-		case t_Kmessage:
+		case LLPT_MESSAGE:
 			{
 				slice st = {0};
 				llp_mes* temp = NULL;
@@ -389,7 +396,7 @@ static int _llp_out_message(llp_mes* lms)
 	{
 		switch(tag_type(lms->d_mes->message_tfl[i].tag))
 		{
-		case t_Kinteger:
+		case LLPT_INTEGER:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -399,7 +406,7 @@ static int _llp_out_message(llp_mes* lms)
 				}
 			}
 			break;
-		case t_Kreal:
+		case LLPT_REAL:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -409,7 +416,7 @@ static int _llp_out_message(llp_mes* lms)
 				}
 			}
 			break;
-		case t_kstring:
+		case LLPT_STRING:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -419,7 +426,7 @@ static int _llp_out_message(llp_mes* lms)
 				}
 			}
 			break;
-		case t_Kbytes:
+		case LLPT_BYTES:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{
@@ -429,7 +436,7 @@ static int _llp_out_message(llp_mes* lms)
 				}
 			}
 			break;
-		case t_Kmessage:
+		case LLPT_MESSAGE:
 			{
 				for(inx=0; inx<lms->filed_al[i].lens; inx++)
 				{

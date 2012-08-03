@@ -5,6 +5,21 @@
 
 typedef struct _llp_env llp_env;
 typedef struct _llp_mes llp_mes;
+
+// -------- llp type
+#define LLPT_INTEGER  0
+#define LLPT_REAL	  1
+#define LLPT_STRING   2
+#define LLPT_BYTES	  3
+#define LLPT_MESSAGE  4
+
+// filed type
+typedef struct _filed_type{
+	int   type;			// filed type
+	int   size;			// filed size
+	char* name;			// filed name	
+} filed_type;
+
 // --------env
 llp_env* llp_new_env();
 void llp_free_env(llp_env* p);
@@ -16,8 +31,19 @@ int llp_reg_Smes(llp_env* env, slice* buff);
 
 // --------new/delete a message object
 llp_mes*  llp_message_new(llp_env* env, char* mes_name);
-void llp_message_clr(llp_mes* in_mes);
-void  llp_message_free(llp_mes* in_mes);
+void llp_message_clr(llp_mes* lm);
+void  llp_message_free(llp_mes* lm);
+// --------get a message object's name
+char* llp_message_name(llp_mes* lm);
+// --------dump filed type from message object
+/*
+** lm	   :message object
+** idx     :filed index (you can set 1 when begin dump)
+** ft_out  :Parameter return 
+** return  : next filed index (dump end when return 0)
+*/ 
+llp_uint32 llp_message_next(llp_mes* lm, llp_uint32 idx, filed_type* ft_out);
+
 
 // --------write a message object
 int llp_Wmes_integer(llp_mes* lm, char* filed_name, llp_integer number);
