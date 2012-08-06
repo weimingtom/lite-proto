@@ -16,9 +16,9 @@ static void test_mes(llp_env* env)
 	llp_mes* lms = llp_message_new(env, "testM");
 
 	printf("mes_name = %s\n", llp_message_name(lm));
-	llp_Wmes_integer(lm, "aa", 123456);
+	llp_Wmes_integer(lm, "aa", -123456);
 	llp_Wmes_string(lm, "bb", "test_string");
-	llp_Wmes_real(lm, "cc", 345.67124);
+	llp_Wmes_real(lm, "cc", (float)(-345.67124));
 	llp_Wmes_bytes(lm, "dd", &sl);
 	llp_Wmes_integer(lm, "mm", 77);
 	llp_Wmes_integer(lm, "mm", 88);
@@ -80,7 +80,7 @@ static void dump_mes(llp_mes* lm)
 }
 
 
-int t_main(void)
+int main(void)
 {
 	llp_env* env = NULL;
 	env = llp_new_env();

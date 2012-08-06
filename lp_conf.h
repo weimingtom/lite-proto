@@ -20,6 +20,7 @@ enum{
 	LP_END
 };
 
+
 #ifdef WIN32
 typedef signed __int32		llp_int32;
 typedef unsigned __int32	llp_uint32;
@@ -32,7 +33,6 @@ typedef uint32_t			llp_uint32;
 typedef int64_t				llp_int64;
 typedef uint64_t			llp_uint64;
 #endif
-
 
 typedef float				llp_float32;
 typedef double				llp_float64;
