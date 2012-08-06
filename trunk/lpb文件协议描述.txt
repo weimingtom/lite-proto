@@ -1,0 +1,26 @@
+
+message lpb{   # 其中字段都是完整字节序, 所有的字符串末尾都会追加0
+ message mes_filed{    
+   byte tag;             # 标签 8bit  低三位(
+						 # 0: 表示此字段为常规字段， 
+						 #1:表示此字段为重复数组字段 )
+                         # 标签 8bit 高5位( 
+					     #2: int32
+						 #3: int64
+						 #4:string
+						 #5:float32
+						 #6:float64
+						 #13:message_type)
+    if ((tag<<3)==message_type)   # 如果高5位为 message_type 类型 
+       string f_message_name;         # 则会写入此message 类型的名称
+    string filed_name;                     #  filed 名称
+ }
+  message mes_body{
+    string mes_name;   # 协议message  名称
+    int32  mes_id;         # 协议message ID 目前在序列化过程中没有使用
+    int32  mes_count;   # 此协议中的字段filed个数
+    mes_filed[] filed;      # 此协议中的每个字段filed
+  }
+
+  mes_body[] mb;	   # 在.mes中定义的所有协议结构
+}
