@@ -34,10 +34,9 @@ void lp_free(void* p)
 	free(p);
 }
 
-#ifdef _DEBUG
+
 void print_mem()
 {
 	printf("mem = %u\n", mem_lens);
 }
-#endif
 

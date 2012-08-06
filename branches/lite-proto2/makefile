@@ -26,7 +26,7 @@ else
 endif
 
 CC = gcc
-CFLAGS += -O2 -Wall  
+CFLAGS += -g -Wall  
 AR = ar rcu
 
 # lite-proto interpreter exec 

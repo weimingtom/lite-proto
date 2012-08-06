@@ -49,7 +49,7 @@ static void _llpDump_ltype(lua_State* L, filed_type* ftp, llp_mes* lm, unsigned 
 {
 	int tidx= lua_gettop(L);
 
-	switch(ftp->t)
+	switch(ftp->type)
 	{
 	case LLPT_REAL:
 		lua_pushnumber(L, (lua_Number)llp_Rmes_real(lm, ftp->name, idx));
@@ -86,16 +86,16 @@ static void _llpL_dump_data(lua_State* L, llp_mes* lm)
 
 	while( (idx=llp_message_next(lm, idx, &ft))!=0 )
 	{	
-		if(ft.is_repeated==0)
+		if(ft.size==1)
 		{
 			_llpDump_ltype(L, &ft, lm, 0);
-			lua_setfield(L, tidx, ft.filed_name);
+			lua_setfield(L, tidx, ft.name);
 		}
-		else
+		else if(ft.size>1)
 		{
-			llp_uint32 i, size=llp_Rmes_size(lm, ft.filed_name);
+			int i;
 			lua_newtable(L);
-			for(i=0; i<size; i++)
+			for(i=0; i<ft.size; i++)
 			{
 				lua_pushnumber(L, (lua_Number)(i+1));
 				_llpDump_ltype(L, &ft, lm, (unsigned int)i);
@@ -103,7 +103,7 @@ static void _llpL_dump_data(lua_State* L, llp_mes* lm)
 			}
 // 			lua_pushnumber(L, (lua_Number)size);
 // 			lua_setfield(L, -2, "size");
-			lua_setfield(L, tidx, ft.filed_name);
+			lua_setfield(L, tidx, ft.name);
 		}
 	}
 }
@@ -168,12 +168,12 @@ static int _llpL_encode_value(lua_State* L, llp_mes* lm, int rt, char* filed_nam
 			
 			if(nn == (lua_Number)ni)	// the number is integer
 			{
-				if(llp_Wmes_integer(lm, filed_name, ni)==LP_FAILE)
+				if(llp_Wmes_integer(lm, filed_name, ni)==LP_FAIL)
 					ENCODE_ERROR(filed_name);
 			}
 			else						// the number is real
 			{
-				if(llp_Wmes_real(lm, filed_name, nn)==LP_FAILE)
+				if(llp_Wmes_real(lm, filed_name, nn)==LP_FAIL)
 					ENCODE_ERROR(filed_name);
 			}
 			break;
@@ -308,7 +308,7 @@ void lua_pushlm(lua_State* L, llp_mes* lm)
 	if(lm==NULL)
 		return;
 
-	_llpL_new_mes(L, lm->d_mes->message_name, lm, NULL);
+	_llpL_new_mes(L, llp_message_name(lm), lm, NULL);
 }
 
 // pop a message obj

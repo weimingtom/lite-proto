@@ -1,10 +1,10 @@
 #ifndef  _LLP_LUA_H_
 #define  _LLP_LUA_H_
 
-#include "llp.h"
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include "../llp.h"
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 
 // open env
 int llpL_open(lua_State* L, llp_env* env);
