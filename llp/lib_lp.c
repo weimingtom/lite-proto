@@ -150,7 +150,7 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 		
 		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
 		check_fail( lib_Fmap_add(des_mes->message_filed, 
-			  		des_mes->message_tfl->filed_name = lib_stringpool_add(env->mesN, f_name), i),
+			  		des_mes->message_tfl[i].filed_name = lib_stringpool_add(env->mesN, f_name), i),
 					LP_FAIL
 				  );
 	}

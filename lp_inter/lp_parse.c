@@ -1,5 +1,7 @@
 #include "lp_parse.h"
 #include "lp_lex.h"
+#include "llp.h"
+
 
 #define lp_tag(t, a)	( (((byte)t)<<3)|((byte)a) )
 #define lp_at_token(p)	((lp_token*)lp_list_inx((p)->token_list, (p)->read_inx))
@@ -256,6 +258,7 @@ C_END:
 static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes)
 {
 	byte tag = 0;
+	byte lt;
 	lp_token* temp = NULL;
 	lp_token* ide = NULL;
 	check_null(lp_p, LP_FAIL);
@@ -282,9 +285,13 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 			{
 				lp_token* tt = NULL;
 				if(temp->type != t_ide)
+				{
+					lt = tt2lt(temp->type);
 					lp_watch(lp_p, temp->type);
+				}
 				else
 				{
+					lt = LLPT_MESSAGE;
 					lp_string_clear(&lp_p->mes_name);
 					check_fail(lp_parse_defM(lp_p, at_mes, &lp_p->mes_name), LP_FAIL);
 				}
@@ -295,14 +302,14 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 				{	
 					lp_watch(lp_p, t_ll);
 					lp_watch(lp_p, t_rl);
-					tag = lp_tag(tt2lt(temp->type), e_rep);
+					tag = lp_tag(lt, e_rep);
 					lp_get_token(lp_p, t_ide, ide);
 					lp_watch(lp_p, t_end);
 				}
 				else if(tt->type == t_ide)
 				{
 					ide = tt;
-					tag = lp_tag(tt2lt(temp->type), e_req);
+					tag = lp_tag(lt, e_req);
 					lp_watch(lp_p, t_ide);
 					lp_watch(lp_p, t_end);		// ;
 				}
