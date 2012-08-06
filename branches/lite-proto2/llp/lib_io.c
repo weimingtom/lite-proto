@@ -178,12 +178,25 @@ static int sl_Rint64(slice* in, llp_int64* num_p)
 
 static int sl_Winteger(slice* out, llp_integer num)
 {
-	return sl_W64(out, *((llp_uint64*)(&num)) );
+	union{
+		llp_integer i;
+		llp_uint64 ui;
+	}v = {0};
+	
+	v.i = num;
+	return sl_W64(out, v.ui);
 }
 
 static int sl_Rinteger(slice* in, llp_integer* num_p)
 {
-	return sl_R64(in, (llp_uint64*)num_p);
+	union{
+		llp_integer i;
+		llp_uint64 ui;
+	}v = {0};
+
+	int ret = sl_R64(in, &(v.ui));
+	*num_p = v.i;
+	return ret;
 }
 
 /*
@@ -208,14 +221,21 @@ static int sl_Wreal(slice* out, llp_real num)
 	union{
 		llp_real   nf;
 		llp_uint64 ne; 
-	}v;
+	}v = {0};
 	v.nf = num;
 	return sl_W64(out, v.ne);
 }
 
 static int sl_Rreal(slice* in, llp_real* num_p)
 {
-	return sl_R64(in, (llp_uint64*)num_p);
+	union{
+		llp_real nf;
+		llp_uint64 ne;
+	}v = {0};
+
+	int ret = sl_R64(in, &(v.ne));
+	*num_p = v.nf;
+	return ret;
 }
 
 static int sl_Wstring(slice* out, char* str)
