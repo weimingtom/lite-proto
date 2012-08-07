@@ -37,7 +37,7 @@ typedef struct _rs_node{
 	struct _rs_node* next;	
 }rs_node;
 
-typedef struct _llp_env{		
+typedef struct llp_env{		
 	llp_map* dmes;			// message body
 
 	string_pool* mesN;		// string pool

@@ -1,8 +1,8 @@
+#include "llp.h"
 #include "lp_conf.h"
 #include "lib_lp.h"
 #include "lib_io.h"
 #include "lib_mes.h"
-#include "llp.h"
 
 static int sl_W32(slice* out, llp_uint32 num);
 static int sl_W64(slice* out, llp_uint64 num);

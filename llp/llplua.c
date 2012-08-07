@@ -1,5 +1,8 @@
 #include "llplua.h"
 
+#define llp_env struct llp_env
+#define llp_mes struct llp_mes
+
 typedef struct _l_env{
 	llp_env* env;
 	byte	is_self;

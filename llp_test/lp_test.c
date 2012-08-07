@@ -1,6 +1,8 @@
 #include "../llp.h"
 
 #pragma comment(lib, "../llp/sllp/Debug/sllp.lib")
+#define llp_mes struct llp_mes
+#define llp_env struct llp_env
 
 static void dump_mes(llp_mes* lm);
 

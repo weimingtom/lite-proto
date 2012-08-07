@@ -18,7 +18,7 @@ else
  CP = cp
  N = //
  JNI = $(JDK)$(N)bin$(N)java
- OUT = $(_LLP) $(_LLPJAVA)
+ OUT = $(_LP) $(_LLP) $(_LLPJAVA)
  JNI = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
  DLLARG = -Wl -fPIC
  CFLAGS += -fPIC
