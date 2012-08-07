@@ -6,8 +6,7 @@ ifeq ($(OS),Windows_NT)
  RMDIR = rmdir /S /Q
  CP = copy
  N = \\
- OUT = $(_LP) $(_LLP)   
- #<--- $(_LLPJAVA)
+ OUT = $(_LP) $(_LLP) $(_LLPJAVA)
  JNI = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
  DLLARG = -Wl,--kill-at -fPIC
 else

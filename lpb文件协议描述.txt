@@ -5,12 +5,11 @@ message lpb{   # 其中字段都是完整字节序, 所有的字符串末尾都�
 						 # 0: 表示此字段为常规字段， 
 						 #1:表示此字段为重复数组字段 )
                          # 标签 8bit 高5位( 
-					     #2: int32
-						 #3: int64
-						 #4:string
-						 #5:float32
-						 #6:float64
-						 #13:message_type)
+					     #0: integer
+						 #1: real
+						 #2: string
+						 #3: bytes
+						 #4: message type)
     if ((tag<<3)==message_type)   # 如果高5位为 message_type 类型 
        string f_message_name;         # 则会写入此message 类型的名称
     string filed_name;                     #  filed 名称
