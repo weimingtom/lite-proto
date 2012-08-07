@@ -2,13 +2,13 @@
 #define	 _LIB_AL_H_
 #include "lp_conf.h"
 
-struct _llp_mes;
+struct llp_mes;
 typedef union _llp_value{
 	char*			 lp_str;
 	llp_integer		 lp_integer;
 	llp_real		 lp_real;
 	slice*			 lp_bytes;
-    struct _llp_mes* lp_mes;
+    struct llp_mes*  lp_mes;
 }llp_value;
 
 
