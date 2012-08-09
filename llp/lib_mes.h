@@ -7,8 +7,8 @@
 
 typedef struct llp_mes{
 	t_def_mes*	 d_mes;			// message body struct
-	llp_array*   filed_al;		// filed data
-	llp_uint32	 filed_lens;
+	llp_array*   field_al;		// field data
+	llp_uint32	 field_lens;
 
 	slice		 sio;			// out 
 	slice		 sret;			//  ret slice

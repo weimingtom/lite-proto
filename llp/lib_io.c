@@ -340,7 +340,7 @@ LLP_API int llp_in_message(slice* in, llp_mes* lms)
 	{
 		check_fail(sl_R32(in, &Rtag), LP_FAIL);		// read tag
 		
-		if( (Ri=Rtag_id(Rtag))>=lms->filed_lens )		// check ID is true
+		if( (Ri=Rtag_id(Rtag))>=lms->field_lens )		// check ID is true
 			return LP_FAIL;
 		
 		// check tag type is true
@@ -412,15 +412,15 @@ static int _llp_out_message(llp_mes* lms)
 	llp_out_open(&lms->sio);			// open out buff
 //	sl_W32(lms->d_mes->message_id);		// if write id?
 	
-	for(i=0; i<lms->filed_lens; i++)
+	for(i=0; i<lms->field_lens; i++)
 	{
 		switch(tag_type(lms->d_mes->message_tfl[i].tag))
 		{
 		case LLPT_INTEGER:
 			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				for(inx=0; inx<lms->field_al[i].lens; inx++)
 				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					llp_value* lv = lib_array_inx(&lms->field_al[i], inx);
 					sl_Wtag(&lms->sio, o_num, i);
 					sl_Winteger(&lms->sio, lv->lp_integer);
 				}
@@ -428,9 +428,9 @@ static int _llp_out_message(llp_mes* lms)
 			break;
 		case LLPT_REAL:
 			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				for(inx=0; inx<lms->field_al[i].lens; inx++)
 				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					llp_value* lv = lib_array_inx(&lms->field_al[i], inx);
 					sl_Wtag(&lms->sio, o_num, i);
 					sl_Wreal(&lms->sio, lv->lp_real);
 				}
@@ -438,9 +438,9 @@ static int _llp_out_message(llp_mes* lms)
 			break;
 		case LLPT_STRING:
 			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				for(inx=0; inx<lms->field_al[i].lens; inx++)
 				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					llp_value* lv = lib_array_inx(&lms->field_al[i], inx);
 					sl_Wtag(&lms->sio, o_str, i);
 					sl_Wstring(&lms->sio, lv->lp_str);
 				}
@@ -448,9 +448,9 @@ static int _llp_out_message(llp_mes* lms)
 			break;
 		case LLPT_BYTES:
 			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				for(inx=0; inx<lms->field_al[i].lens; inx++)
 				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					llp_value* lv = lib_array_inx(&lms->field_al[i], inx);
 					sl_Wtag(&lms->sio, o_bytes, i);
 					sl_Wbytes(&lms->sio, lv->lp_bytes);
 				}
@@ -458,9 +458,9 @@ static int _llp_out_message(llp_mes* lms)
 			break;
 		case LLPT_MESSAGE:
 			{
-				for(inx=0; inx<lms->filed_al[i].lens; inx++)
+				for(inx=0; inx<lms->field_al[i].lens; inx++)
 				{
-					llp_value* lv = lib_array_inx(&lms->filed_al[i], inx);
+					llp_value* lv = lib_array_inx(&lms->field_al[i], inx);
 					sl_Wtag(&lms->sio, o_mes, i);
 					check_fail(_llp_out_message(lv->lp_mes), LP_FAIL);
 					sl_Wmessage(&lms->sio, lv->lp_mes);

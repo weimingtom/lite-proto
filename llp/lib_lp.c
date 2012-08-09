@@ -89,7 +89,7 @@ static int llp_rs_check(llp_env* env)
 	for(;env->rs_p; ){
 		tp = env->rs_p->next;
 		//  if the self message is not defined 
-		check_null(env->rs_p->p->message_filed, LP_FAIL);
+		check_null(env->rs_p->p->message_field, LP_FAIL);
 		free(env->rs_p);
 		env->rs_p = tp;
 	}
@@ -120,12 +120,12 @@ RMV_END:
 }
 
 
-static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
+static int llp_read_field(llp_env* env, t_def_mes* des_mes, slice* sl)
 {
 	llp_uint32 i=0;
 	des_mes->message_tfl = (t_Mfield*)malloc(sizeof(t_Mfield)*des_mes->message_count);
 	memset(des_mes->message_tfl, 0, sizeof(t_Mfield)*des_mes->message_count);
-	check_null( des_mes->message_filed = lib_Fmap_new(des_mes->message_count) ,
+	check_null( des_mes->message_field = lib_Fmap_new(des_mes->message_count) ,
 				LP_FAIL	
 			  );
 
@@ -149,8 +149,8 @@ static int llp_read_filed(llp_env* env, t_def_mes* des_mes, slice* sl)
 		}
 		
 		check_fail(sl_Rstr(sl, &f_name), LP_FAIL);
-		check_fail( lib_Fmap_add(des_mes->message_filed, 
-			  		des_mes->message_tfl[i].filed_name = lib_stringpool_add(env->mesN, f_name), i),
+		check_fail( lib_Fmap_add(des_mes->message_field, 
+			  		des_mes->message_tfl[i].field_name = lib_stringpool_add(env->mesN, f_name), i),
 					LP_FAIL
 				  );
 	}
@@ -168,7 +168,7 @@ static int llp_read_message(llp_env* env, char** out_name, slice* sl)
 	mes_p->message_name = *out_name;												// set message name
 	check_fail(sl_Ruint(sl, &(mes_p->message_id)), LP_FAIL);						// read id
 	check_fail(sl_Ruint(sl, &(mes_p->message_count)), LP_FAIL);						// read message count
-	check_fail(llp_read_filed(env, mes_p, sl), LP_FAIL);							// read filed
+	check_fail(llp_read_field(env, mes_p, sl), LP_FAIL);							// read field
 
 	return LP_TRUE;
 }

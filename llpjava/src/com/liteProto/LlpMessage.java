@@ -25,69 +25,69 @@ public class LlpMessage {
 		LlpJavaNative.llpMessageClr(llpMesHandle);
 	}
 
-	public void write(String filedStr, int number) {
-		if (filedStr == null) {
+	public void write(String fieldStr, int number) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, filedStr, (long)number);
+		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, fieldStr, (long)number);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative WriteInt32]:  write message \"" + name + "\" filed \"" + filedStr + "\" number: " + number
+			throw new RuntimeException("[LlpJavaNative WriteInt32]:  write message \"" + name + "\" field \"" + fieldStr + "\" number: " + number
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, boolean bool) {
-		if (filedStr == null) {
+	public void write(String fieldStr, boolean bool) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
 		long number = bool ? 0 : 1;
-		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, filedStr, number);
+		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, fieldStr, number);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative integer]:  write message \"" + name + "\" filed \"" + filedStr + "\" number: " + number
+			throw new RuntimeException("[LlpJavaNative integer]:  write message \"" + name + "\" field \"" + fieldStr + "\" number: " + number
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, long number) {
-		if (filedStr == null) {
+	public void write(String fieldStr, long number) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, filedStr, number);
+		int ret = LlpJavaNative.llpWmesInteger(llpMesHandle, fieldStr, number);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative integer]:  write message \"" + name + "\" filed \"" + filedStr + "\" number: " + number
+			throw new RuntimeException("[LlpJavaNative integer]:  write message \"" + name + "\" field \"" + fieldStr + "\" number: " + number
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, float number) {
-		if (filedStr == null) {
+	public void write(String fieldStr, float number) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		int ret = LlpJavaNative.llpWmesReal(llpMesHandle, filedStr, (double)number);
+		int ret = LlpJavaNative.llpWmesReal(llpMesHandle, fieldStr, (double)number);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative writeReal]:  write message \"" + name + "\" filed \"" + filedStr + "\" number: " + number
+			throw new RuntimeException("[LlpJavaNative writeReal]:  write message \"" + name + "\" field \"" + fieldStr + "\" number: " + number
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, double number) {
-		if (filedStr == null) {
+	public void write(String fieldStr, double number) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		int ret = LlpJavaNative.llpWmesReal(llpMesHandle, filedStr, number);
+		int ret = LlpJavaNative.llpWmesReal(llpMesHandle, fieldStr, number);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative writeReal]:  write message \"" + name + "\" filed \"" + filedStr + "\" number: " + number
+			throw new RuntimeException("[LlpJavaNative writeReal]:  write message \"" + name + "\" field \"" + fieldStr + "\" number: " + number
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, String str) {
-		if (filedStr == null) {
+	public void write(String fieldStr, String str) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
@@ -95,118 +95,118 @@ public class LlpMessage {
 			return;
 		}
 
-		int ret = LlpJavaNative.llpWmesString(llpMesHandle, filedStr, str);
+		int ret = LlpJavaNative.llpWmesString(llpMesHandle, fieldStr, str);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative WriteString]:  write message \"" + name + "\" filed \"" + filedStr + "\" str: " + str
+			throw new RuntimeException("[LlpJavaNative WriteString]:  write message \"" + name + "\" field \"" + fieldStr + "\" str: " + str
 					+ " is error.");
 		}
 	}
 
-	public void write(String filedStr, byte[] bytes) {
-		if (bytes == null || filedStr == null) {
+	public void write(String fieldStr, byte[] bytes) {
+		if (bytes == null || fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		int ret = LlpJavaNative.llpWmesBytes(llpMesHandle, filedStr, bytes);
+		int ret = LlpJavaNative.llpWmesBytes(llpMesHandle, fieldStr, bytes);
 		if (ret == 0) {
-			throw new RuntimeException("[LlpJavaNative writeBytes]:  write message \"" + name + "\" filed \"" + filedStr);
+			throw new RuntimeException("[LlpJavaNative writeBytes]:  write message \"" + name + "\" field \"" + fieldStr);
 		}
 	}
 
-	public LlpMessage write(String filedStr) {
-		if (filedStr == null) {
+	public LlpMessage write(String fieldStr) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		long handle = LlpJavaNative.llpWmesMessage(llpMesHandle, filedStr);
+		long handle = LlpJavaNative.llpWmesMessage(llpMesHandle, fieldStr);
 		if (handle == 0) {
-			throw new RuntimeException("[LlpJavaNative writeMessage]:  write message \"" + name + "\" filed \"" + filedStr + "\"is error.");
+			throw new RuntimeException("[LlpJavaNative writeMessage]:  write message \"" + name + "\" field \"" + fieldStr + "\"is error.");
 		}
 
-		return new LlpMessage(handle, filedStr);
+		return new LlpMessage(handle, fieldStr);
 	}
 
-	public long readInteger(String filedStr, int alInx) {
-		if (filedStr == null) {
+	public long readInteger(String fieldStr, int alInx) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		return LlpJavaNative.llpRmesInteger(llpMesHandle, filedStr, alInx);
+		return LlpJavaNative.llpRmesInteger(llpMesHandle, fieldStr, alInx);
 	}
 
-	public long readInteger(String filedStr) {
-		if (filedStr == null) {
+	public long readInteger(String fieldStr) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		return readInteger(filedStr, 0);
+		return readInteger(fieldStr, 0);
 	}
 
-	public double readReal(String filedStr, int alInx) {
-		if (filedStr == null) {
+	public double readReal(String fieldStr, int alInx) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		return LlpJavaNative.llpRmesReal(llpMesHandle, filedStr, alInx);
+		return LlpJavaNative.llpRmesReal(llpMesHandle, fieldStr, alInx);
 	}
 
-	public double readReal(String filedStr) {
-		if (filedStr == null) {
+	public double readReal(String fieldStr) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		return readReal(filedStr, 0);
+		return readReal(fieldStr, 0);
 	}
 
-	public String readString(String filedStr, int alInx) {
-		if (filedStr == null) {
+	public String readString(String fieldStr, int alInx) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		byte[] str = LlpJavaNative.llpRmesString(llpMesHandle, filedStr, alInx);
+		byte[] str = LlpJavaNative.llpRmesString(llpMesHandle, fieldStr, alInx);
 
 		return new String(str);
 	}
 
-	public String readString(String filedStr) {
-		return readString(filedStr, 0);
+	public String readString(String fieldStr) {
+		return readString(fieldStr, 0);
 	}
 
-	public byte[] readBytes(String filedStr, int alInx) {
-		if (filedStr == null) {
+	public byte[] readBytes(String fieldStr, int alInx) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		byte[] ret = LlpJavaNative.llpRmesBytes(llpMesHandle, filedStr, alInx);
+		byte[] ret = LlpJavaNative.llpRmesBytes(llpMesHandle, fieldStr, alInx);
 		return ret;
 	}
 
-	public byte[] readBytes(String filedStr) {
-		return readBytes(filedStr, 0);
+	public byte[] readBytes(String fieldStr) {
+		return readBytes(fieldStr, 0);
 	}
 
-	public LlpMessage readMessage(String filedStr, int alInx) {
-		if (filedStr == null) {
+	public LlpMessage readMessage(String fieldStr, int alInx) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		long handle = LlpJavaNative.llpRmesMessage(llpMesHandle, filedStr, alInx);
+		long handle = LlpJavaNative.llpRmesMessage(llpMesHandle, fieldStr, alInx);
 		if (handle == 0)
 			return null;
 
-		return new LlpMessage(handle, filedStr);
+		return new LlpMessage(handle, fieldStr);
 	}
 
-	public LlpMessage readMessage(String filedStr) throws Exception {
-		return readMessage(filedStr, 0);
+	public LlpMessage readMessage(String fieldStr) throws Exception {
+		return readMessage(fieldStr, 0);
 	}
 
-	public int readSize(String filedStr) {
-		if (filedStr == null) {
+	public int readSize(String fieldStr) {
+		if (fieldStr == null) {
 			throw new NullPointerException();
 		}
 
-		return LlpJavaNative.llpRmesSize(llpMesHandle, filedStr);
+		return LlpJavaNative.llpRmesSize(llpMesHandle, fieldStr);
 	}
 
 	// 编码
