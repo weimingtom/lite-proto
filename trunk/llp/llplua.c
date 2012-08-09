@@ -48,7 +48,7 @@ static int _llpL_free_mes(lua_State* L)
 }
 
 // dump type not repeated
-static void _llpDump_ltype(lua_State* L, filed_type* ftp, llp_mes* lm, unsigned int idx)
+static void _llpDump_ltype(lua_State* L, field_type* ftp, llp_mes* lm, unsigned int idx)
 {
 	int tidx= lua_gettop(L);
 
@@ -85,7 +85,7 @@ static void _llpL_dump_data(lua_State* L, llp_mes* lm)
 {
 	int tidx = lua_gettop(L);
 	llp_uint32 idx=1;
-	filed_type ft;
+	field_type ft;
 
 	while( (idx=llp_message_next(lm, idx, &ft))!=0 )
 	{	
@@ -154,7 +154,7 @@ static int _llpL_close(lua_State* L)
 #define ENCODE_ERROR(s)	( luaL_error(L, "[encode error]: write key '%s' is error.", s) )
 
 
-static int _llpL_encode_value(lua_State* L, llp_mes* lm, int rt, char* filed_name)
+static int _llpL_encode_value(lua_State* L, llp_mes* lm, int rt, char* field_name)
 {
 	int ret_type = lua_type(L, -1);
 	
@@ -171,19 +171,19 @@ static int _llpL_encode_value(lua_State* L, llp_mes* lm, int rt, char* filed_nam
 			
 			if(nn == (lua_Number)ni)	// the number is integer
 			{
-				if(llp_Wmes_integer(lm, filed_name, ni)==LP_FAIL)
-					ENCODE_ERROR(filed_name);
+				if(llp_Wmes_integer(lm, field_name, ni)==LP_FAIL)
+					ENCODE_ERROR(field_name);
 			}
 			else						// the number is real
 			{
-				if(llp_Wmes_real(lm, filed_name, nn)==LP_FAIL)
-					ENCODE_ERROR(filed_name);
+				if(llp_Wmes_real(lm, field_name, nn)==LP_FAIL)
+					ENCODE_ERROR(field_name);
 			}
 			break;
 		}
 	case LUA_TSTRING:
-		if(llp_Wmes_string(lm, filed_name, (char*)lua_tostring(L, -1)) == LP_FAIL)
-			ENCODE_ERROR(filed_name);
+		if(llp_Wmes_string(lm, field_name, (char*)lua_tostring(L, -1)) == LP_FAIL)
+			ENCODE_ERROR(field_name);
 		break;
 	case LUA_TTABLE:
 		{
@@ -193,17 +193,17 @@ static int _llpL_encode_value(lua_State* L, llp_mes* lm, int rt, char* filed_nam
 			
 			if(lua_type(L, -1) == LUA_TTABLE)
 			{
-				lm = llp_Wmes_message(lm, filed_name);
+				lm = llp_Wmes_message(lm, field_name);
 				if(lm==NULL)
-					ENCODE_ERROR(filed_name);
+					ENCODE_ERROR(field_name);
 			}
 
 			lua_settop(L, top);
-			_llpL_encode_table(L, lm, filed_name);
+			_llpL_encode_table(L, lm, field_name);
 		}
 		break;
 	default:
-		luaL_error(L, "[encode error]: write key '%s' is not allow.", filed_name);
+		luaL_error(L, "[encode error]: write key '%s' is not allow.", field_name);
 	}
 
 	return ret_type;
@@ -227,8 +227,8 @@ static void _llpL_encode_table(lua_State* L, llp_mes* lm,  char* deep_name)
 			break;
 		case LUA_TSTRING:
 			{
-				char* filed_name = (char*)lua_tostring(L, -2);
-				_llpL_encode_value(L, lm, LUA_TNIL, filed_name);
+				char* field_name = (char*)lua_tostring(L, -2);
+				_llpL_encode_value(L, lm, LUA_TNIL, field_name);
 			}
 			break;
 		default:

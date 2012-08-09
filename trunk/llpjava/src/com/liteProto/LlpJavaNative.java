@@ -25,28 +25,28 @@ public class LlpJavaNative {
 	static native byte[] llpMessageName(long inMes);
 
 	// --------write a message object
-	static native int llpWmesInteger(long lm, String filedStr, long number);
+	static native int llpWmesInteger(long lm, String fieldStr, long number);
 
-	static native int llpWmesReal(long lm, String filedStr, double number);
+	static native int llpWmesReal(long lm, String fieldStr, double number);
 
-	static native int llpWmesString(long lm, String filedStr, String str);
+	static native int llpWmesString(long lm, String fieldStr, String str);
 
-	static native int llpWmesBytes(long lm, String filedStr, byte[] bytes);
+	static native int llpWmesBytes(long lm, String fieldStr, byte[] bytes);
 
-	static native long llpWmesMessage(long lm, String filedStr);
+	static native long llpWmesMessage(long lm, String fieldStr);
 
 	// ---------read a message object
-	static native long llpRmesInteger(long lm, String filedStr, int alInx);
+	static native long llpRmesInteger(long lm, String fieldStr, int alInx);
 	
-	static native double llpRmesReal(long lm, String filedStr, int alInx);
+	static native double llpRmesReal(long lm, String fieldStr, int alInx);
 
-	static native byte[] llpRmesString(long lm, String filedStr, int alInx);
+	static native byte[] llpRmesString(long lm, String fieldStr, int alInx);
 
-	static native byte[] llpRmesBytes(long lm, String filedStr, int alInx);
+	static native byte[] llpRmesBytes(long lm, String fieldStr, int alInx);
 
-	static native long llpRmesMessage(long lm, String filedStr, int alInx);
+	static native long llpRmesMessage(long lm, String fieldStr, int alInx);
 
-	static native int llpRmesSize(long lm, String filedStr);
+	static native int llpRmesSize(long lm, String fieldStr);
 
 	// ------- out/in a message body
 	static native byte[] llpOutMessage(long lms);

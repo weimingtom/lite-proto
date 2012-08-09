@@ -12,13 +12,13 @@ typedef enum _e_lpf{
 
 typedef enum _e_lt{
 	def_mes,		// message
-	def_field		// filed at message body 
+	def_field		// field at message body 
 }e_lt;
 
 struct _t_def_mes;
 typedef struct _t_Mfield{
 	byte tag;					// tag
-	char* filed_name;			// filed name
+	char* field_name;			// field name
 	struct _t_def_mes* tms;		// if type message 
 }t_Mfield;
 
@@ -26,9 +26,9 @@ typedef struct _t_Mfield{
 typedef struct _t_def_mes{
 	llp_uint32		message_id;			// message id
 	char*			message_name;		// message name
-	filed_map*		message_filed;		// filed table
-	t_Mfield*		message_tfl;		// filed tag list
-	llp_uint32		message_count;		// filed count
+	field_map*		message_field;		// field table
+	t_Mfield*		message_tfl;		// field tag list
+	llp_uint32		message_count;		// field count
 }t_def_mes;
 
 // reference self 

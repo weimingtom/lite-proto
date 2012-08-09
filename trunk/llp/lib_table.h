@@ -3,17 +3,17 @@
 #include "lp_conf.h"
 
 
-typedef struct _filed_slot {
-	char* filed_name;
+typedef struct _field_slot {
+	char* field_name;
 	int id;
 	size_t hash;
 	size_t next;
-}filed_slot;
+}field_slot;
 
-typedef struct _filed_map{
+typedef struct _field_map{
 	size_t size;
-	filed_slot* slot;
-}filed_map;
+	field_slot* slot;
+}field_map;
 
 
 typedef struct _llp_slot{
@@ -44,10 +44,10 @@ struct _t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name);
 struct _t_def_mes* lib_Mmap_find(llp_map* l_map, char* message_name);
 void lib_Mmap_free(llp_map* l_map);
 
-filed_map* lib_Fmap_new(size_t size);
-void lib_Fmap_free(filed_map* f_map);
-int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id);
-int* lib_Fmap_find(filed_map* f_map, char* filed_name);
+field_map* lib_Fmap_new(size_t size);
+void lib_Fmap_free(field_map* f_map);
+int lib_Fmap_add(field_map* f_map,  char* field_name, int id);
+int* lib_Fmap_find(field_map* f_map, char* field_name);
 
 
 

@@ -189,7 +189,7 @@ void lib_Mmap_free(llp_map* l_map)
 			continue;
 
 		temp = (t_def_mes*)l_map->table[i].vp;
-		lib_Fmap_free(temp->message_filed);
+		lib_Fmap_free(temp->message_field);
 		free(temp->message_tfl);
 		free(temp);
 	}
@@ -197,36 +197,36 @@ void lib_Mmap_free(llp_map* l_map)
 	lib_map_free(l_map);
 }
 
-filed_map* lib_Fmap_new(size_t size)
+field_map* lib_Fmap_new(size_t size)
 {
-	filed_map* ret = (filed_map*)malloc(sizeof(filed_map) + size*sizeof(filed_slot));
+	field_map* ret = (field_map*)malloc(sizeof(field_map) + size*sizeof(field_slot));
 	check_null(ret, NULL);
 	
 	ret->size = size;
-	ret->slot = (filed_slot*)(ret + 1);
-	memset(ret->slot, 0, sizeof(filed_slot)*size);
+	ret->slot = (field_slot*)(ret + 1);
+	memset(ret->slot, 0, sizeof(field_slot)*size);
 
 	return ret;
 }
 
-void lib_Fmap_free(filed_map* f_map)
+void lib_Fmap_free(field_map* f_map)
 {
 	if(f_map)
 		free(f_map);
 }
 
-int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id)
+int lib_Fmap_add(field_map* f_map,  char* field_name, int id)
 {
 	size_t hash, emp, sh, hash_full;
 	check_null(f_map, LP_FAIL);
-	check_null(filed_name, LP_FAIL);
-	hash_full =calc_hash(filed_name);
+	check_null(field_name, LP_FAIL);
+	hash_full =calc_hash(field_name);
 	hash = hash_full % f_map->size;
 	
 	sh = hash;
-	if(f_map->slot[hash].filed_name == NULL)
+	if(f_map->slot[hash].field_name == NULL)
 	{
-		f_map->slot[hash].filed_name = filed_name;
+		f_map->slot[hash].field_name = field_name;
 		f_map->slot[hash].id = id;
 		f_map->slot[hash].hash = hash_full;
 	}
@@ -234,7 +234,7 @@ int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id)
 	{
 		for( ;; )
 		{	
-			if(f_map->slot[sh].hash== hash_full && strcmp(f_map->slot[sh].filed_name, filed_name)==0)
+			if(f_map->slot[sh].hash== hash_full && strcmp(f_map->slot[sh].field_name, field_name)==0)
 				return LP_EXIST;
 			if(f_map->slot[sh].next==0)
 				break;
@@ -243,12 +243,12 @@ int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id)
 		}
 		
 		emp = hash;
-		for(;f_map->slot[emp].filed_name!=NULL;)
+		for(;f_map->slot[emp].field_name!=NULL;)
 			emp = (emp + 1)%f_map->size;
 		
 		f_map->slot[emp].next = f_map->slot[hash].next;
 		f_map->slot[hash].next = emp + 1;
-		f_map->slot[emp].filed_name = filed_name;
+		f_map->slot[emp].field_name = field_name;
 		f_map->slot[emp].id = id;
 		f_map->slot[emp].hash = hash_full;
 	}
@@ -256,18 +256,18 @@ int lib_Fmap_add(filed_map* f_map,  char* filed_name, int id)
 	return LP_TRUE;
 }
 
-int* lib_Fmap_find(filed_map* f_map, char* filed_name)
+int* lib_Fmap_find(field_map* f_map, char* field_name)
 {
 	size_t hash, hash_full;
 	check_null(f_map, NULL);
-	check_null(filed_name, NULL);
+	check_null(field_name, NULL);
 	if(!(f_map->size))	return NULL;
-	hash_full = calc_hash(filed_name);
+	hash_full = calc_hash(field_name);
 	hash = hash_full % f_map->size;
 
-	for(;f_map->slot[hash].filed_name!= NULL;)
+	for(;f_map->slot[hash].field_name!= NULL;)
 	{
-		if(f_map->slot[hash].hash==hash_full && strcmp(filed_name, f_map->slot[hash].filed_name)==0)
+		if(f_map->slot[hash].hash==hash_full && strcmp(field_name, f_map->slot[hash].field_name)==0)
 			return &f_map->slot[hash].id;
 		if(f_map->slot[hash].next==0)
 			return NULL;

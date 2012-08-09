@@ -72,12 +72,12 @@ static void dump_mes(llp_mes* lm)
 	};
 
 	int idx=1;
-	filed_type ft = {0};
+	field_type ft = {0};
 
 	printf("\n-------mes_name = %s---------\n", llp_message_name(lm));
 
 	for(idx=1; idx=llp_message_next(lm, idx, &ft); ){
-		printf("filed_name = %s filed_type=%s , filed_size=%d\n", ft.name, llpts[ft.type], ft.size);
+		printf("field_name = %s field_type=%s , field_size=%d\n", ft.name, llpts[ft.type], ft.size);
 	}
 }
 
