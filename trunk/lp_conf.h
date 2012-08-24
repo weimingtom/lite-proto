@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 
-#ifdef  __linux__
+#ifndef  WIN32
 #include <stdint.h>
 #endif
 
@@ -27,7 +27,7 @@ typedef unsigned __int32	llp_uint32;
 typedef signed __int64		llp_int64;
 typedef unsigned __int64	llp_uint64;
 
-#elif defined(__linux__)
+#else
 typedef int32_t				llp_int32;
 typedef uint32_t			llp_uint32;
 typedef int64_t				llp_int64;
