@@ -159,8 +159,12 @@ t_def_mes* lib_Mmap_add(llp_map* l_map, char* message_name)
 	}
 	else if(ret==LP_EXIST)
 	{
+		t_def_mes* _vp = NULL;
 		free(kv.vp);
-		kv.vp=*(lib_map_find(l_map, message_name));
+		_vp = kv.vp=*(lib_map_find(l_map, message_name));
+		// the message is already regedited
+		if(_vp->message_field != NULL && _vp->message_tfl != NULL)
+			return NULL;
 	}
 
 	return (t_def_mes*)kv.vp;
