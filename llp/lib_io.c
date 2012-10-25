@@ -274,6 +274,41 @@ int llp_out_clr(slice* out)
 	return LP_TRUE;
 }
 
+static int _llp_skip_filed(slice* in, e_ot  tt)
+{
+	switch(tt)
+	{
+	case o_num:
+		{
+			llp_uint64 snum = 0;
+			sl_R64(in, &snum);
+		}
+		break;
+	case o_str:
+		{
+			char* sstr = NULL;
+			check_fail(sl_Rstring(in, &sstr), LP_FAIL);
+		}
+		break;
+	case o_stream:
+		{
+			slice ssl = {0};
+			check_fail(sl_Rstream(in, &ssl), LP_FAIL);
+		}
+		break;
+	case o_mes:
+		{
+			llp_uint32 slen = 0;
+			check_fail(sl_R32(in, (llp_uint32*)(&slen)), LP_FAIL);		// read message lens
+			in->sp += slen;												// jump message
+		}
+		break;
+	default:
+		return LP_FAIL;
+	}
+	return LP_TRUE;
+}
+
 // API
 int llp_in_message(slice* in, llp_mes* lms)
 {
@@ -288,8 +323,18 @@ int llp_in_message(slice* in, llp_mes* lms)
 	{
 		check_fail(sl_R32(in, &Rtag), LP_FAIL);		// read tag
 		
+		// the filed is will skip when not find at message
+		if( (Ri=Rtag_id(Rtag))>=lms->filed_lens )		// check ID is true
+		{
+			check_fail(_llp_skip_filed(in, Rtag_type(Rtag)), LP_FAIL);
+			continue;
+		}
+
+		/*
+		// will decode fail when the filed not's find at message 
 		if( (Ri=Rtag_id(Rtag))>=lms->filed_lens )		// check ID is true
 			return LP_FAIL;
+		*/
 		
 		// check tag type is true
 		switch(tt=(byte)tag_type(lms->d_mes->message_tfl[Ri].tag))
