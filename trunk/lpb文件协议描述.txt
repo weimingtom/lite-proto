@@ -10,7 +10,8 @@ message lpb{   # 其中字段都是完整字节序, 所有的字符串末尾都�
 						 #2: string
 						 #3: bytes
 						 #4: message type)
-    if ((tag<<3)==message_type)   # 如果高5位为 message_type 类型 
+    if ((tag>>3)==message_type)   # 如果高5位为 message_type 类型 
+       byte ei;                       # 写入当前message 是否为外部引用
        string f_message_name;         # 则会写入此message 类型的名称
     string field_name;                     #  field 名称
  }

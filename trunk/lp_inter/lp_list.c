@@ -1,5 +1,5 @@
 #include "lp_list.h"
-#include "lp_conf.h"
+#include "../lp_conf.h"
 
 int _lp_list_new(lp_list* lp_l, size_t one_size, size_t def_size, list_Fnew new_func, list_Ffree free_func)
 {

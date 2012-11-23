@@ -1,7 +1,7 @@
 #ifndef  _LLP_LUA_H_
 #define  _LLP_LUA_H_
 
-#include "llp.h"
+#include "../llp.h"
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>

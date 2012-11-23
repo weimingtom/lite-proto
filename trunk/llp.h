@@ -24,9 +24,9 @@ typedef struct _field_type{
 struct llp_env* llp_new_env();
 void llp_free_env(struct llp_env* p);
 
-// --------registration message from .lpb files
+// --------registration message from .lpb files (not thread-safe)
 int llp_reg_mes(struct llp_env* env, char* lpb_file_name);
-// --------registration message from slice
+// --------registration message from slice (not thread-safe)
 int llp_reg_Smes(struct llp_env* env, slice* buff);
 
 // --------new/delete a message object

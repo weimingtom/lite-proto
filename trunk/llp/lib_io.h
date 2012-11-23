@@ -1,6 +1,6 @@
 #ifndef  _LIB_IO_H_
 #define  _LIB_IO_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lib_mes.h"
 
 #define  sl_emp(sl)				( ((sl)->sp_size) - (((sl)->sp)-((sl)->b_sp)) ) 
