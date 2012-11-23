@@ -1,4 +1,4 @@
-#include "llp.h"
+#include "../llp.h"
 #include "lp_conf.h"
 #include "lib_lp.h"
 #include "lib_io.h"

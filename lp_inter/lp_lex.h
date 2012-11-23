@@ -1,6 +1,6 @@
 #ifndef  _LP_LEX_H
 #define  _LP_LEX_H
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lp_table.h"
 
 extern char* ts[];

@@ -1,6 +1,6 @@
 #ifndef  _LIB_TABLE_H_
 #define  _LIB_TABLE_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 
 
 typedef struct _field_slot {

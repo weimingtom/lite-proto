@@ -1,6 +1,11 @@
 #include "lp_parse.h"
 #include "lp_lex.h"
-#include "llp.h"
+#include "../llp.h"
+
+typedef enum _fmes{
+	fmes_internal,			// the field message is defined at current file 
+	fmes_extern 			// the field message is defined at extern file
+}fmes;
 
 
 #define lp_tag(t, a)	( (((byte)t)<<3)|((byte)a) )
@@ -25,7 +30,7 @@
 
 static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out_count, lp_table* ide_table, char* at_mes);
 static int lp_parse_message(lp_parse_env* lp_p, char* at_mes);
-static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name);
+static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name, int* out_fmes);
 static int lp_parse_extern(lp_parse_env* lp_p);
 
 
@@ -151,7 +156,7 @@ static int lp_parse_extern(lp_parse_env* lp_p)
 			return LP_FAIL;
 		}
 		
-		if(lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p) == LP_EXIST)
+		if(lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p, fmes_extern) == LP_EXIST)
 		{
 			print("parse[error line:%d] the extern message name \"%s\" is already def!\n", 
 				  lp_p->line, (char*)mes.str.list_p);
@@ -221,7 +226,7 @@ static int lp_parse_message(lp_parse_env* lp_p, char* at_mes)
 				lp_string_cat(&mes, '.');
 			}
 			lp_string_cats(&mes, (char*)mes_name->name.str.list_p);
-			if((a_ret=lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p)) == LP_EXIST)
+			if((a_ret=lp_table_add(&lp_p->parse_table, (char*)mes.str.list_p, fmes_internal)) == LP_EXIST)
 			{
 				print("parse[error line: %d]the new message \"%s\" is exist!\n", lp_p->line, mes.str.list_p);
 				goto C_END;
@@ -261,6 +266,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 	byte lt;
 	lp_token* temp = NULL;
 	lp_token* ide = NULL;
+	int fmes = fmes_internal;
 	check_null(lp_p, LP_FAIL);
 	check_null(lp_out, LP_FAIL);
 	check_null(at_mes, LP_FAIL);
@@ -293,7 +299,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 				{
 					lt = LLPT_MESSAGE;
 					lp_string_clear(&lp_p->mes_name);
-					check_fail(lp_parse_defM(lp_p, at_mes, &lp_p->mes_name), LP_FAIL);
+					check_fail(lp_parse_defM(lp_p, at_mes, &lp_p->mes_name, &fmes), LP_FAIL);
 				}
 				tt= lp_at_token(lp_p);
 				if(tt == NULL)
@@ -323,7 +329,7 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 					char a=0;
 					size_t i=0;
 					int ret = 0;
-					if( (ret=lp_table_add(ide_table, (char*)ide->name.str.list_p))==LP_EXIST)
+					if( (ret=lp_table_add(ide_table, (char*)ide->name.str.list_p, fmes_internal))==LP_EXIST)
 					{
 						print("parse[error line: %d] the ide \"%s\" is redef!\n", lp_p->line, (char*)ide->name.str.list_p);
 						return LP_FAIL;
@@ -333,10 +339,16 @@ static int lp_parse_closure(lp_parse_env* lp_p, lp_list* lp_out, llp_uint32* out
 						print("Serious error[line: %d]: add ide is error! \n", lp_p->line);
 						return LP_FAIL;
 					}
-					for(i=0; i<sizeof(tag); i++)
-						lp_list_add(lp_out, &tag);
+					
+					lp_list_add(lp_out, &tag);			// push tag
 					if(temp->type==t_ide)				// push message type name
 					{
+						union {
+							int v;
+							byte ei;
+						}v;
+						v.v = fmes;
+						lp_list_add(lp_out, &(v.ei));
 						for(i=0; i<lp_p->mes_name.str.list_len; i++)
 							lp_list_add(lp_out, lp_p->mes_name.str.list_p+i);
 						lp_list_add(lp_out, (byte*)(&a));
@@ -371,7 +383,7 @@ CLO_END:
 	return LP_TRUE;
 }
 
-static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
+static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name, int* out_fmes)
 {
 	lp_token* lp_t = NULL;
 	int ret = LP_FAIL;
@@ -401,19 +413,22 @@ static int lp_parse_defM(lp_parse_env* lp_p, char* at_mes, lp_string* out_name)
 			{
 				lp_string_cat(&full_name, '.');
 				lp_string_cats(&full_name, (char*)name.str.list_p);
-				if(lp_table_look(&lp_p->parse_table, (char*)full_name.str.list_p)==LP_TRUE)		// search at local
+				int* vp = NULL;
+				if((vp=lp_table_query(&lp_p->parse_table, (char*)full_name.str.list_p))!=NULL)		// search at local
 				{
 					ret = LP_TRUE, lp_string_cats(out_name, (char*)full_name.str.list_p);
+					*out_fmes = *vp;
 					goto DEFM_END;
 				}
-				else if(lp_table_look(&lp_p->parse_table, (char*)name.str.list_p)==LP_TRUE)			// search at global
+				else if((vp=lp_table_query(&lp_p->parse_table, (char*)name.str.list_p))!=NULL)			// search at global
 				{
 					ret = LP_TRUE, lp_string_cats(out_name, (char*)name.str.list_p);
+					*out_fmes = *vp;
 					goto DEFM_END;
 				}
 				else
 				{
-					print("parse[line line: %d] not find message body \"%s\" !\n", lp_p->line, (char*)name.str.list_p);
+					print("parse[error line: %d] not find message body \"%s\" !\n", lp_p->line, (char*)name.str.list_p);
 					goto DEFM_ERROR_END;
 				}
 			}

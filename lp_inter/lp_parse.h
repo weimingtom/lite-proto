@@ -1,6 +1,6 @@
 #ifndef  _LP_PARSE_H_
 #define  _LP_PARSE_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lp_table.h"
 
 enum {
@@ -15,7 +15,7 @@ typedef struct _lp_parse_env{
 	size_t		read_inx;
 	unsigned int	line;
 	
-	lp_list		clo_stack;		//  ±Õ°ü¶ÑÕ»
+	lp_list		clo_stack;	
 	lp_string   mes_name;
 }lp_parse_env;
 

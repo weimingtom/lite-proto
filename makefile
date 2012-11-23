@@ -56,6 +56,7 @@ AND_JNIP = $(AND_JNI)$(N)src
 ALL : BUILD_PATH  $(OUT)
 	$(CP) lp_conf.h  .$(N)$(LLP_OUT)
 	$(CP) llp.h   .$(N)$(LLP_OUT)
+	cp -rf ./out/* ./out_back
 	@echo  -----build success------
 
 android:

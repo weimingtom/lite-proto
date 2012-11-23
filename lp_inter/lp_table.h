@@ -1,6 +1,6 @@
 #ifndef  _LP_TABLE_H_
 #define  _LP_TABLE_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lp_list.h"
 
 typedef struct _lp_string{
@@ -8,7 +8,7 @@ typedef struct _lp_string{
 }lp_string;
 
 typedef struct _lp_table_one{
-	byte	tag;			// _ _ _ _ _is type  _ _ _ is or ont al
+	int value;
 	lp_string name;
 	struct _lp_table_one* next;
 }lp_table_one;
@@ -22,8 +22,8 @@ typedef struct _lp_table{
 
 unsigned int _BKDRHash(char *str, int len);
 int lp_table_new(lp_table* lp_t);
-int lp_table_add(lp_table* lp_t, char* name);
-int lp_table_look(lp_table* lp_t, char* name);
+int lp_table_add(lp_table* lp_t, char* name, int value);
+int* lp_table_query(lp_table* lp_t, char* name);
 int lp_table_free(lp_table* lp_t);
 
 lp_string lp_string_new(char* str);

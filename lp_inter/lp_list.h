@@ -1,6 +1,6 @@
 #ifndef	_LP_LIST_H_
 #define _LP_LIST_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 
 #define  LP_LIST_DEF_SIZE		128
 

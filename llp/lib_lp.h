@@ -1,6 +1,6 @@
 #ifndef _LIB_LP_H_
 #define _LIB_LP_H_
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lib_table.h"
 #include "lib_stringpool.h"
 
@@ -41,7 +41,6 @@ typedef struct llp_env{
 	llp_map* dmes;			// message body
 
 	string_pool* mesN;		// string pool
-	rs_node* rs_p;			// reference self list
 }llp_env;
 
 

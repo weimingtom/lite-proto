@@ -1,5 +1,5 @@
 #include "lp_table.h"
-#include "lp_conf.h"
+#include "../lp_conf.h"
 #include "lp_list.h"
 #include <memory.h>
 
@@ -27,7 +27,7 @@ int lp_table_new(lp_table* lp_t)
 	return LP_TRUE;
 }
 
-int lp_table_add(lp_table* lp_t, char* name)
+int lp_table_add(lp_table* lp_t, char* name, int value)
 {
 	lp_table_one* head = NULL;
 	int inx = 0;
@@ -41,6 +41,7 @@ int lp_table_add(lp_table* lp_t, char* name)
 		lp_t->table_list[inx] = (lp_table_one*)malloc(sizeof(lp_table_one));
 		memset(lp_t->table_list[inx], 0, sizeof(lp_table_one));
 		lp_t->table_list[inx]->name = lp_string_new(name);
+		lp_t->table_list[inx]->value = value;
 	}
 	else
 	{
@@ -55,26 +56,27 @@ int lp_table_add(lp_table* lp_t, char* name)
 		back->next = (lp_table_one*)malloc(sizeof(lp_table_one));
 		memset(back->next, 0, sizeof(lp_table_one));
 		back->next->name = lp_string_new(name);
+		back->next->value = value;
 	}
 	return LP_TRUE;
 }
 
-int lp_table_look(lp_table* lp_t, char* name)
+int* lp_table_query(lp_table* lp_t, char* name)
 {
 	lp_table_one* lt_o = NULL;
 	int inx =0;
-	check_null(lp_t, LP_FAIL);
-	check_null(name, LP_FAIL);
+	check_null(lp_t, NULL);
+	check_null(name, NULL);
 	
 	inx = lp_hash(name);
 	lt_o = lp_t->table_list[inx];
 	while(lt_o)
 	{
 		if(strcmp((char*)lt_o->name.str.list_p, name)==0)
-			return LP_TRUE;
+			return &(lt_o->value);
 		lt_o = lt_o->next;
 	}
-	return LP_FAIL;
+	return NULL;
 }
 
 int lp_table_free(lp_table* lp_t)
